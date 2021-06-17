@@ -1,6 +1,29 @@
-// #include "builtin.h"
+#include "builtin.h"
 
-// int			find_str(const char *str, const char *to_find, int n)
+char	*m_strdup(char *src)
+{
+	char	*dest;
+	size_t	len;
+
+	len = m_strlen(src);
+	if (!(dest = (char *)malloc(len + 1)))
+		return (NULL);
+	m_strlcpy(dest, src, len + 1);
+	return ((char *)dest);
+}
+
+int		m_arrsize(char **arr)
+{
+	int i;
+
+	i = 0;
+	while (arr[i])
+		++i;
+	return (i);
+}
+
+
+// int			find_str(char *str, char *to_find, int n)
 // {
 // 	str += n;
 // 	while (*to_find)
@@ -13,7 +36,7 @@
 // 	return (1);
 // }
 
-// char		*ft_strnstr(const char *str, const char *to_find, size_t n)
+// char		*ft_strnstr(char *str, char *to_find, size_t n)
 // {
 // 	size_t	i;
 

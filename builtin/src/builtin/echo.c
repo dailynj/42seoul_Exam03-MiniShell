@@ -1,11 +1,19 @@
 #include "builtin.h"
 
-int echo(char **option, char* value)
+int m_echo(t_parsed parsed)
 {
-	printf("\\%s", value);
-
-	if (option != 0 && option[0][0] != 'n')
+	if (!m_strncmp(parsed.cmd[1], "-n", 2))
+	{
+		printf("%s", parsed.cmd[2]);
 		return (0);
-	printf("\n");
+	}
+	// error handling  따로 하기
+	if (!m_strncmp(parsed.cmd[1], "-", 1))
+	{
+		printf("Error: 없는 옵션입니다.\n");
+		return (0);
+	}
+	printf("%s\n", parsed.cmd[2]);
+
 	return (0);
 }

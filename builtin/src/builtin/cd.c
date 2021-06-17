@@ -1,11 +1,10 @@
 #include "builtin.h"
 
-int cd(char **option, char *value)
+int	m_cd(t_parsed parsed)
 {
-	(void) option;
 	int result;
 
-	result = chdir(value);
+	result = chdir(parsed.cmd[2]);
 	if (result != 0)
 		return (1);
 	return (0);

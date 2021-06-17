@@ -78,9 +78,7 @@ t_tree **search_tree(char *val)
 			tmp = tmp->right;
 		}
 		else
-		{
 			return (ret);
-		}
 	}
 	return (NULL);
 }
@@ -94,27 +92,20 @@ void delete_tree(char *val)
 	if (delete_node == NULL)
 		return ;
 	--tree()->size;
-	if (!(*delete_node)->left && !(*delete_node)->right)
-	{
-		free(*delete_node);
-		*delete_node = 0;
-	}
-	else if ((*delete_node)->right)
+	if ((*delete_node)->right)
 	{
 		tmp = delete_node;
-		*delete_node = (*delete_node)->right;
-		if ((*tmp)->left)
-			(*delete_node)->left = (*tmp)->left;
-		free(*tmp);
-		*tmp = 0;
+		*tmp = (*tmp)->right;
+		if ((*delete_node)->left)
+			(*tmp)->left = (*delete_node)->left;
 	}
-	else
+	else if ((*delete_node)->left)
 	{
 		tmp = delete_node;
-		*delete_node = (*delete_node)->left;
-		free(*tmp);
-		*tmp = 0;
+		*tmp = (*tmp)->left;
 	}
+	free(*delete_node);
+	*delete_node = 0;
 }
 
 /*
@@ -132,11 +123,11 @@ void free_tree(t_tree **tr)
 	*tr = 0;
 }
 
-void print_tree(int type, char *val)
+char*	inorder_print_node(char *val, int type)
 {
-	if (type >> 1) // env
+	if (type >> 1) 				// environ = 2
 		printf("%s\n", val);
-	else // export
+	else 						// export = 1
 	{
 		printf("declare -x ");
 		while (*val)
@@ -148,46 +139,24 @@ void print_tree(int type, char *val)
 		}
 		printf("\"\n");
 	}
+	return (NULL);
 }
 
-// 짜야할거....tree ->char** 로 만들기
-// char **arr_for_execve()
-// {
-// 	// tree()->size; node 개수
-// 	char **ret;
-// 	int idx;
-
-// 	if (tree()->size == 0)
-// 		return (NULL);
-// 	if (!(ret = (char **)malloc(sizeof(char *) * tree()->size)))
-// 		exit(0); // error handle 하기
-// 	idx = -1;
-// 	while (++idx < tree()->size)
-// 	{
-// 		ret[idx] = (char *)malloc()
-// 	}
-// 	return (ret);
-// }
-
-char* inorder_tree(int type, t_tree *tr)
-{
-	if (!type)
-	{
-		// return (arr_for_execve());
-		return (NULL);
-	}
-	else
-	{
-		print_tree(type, tr->val);
-		return (NULL);
-	}
-}
-
-void inorder(int type, t_tree *tr)
+int inorder_execve(t_tree *tr, char **output, int index)
 {
 	if (tr == NULL)
-		return;
-	inorder(type, tr->left);
-	inorder_tree(type, tr);
-	inorder(type, tr->right);
+		return (index);
+	index = inorder_execve(tr->left, output, index);
+	output[index] = m_strdup(tr->val);
+	index = inorder_execve(tr->right, output, index + 1);
+	return (index);
+}
+
+void inorder_print(t_tree *tr, int type)
+{
+	if (tr == NULL)
+		return ;
+	inorder_print(tr->left, type);
+	inorder_print_node(tr->val, type);
+	inorder_print(tr->right, type);
 }

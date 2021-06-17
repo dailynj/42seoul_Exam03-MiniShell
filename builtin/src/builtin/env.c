@@ -2,6 +2,6 @@
 
 int m_env()
 {
-	inorder(environ, tree());
+	inorder_print(tree(), environ);
 	return (1); // 수정
 }

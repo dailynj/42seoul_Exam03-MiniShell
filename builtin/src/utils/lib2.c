@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-int		m_strchr(const char *s, int c)
+int		m_strchr(char *s, int c)
 {
 	int i;
 
@@ -11,7 +11,7 @@ int		m_strchr(const char *s, int c)
 	return (0);
 }
 
-size_t			m_strlcpy(char *dst, const char *src, size_t dstsize)
+size_t			m_strlcpy(char *dst, char *src, size_t dstsize)
 {
 	size_t	i;
 
@@ -32,7 +32,7 @@ size_t			m_strlcpy(char *dst, const char *src, size_t dstsize)
 	return (i);
 }
 
-size_t			m_check_size(char const *s, char *delim)
+size_t			m_check_size(char *s, char *delim)
 {
 	size_t	cnt;
 	int		i;
@@ -73,7 +73,7 @@ char			*m_substr(char *s, unsigned int start, size_t len)
 	return (dest);
 }
 
-char			**m_split(char const *s, char *delim)
+char			**m_split(char *s, char *delim)
 {
 	char	**ret;
 	char	*from;

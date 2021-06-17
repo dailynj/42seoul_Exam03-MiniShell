@@ -49,7 +49,7 @@ int		m_strlen(char *str)
 // 	return 0;
 // }
 
-char *m_strcpy(char *dest, const char *src)
+char *m_strcpy(char *dest, char *src)
 {
 	char *tmp = dest;
 

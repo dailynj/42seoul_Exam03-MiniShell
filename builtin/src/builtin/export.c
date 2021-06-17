@@ -2,6 +2,6 @@
 
 int m_export()
 {
-	inorder(export, tree());
+	inorder_print(tree(), export);
 	return (1); //	수정
 }

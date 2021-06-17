@@ -1,9 +1,9 @@
 #include "builtin.h"
 
-//int pwd(char **option, char *value)
-int pwd()
+int m_pwd(t_parsed parsed)
 {
 	char cwd[PATH_MAX];
+	(void) parsed;
 
 	if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
