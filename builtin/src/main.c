@@ -1,11 +1,12 @@
 #include "builtin.h"
 
-int functions();
-int start_shell();
-void print_pwd(int type);
-
 int main(int ac, char **av, char **env)
 {
+	(void) ac;
+	(void) av;
+	(void) env;
+
+
 	// char *str;
 	// t_tree *tmp;
 
@@ -49,57 +50,79 @@ int main(int ac, char **av, char **env)
 
 int start_shell()
 {
-	char *short_pwd;
-	char read_buf[BUFFER_SIZE];
-	int read_size;
+	// char *short_pwd;
+	char	read_buf[BUFFER_SIZE];
+	int		read_size;
+	char	**pipe_str;
 
 	while (1)
 	{
 		print_pwd(LONG);
 		read_size = read(0, read_buf, BUFFER_SIZE);
-		if (!m_strncmp(read_buf, "echo", read_size - 1))
+		pipe_str = m_split(read_buf, "|");
+		while(*pipe_str)
 		{
-			echo(NULL, "hello");
-		}
-		else if (!m_strncmp(read_buf, "pwd", read_size - 1))
-		{
-			pwd();
-			// 옵션이 들어오면 invalid option..?
-			// 인자가 들어오면 무시
-		}
-		else if (!m_strncmp(read_buf, "cd", read_size - 1))
-		{
-			cd(NULL, "/Users/su/Desktop/42Seoul/");
-			// 파싱해서 val 보내기
-		}
-		else if (!m_strncmp(read_buf, "exit", read_size - 1))
-		{
-			m_exit();
-		}
-		else if (!m_strncmp(read_buf, "env", read_size - 1))
-		{
-			m_env();
-			// 옵션 들어오면 error 처리
-			// 옵션이 아닌 str 들어올때 error 처리
-		}
-		else if (!m_strncmp(read_buf, "export", read_size - 1))
-		{
-			m_export();
-			// 1개 들어오면 search 하기
-			// 0개 들어오면 전체 출력
-			// 옵션 error
-			// str error 처리
-		}
-		else if (!m_strncmp(read_buf, "unset", read_size - 1))
-		{
-			m_unset("LL");
-			// 파싱해서 환경변수 이름 넣어주기
-			// 옵션 error
-			// str error
+			// pipe -> fd[0] fd[1]
+			if (m_strchr(read_buf, '<') || m_strchr(read_buf, '>')) // >> << 도 구분해야되는데...
+			{
+				// run_redirection(read_buf);
+			}
+			if ((!run_builtin(read_buf, read_size)) )//|| (!run_execve()))
+			{
+				printf("not command!\n");
+			}
 		}
 		m_memset(read_buf, 0, BUFFER_SIZE);
 	}
 	return (0);
+}
+
+//t_bool
+int		run_builtin(char *read_buf, int read_size)
+{
+	if (!m_strncmp(read_buf, "echo", read_size - 1))
+	{
+		echo(NULL, "hello");
+	}
+	else if (!m_strncmp(read_buf, "pwd", read_size - 1))
+	{
+		pwd();
+		// 옵션이 들어오면 invalid option..?
+		// 인자가 들어오면 무시
+	}
+	else if (!m_strncmp(read_buf, "cd", read_size - 1))
+	{
+		cd(NULL, "/Users/su/Desktop/42Seoul/");
+		// 파싱해서 val 보내기
+	}
+	else if (!m_strncmp(read_buf, "exit", read_size - 1))
+	{
+		m_exit();
+	}
+	else if (!m_strncmp(read_buf, "env", read_size - 1))
+	{
+		m_env();
+		// 옵션 들어오면 error 처리
+		// 옵션이 아닌 str 들어올때 error 처리
+	}
+	else if (!m_strncmp(read_buf, "export", read_size - 1))
+	{
+		m_export();
+		// 1개 들어오면 search 하기
+		// 0개 들어오면 전체 출력
+		// 옵션 error
+		// str error 처리
+	}
+	else if (!m_strncmp(read_buf, "unset", read_size - 1))
+	{
+		m_unset("LL");
+		// 파싱해서 환경변수 이름 넣어주기
+		// 옵션 error
+		// str error
+	}
+	else
+		return (0);
+	return (1);
 }
 
 void print_pwd(int type)

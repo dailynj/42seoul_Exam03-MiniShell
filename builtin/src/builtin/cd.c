@@ -2,6 +2,7 @@
 
 int cd(char **option, char *value)
 {
+	(void) option;
 	int result;
 
 	result = chdir(value);

@@ -9,6 +9,7 @@ t_tree	*tree(void)
 
 void init_tree(char **env)
 {
+	(void) env;
 	m_strcpy(tree()->val, "a=h");
 	tree()->left = NULL;
 	tree()->right = NULL;
@@ -116,8 +117,11 @@ void delete_tree(char *val)
 	}
 }
 
-// free_tree(tree()->left);
-// free_tree(tree()->right);
+/*
+** how to free
+** free_tree(tree()->right);
+** free_tree(tree()->left);
+*/
 void free_tree(t_tree **tr)
 {
 	if (*tr == NULL)
