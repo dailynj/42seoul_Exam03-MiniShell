@@ -81,6 +81,7 @@ int start_shell()
 				printf("not command!\n");
 			}
 		}
+		// pipe_str 프리해주기
 		m_free_split(pipe_str, m_arrsize(pipe_str));
 	}
 	return (0);

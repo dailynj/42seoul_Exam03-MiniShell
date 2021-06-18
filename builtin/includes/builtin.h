@@ -84,6 +84,7 @@ int				m_strchr(char *s, int c);
 char			*m_strdup(char *src);
 int				m_max(int n1, int n2);
 int				m_arrsize(char **arr);
+int				nnnn(char *line);
 
 // run_redirection.c
 int				exist_filename(char *new_filename);
