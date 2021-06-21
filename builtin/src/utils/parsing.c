@@ -24,87 +24,140 @@ int nooption(char *line)
 	return (1);
 }
 
-t_parsed get_cmd_echo(char *line)
+// 1. 명령어를 cmd[0] 에 넣는다
+// cmd[0] == echo
+// 	      ㄴ else
+// cmd_echo() -> echo cmd[1], cmd[2] 처리
+// cmd_else() -> else func cmd[1], cmd[2] 처리
+/*
+int quote(char **line)
 {
-	t_parsed output;
-	char *temp;
+	int ret;
+	int idx;
+	int qdx;
+	int type;
+
+	type = 0;
+	qdx = 0;
+	idx = 0;
+	while ((*line)[qdx] != '\'' || (*line)[qdx] != '\"')
+		++qdx;
+	if ((*line)[qdx] == '\'')
+		type = 1;
+	else
+		type = 2;
+	while ((*line)[qdx] != '\'' || (*line)[qdx] != '\"')
+	{
+		(*line)[idx] = (*line)[qdx];
+		++idx;
+		++qdx;
+	}
+	if (type == 1 && (*line)[qdx] == '\'')
+		ret = 1;
+	else if (type == 2 && (*line)[qdx] == '\"')
+		ret = 1;
+	(*line)[qdx] = '\0';
+	return (ret);
+}
+*/
+
+
+void cmd_echo(t_parsed *output, char *line)
+{
+	// t_parsed output;
+	char *temp = 0;
 	int idx;
 	int cnt;
 
-	idx = 0;
-	cnt = 1;
-	m_memset(&output, 0, sizeof(t_parsed));
+	idx = 1;
+	cnt = 2;
 	while (idx < cnt && idx < 3)
 	{
 		while (*line == 32)
 				++line;
-		// printf("[jump : %d]\n", nnnn(line));
 		if (nnnn(line) > 0 && idx == 1)
 		{
-			m_strcpy(output.cmd[1], "-n");
+			m_strcpy(output->cmd[1], "-n");
 			line += (nnnn(line));
-			// printf("|%c|", *line);
 		}
 		else
 		{
-			if (!output.cmd[1][0] && idx == 1)
+			if (!output->cmd[1][0] && idx == 1)
 				idx++;
-			// printf("[idx : %d, cnt : %d]\n",idx, cnt);
-			// printf("line : %s\n", line);
 			temp = line;
 			while (*line && ((*line) != 32 || idx != 0))
 			{
-				output.cmd[idx][line - temp] = *line;
+				output->cmd[idx][line - temp] = *line;
 				++line;
 			}
 		}
-
 		if (check(line))
 			++cnt;
 		++idx;
 	}
-	return (output);
+}
+
+void cmd_else(t_parsed *output, char *line)
+{
+	// char *temp;
+	int idx;
+	int cnt;
+	int i;
+
+	idx = 1;
+	cnt = 2;
+	while (idx < cnt && idx < 3)
+	{
+		i = -1;
+		while (*line == 32)
+				++line;
+		if (*line == '-' && idx == 1)
+		{
+			while(*line != '\0' && *line != ' ')
+			{
+				output->cmd[1][++i] = *line;
+				++line;
+			}
+		}
+		else
+		{
+			while(*line != '\0' && *line != ' ')
+			{
+				
+				output->cmd[2][++i] = *line;
+				++line;
+			}
+		}
+		if (check(line))
+			++cnt;
+		++idx;
+	}
 }
 
 t_parsed get_cmd(char *line)
 {
 	t_parsed output;
-	char *temp;
-	int idx;
-	int cnt;
-
-	idx = 0;
-	cnt = 1;
+	// char *temp = 0;
+	int i;
+	
+	i = -1;
 	m_memset(&output, 0, sizeof(t_parsed));
-	while (idx < cnt && idx < 3)
+	while (*line == 32)
+		++line;
+	while (*line && ((*line) != 32)) // || idx != 0))
 	{
-		while (*line == 32)
-				++line;
-		// printf("[jump : %d]\n", nnnn(line));
-		if (nnnn(line) > 0 && idx == 1)
-		{
-			m_strcpy(output.cmd[1], "-n");
-			line += (nnnn(line));
-			// printf("|%c|", *line);
-		}
-		else
-		{
-			if (!output.cmd[1][0] && idx == 1)
-				idx++;
-			// printf("[idx : %d, cnt : %d]\n",idx, cnt);
-			// printf("line : %s\n", line);
-			temp = line;
-			while (*line && ((*line) != 32 || idx != 0))
-			{
-				output.cmd[idx][line - temp] = *line;
-				++line;
-			}
-		}
-
-		if (check(line))
-			++cnt;
-		++idx;
+		output.cmd[0][++i] = *line;
+		++line;
 	}
+	if (!m_strncmp(output.cmd[0], "echo", 4))
+	{
+		if (check(line))
+		cmd_echo(&output, line);
+	}
+	else
+	{
+		cmd_else(&output, line);
+	}
+	
 	return (output);
 }
-

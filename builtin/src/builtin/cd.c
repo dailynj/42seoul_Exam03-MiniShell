@@ -66,9 +66,12 @@ int	m_cd(t_parsed parsed)
 	{
 		print_parsed(parsed);
 		if (parsed.cmd[1][0] != 0)
+		{
+			print_error("cd:", parsed.cmd[1], "invalid option");
 			print_error("cd:", NULL, "usage: cd [-L|-p] [dir]");
+		}
 		else
-			print_error("cd:", parsed.cmd[2], "No Such file or directory");
+			print_error("cd:", parsed.cmd[2], "No such file or directory");
 		return (1); // print_error()
 	}
 	return (0);

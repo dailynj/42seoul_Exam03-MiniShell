@@ -47,6 +47,47 @@ int main(int ac, char **av, char **env)
 	return (0);
 }
 
+int copy_size(char *env)
+{
+	int idx;
+
+	idx = 0;
+	if (env[idx] != '$')
+		return (0);
+	while (env[idx] !=)
+		++idx;
+	return (idx);
+}
+
+int quote(char **buf)
+{
+	char	temp[BUFFER_SIZE];
+	int		idx;
+	int		tdx;
+
+	tdx = -1;
+	idx = -1;
+	m_memset(temp, 0 , sizeof(char*));
+	while(buf[++idx])
+	{
+		if (buf[idx] == "\"")
+		{
+			while (buf[++idx] != "\"")
+			{
+				m_strlcpy(buf,);
+			}
+		}
+		else if(buf[idx] == "\'")
+		{
+			while (buf[++idx] != "\'")
+			{	
+				temp[++tdx] = buf[idx];
+			}
+		}
+	}
+	m_strlcpy(*buf, temp, BUFFER_SIZE);
+}
+
 int start_shell()
 {
 	// char *short_pwd;
@@ -66,7 +107,7 @@ int start_shell()
 		read_buf[read_size - 1] = 0;
 		// 여기는 읽은 라인을 파이프 단위로 스플릿하기
 		pipe_str = m_split(read_buf, "|");
-		parsed = get_cmd_echo(read_buf);
+		parsed = get_cmd(read_buf);
 
 		idx = -1;
 		while(++idx < m_arrsize(pipe_str))
@@ -91,7 +132,7 @@ int start_shell()
 //t_bool
 int		run_builtin(t_parsed parsed, int read_size)
 {
-	if (!m_strncmp(parsed.cmd[0], "echo", 4))
+	if (!m_strncmp(parsed.cmd[0], "echo", read_size -1))
 	{
 		m_echo(parsed);
 	}
