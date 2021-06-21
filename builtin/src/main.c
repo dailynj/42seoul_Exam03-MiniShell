@@ -21,7 +21,7 @@ int main(int ac, char **av, char **env)
 
 	// /*
 	// write(1, "here!\n", 6);
-	// init_tree(env);
+	init_tree(env);
 	// insert_tree("kr=ks");
 	// insert_tree("hB=ks");
 	// insert_tree("i=asdf");
@@ -66,7 +66,7 @@ int start_shell()
 		read_buf[read_size - 1] = 0;
 		// 여기는 읽은 라인을 파이프 단위로 스플릿하기
 		pipe_str = m_split(read_buf, "|");
-		parsed = get_cmd(read_buf);
+		parsed = get_cmd_echo(read_buf);
 
 		idx = -1;
 		while(++idx < m_arrsize(pipe_str))

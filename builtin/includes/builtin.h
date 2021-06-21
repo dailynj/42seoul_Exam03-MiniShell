@@ -91,6 +91,10 @@ int				exist_filename(char *new_filename);
 void			run_redirect(char *read_buf);
 
 // parsing.c
+t_parsed		get_cmd_echo(char *line);
 t_parsed		get_cmd(char *line);
 
+// error.c
+void		print_error(char *cmd, char *arg, char *message);
+void		print_parsed(t_parsed parsed);
 #endif

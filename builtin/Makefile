@@ -3,11 +3,11 @@ NAME	=	sunashell
 CC		=	gcc
 CFLAGS	=	-Wall -Wextra -Werror
 INCLUDE = -I./includes
-SRC		=	main.c tree.c run_redirection.c error_handling.c \
+SRC		=	main.c tree.c run_redirection.c \
 			builtin/cd.c builtin/echo.c builtin/env.c builtin/exit.c \
 			builtin/export.c builtin/pwd.c builtin/unset.c \
 			utils/lib.c utils/lib2.c utils/lib3.c utils/parsing.c \
-
+			error_handler/error_handler.c
 
 
 SRC_DIR = ./src/

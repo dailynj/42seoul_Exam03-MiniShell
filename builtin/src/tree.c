@@ -14,6 +14,11 @@ void init_tree(char **env)
 	tree()->left = NULL;
 	tree()->right = NULL;
 	tree()->size = 0;
+	while (*env)
+	{
+		insert_tree(*env);
+		++env;
+	}
 }
 
 t_tree *new_node(char *val)
@@ -125,6 +130,8 @@ void free_tree(t_tree **tr)
 
 char*	inorder_print_node(char *val, int type)
 {
+	if (val == tree()->val)
+		return (NULL);
 	if (type >> 1) 				// environ = 2
 		printf("%s\n", val);
 	else 						// export = 1
@@ -154,6 +161,8 @@ int inorder_execve(t_tree *tr, char **output, int index)
 
 void inorder_print(t_tree *tr, int type)
 {
+	if (tree()->size == 0)
+		return ;
 	if (tr == NULL)
 		return ;
 	inorder_print(tr->left, type);
