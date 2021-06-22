@@ -54,15 +54,13 @@ int m_echo(t_parsed parsed)
 		{
 			printf("%s ", parsed.cmd[1]);
 			printf("%s\n", parsed.cmd[2]);
-			return (0);
 		}
 		else
 		{
 			printf("%s", parsed.cmd[2]);
-			return (0);
 		}
 	}
-	printf("%s\n", parsed.cmd[2]);
-
-	return (0);
+	else
+		printf("%s\n", parsed.cmd[2]);
+	return (OK);
 }

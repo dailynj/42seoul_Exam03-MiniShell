@@ -72,7 +72,7 @@ int	m_cd(t_parsed parsed)
 		}
 		else
 			print_error("cd:", parsed.cmd[2], "No such file or directory");
-		return (1); // print_error()
+		return (ERROR); // print_error()
 	}
-	return (0);
+	return (OK);
 }

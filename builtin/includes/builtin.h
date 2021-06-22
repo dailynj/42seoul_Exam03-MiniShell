@@ -10,15 +10,20 @@
 
 #define SHORT 0
 #define LONG 1
+
 #define BUFFER_SIZE 100
 #define ENV_MAX 40000000
+
 #define WHITESPACE "\t\n\v\f\r "
+
 #define REAL_PIPE 1
 #define REAL_LL 2
 #define REAL_L 3
 #define REAL_RR 4
 #define REAL_R 5
 
+#define ERROR 0
+#define OK 1
 
 typedef enum	e_type
 {

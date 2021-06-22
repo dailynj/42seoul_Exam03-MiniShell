@@ -10,7 +10,7 @@ t_tree	*tree(void)
 void init_tree(char **env)
 {
 	(void) env;
-	m_strcpy(tree()->val, "a=h");
+	m_strcpy(tree()->val, "5=h");
 	tree()->left = NULL;
 	tree()->right = NULL;
 	tree()->size = 0;
@@ -19,6 +19,14 @@ void init_tree(char **env)
 		insert_tree(*env);
 		++env;
 	}
+	// insert_tree("7");
+	// insert_tree("3");
+	// insert_tree("2");
+	// insert_tree("1");
+	// insert_tree("6");
+	// insert_tree("4");
+	// insert_tree("9");
+	// insert_tree("8");
 }
 
 t_tree *new_node(char *val)
@@ -91,27 +99,35 @@ t_tree **search_tree(char *val)
 void delete_tree(char *val)
 {
 	t_tree **delete_node;
-	t_tree **tmp;
+	t_tree **free_node;
+	t_tree *tmp;
+	char backup[BUFFER_SIZE];
 
 	delete_node = search_tree(val);
 	if (delete_node == NULL)
 		return ;
 	--tree()->size;
+	tmp = *delete_node;
 	if ((*delete_node)->right)
 	{
-		tmp = delete_node;
-		*tmp = (*tmp)->right;
-		if ((*delete_node)->left)
-			(*tmp)->left = (*delete_node)->left;
+		tmp = (*delete_node)->right;
+		while (tmp->left != NULL)
+			tmp = tmp->left;
+		m_strlcpy(backup, tmp->val, BUFFER_SIZE);
 	}
 	else if ((*delete_node)->left)
 	{
-		tmp = delete_node;
-		*tmp = (*tmp)->left;
+		tmp = (*delete_node)->left;
+		while (tmp->right != NULL)
+			tmp = tmp->right;
+		m_strlcpy(backup, tmp->val, BUFFER_SIZE);
 	}
-	free(*delete_node);
-	*delete_node = 0;
+	free_node = search_tree(backup);
+	free(*free_node);
+	*free_node = 0;
+	m_strlcpy((*delete_node)->val, backup, BUFFER_SIZE);
 }
+
 
 /*
 ** how to free
@@ -154,9 +170,7 @@ int inorder_execve(t_tree *tr, char ***output, int index)
 	if (tr == NULL)
 		return (index);
 	index = inorder_execve(tr->left, output, index);
-	// printf("[tr->val : %s]\n", tr->val);
 	(*output)[index] = m_strdup(tr->val);
-	// printf("dupval[%d] : %s\n", index, (*output)[index]);
 	index = inorder_execve(tr->right, output, index + 1);
 	return (index);
 }

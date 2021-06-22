@@ -3,5 +3,5 @@
 int m_env()
 {
 	inorder_print(tree(), environ);
-	return (1); // 수정
+	return (OK); // 수정
 }

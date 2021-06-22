@@ -9,11 +9,16 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	char **tmp_path_arr;
 	pid_t pid;
 	char *path;
-		
-	envp = malloc(sizeof(char *) * tree()->size + 1);
-	
+	int status;
+
 	exec_str = m_split_char(pipe_str, ' ');
 	path_arr = m_split_char(m_find_env("PATH"), 58);
+	if (!path_arr)
+	{
+		printf("Error: not found\n");
+		return (0); // error 처리
+	}
+	envp = malloc(sizeof(char *) * tree()->size + 1);
 	tmp_path_arr = path_arr;
 	inorder_execve(tree(), &envp, 0); // sunashell 의 환경변수 목록 넘기는 함수
 
@@ -21,7 +26,7 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	// 2. 마지막에 null
 	// ㄴ fork해서 실행
 	// 3. exec_str free 해주기!
-	
+
 	pid = fork();
 	if (pid == 0)
 	{
@@ -37,8 +42,7 @@ int run_execved(char *pipe_str, t_parsed parsed)
 		// 여기서 return 말고 exit으로 처리해야함
 		return (0);
 	}
-	
-	// waitpid()
+	wait(&status);
 	// 자식이 끝날 때 까지 기다렸다가 만약 자식이 error상태로 끝나면 return 에러
 	m_free_split(path_arr, m_arrsize(path_arr));
 	m_free_split(exec_str, m_arrsize(exec_str));

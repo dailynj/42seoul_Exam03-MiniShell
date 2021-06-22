@@ -3,5 +3,5 @@
 int m_export()
 {
 	inorder_print(tree(), export);
-	return (1); //	수정
+	return (OK); //	수정
 }
