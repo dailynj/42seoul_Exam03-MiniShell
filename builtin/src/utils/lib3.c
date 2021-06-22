@@ -5,8 +5,6 @@ char	*m_strdup(char *src)
 	char	*dest;
 	size_t	len;
 
-	if (!src)
-		return (NULL);
 	len = m_strlen(src);
 	if (!(dest = (char *)malloc(len + 1)))
 		return (NULL);

@@ -154,9 +154,9 @@ int inorder_execve(t_tree *tr, char ***output, int index)
 	if (tr == NULL)
 		return (index);
 	index = inorder_execve(tr->left, output, index);
-	if (m_strlen((*output)[index]) == 0)
-		(*output)[index] = m_strdup(tr->val);
-	printf("dupval[%d] : %s\n", index, (*output)[index]);
+	// printf("[tr->val : %s]\n", tr->val);
+	(*output)[index] = m_strdup(tr->val);
+	// printf("dupval[%d] : %s\n", index, (*output)[index]);
 	index = inorder_execve(tr->right, output, index + 1);
 	return (index);
 }
