@@ -3,9 +3,14 @@
 int m_pwd(t_parsed parsed)
 {
 	char cwd[PATH_MAX];
-	(void) parsed; // 혹시 옵션 들어오면 에러 메세지 보내기!
 
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
+	if (parsed.cmd[1][0] != '\0')
+	{
+		// invalid option 추가하기
+		// 예시 bash: export: -l: invalid option
+		return (ERROR);
+	}
+	else if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
 		printf("%s\n", cwd);
 	}

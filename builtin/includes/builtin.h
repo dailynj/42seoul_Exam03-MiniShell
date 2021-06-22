@@ -57,9 +57,9 @@ int 			m_echo(t_parsed parsed);
 int				m_cd(t_parsed parsed);
 int				m_pwd(t_parsed parsed);
 int				m_exit();
-int				m_env();
-int				m_export();
-int				m_unset(char *val);
+int				m_env(t_parsed parsed);
+int				m_export(t_parsed parsed);
+int				m_unset(t_parsed parsed);
 
 
 // tree.c
@@ -97,6 +97,7 @@ int				m_max(int n1, int n2);
 int				m_arrsize(char **arr);
 int				nnnn(char *line);
 char			*m_strjoin(char *s1, char *s2);
+int				m_isnum(char *str);
 
 
 // run_redirection.c

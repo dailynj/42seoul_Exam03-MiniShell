@@ -89,13 +89,13 @@ int		run_builtin(t_parsed parsed, int read_size)
 	}
 	else if (!m_strncmp(parsed.cmd[0], "env", read_size - 1))
 	{
-		return (m_env());
+		return (m_env(parsed));
 		// 옵션 들어오면 error 처리
 		// 옵션이 아닌 str 들어올때 error 처리
 	}
 	else if (!m_strncmp(parsed.cmd[0], "export", read_size - 1))
 	{
-		return (m_export());
+		return (m_export(parsed));
 		// 1개 들어오면 search 하기
 		// 0개 들어오면 전체 출력
 		// 옵션 error
@@ -103,7 +103,7 @@ int		run_builtin(t_parsed parsed, int read_size)
 	}
 	else if (!m_strncmp(parsed.cmd[0], "unset", read_size - 1))
 	{
-		return (m_unset(parsed.cmd[2]));
+		return (m_unset(parsed));
 		// 파싱해서 환경변수 이름 넣어주기
 		// 옵션 error
 		// str error

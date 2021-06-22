@@ -148,8 +148,11 @@ char*	inorder_print_node(char *val, int type)
 {
 	if (val == tree()->val)
 		return (NULL);
-	if (type >> 1) 				// environ = 2
-		printf("%s\n", val);
+	if (type >> 1) // environ = 2
+	{ 			
+		if (m_strchr(val, '='))	
+			printf("%s\n", val);
+	}
 	else 						// export = 1
 	{
 		printf("declare -x ");

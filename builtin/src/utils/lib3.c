@@ -52,6 +52,23 @@ char	*m_strjoin(char *s1, char *s2)
 	return (dest);
 }
 
+int		m_isnum(char *str)
+{
+	int i;
+
+	i = 0;
+	if (str[i] == '-')
+		++i;
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]) && str[i] != '.')
+			return (ERROR);
+		++i;
+	}
+	return (OK);
+}
+
+
 // int			find_str(char *str, char *to_find, int n)
 // {
 // 	str += n;
