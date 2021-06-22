@@ -106,6 +106,7 @@ void cmd_else(t_parsed *output, char *line)
 
 	idx = 1;
 	cnt = 2;
+	// m_memset(output->cmd[2], 0, BUFFER_SIZE);
 	while (idx < cnt && idx < 3)
 	{
 		i = -1;
@@ -123,7 +124,7 @@ void cmd_else(t_parsed *output, char *line)
 		{
 			while(*line != '\0' && *line != ' ')
 			{
-				
+
 				output->cmd[2][++i] = *line;
 				++line;
 			}
@@ -139,7 +140,7 @@ t_parsed get_cmd(char *line)
 	t_parsed output;
 	// char *temp = 0;
 	int i;
-	
+
 	i = -1;
 	m_memset(&output, 0, sizeof(t_parsed));
 	while (*line == 32)

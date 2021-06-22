@@ -37,6 +37,7 @@ int start_shell()
 	{
 		print_pwd(LONG); // sunashell crab
 		m_memset(read_buf, 0 , BUFFER_SIZE);
+
 		read_size = read(0, read_buf, BUFFER_SIZE);
 		read_buf[read_size - 1] = 0;
 		replace_env(read_buf);
@@ -45,6 +46,7 @@ int start_shell()
 		temp = pipe_str;
 		while (*pipe_str)
 		{
+			m_memset(&parsed, 0 , sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
 			// print_parsed(parsed);
 			// pipe -> fd[0] fd[1]
@@ -56,7 +58,6 @@ int start_shell()
 			{
 				printf("not command!\n");
 			}
-			m_memset(&parsed, 0 , sizeof(t_parsed));
 			++pipe_str;
 		}
 		m_free_split(temp, m_arrsize(temp));

@@ -61,7 +61,7 @@ int		m_isnum(char *str)
 		++i;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]) && str[i] != '.')
+		if (str[i] < '0' || str[i] > '9')
 			return (ERROR);
 		++i;
 	}
