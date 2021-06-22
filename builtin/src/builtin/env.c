@@ -2,6 +2,8 @@
 
 int m_env(t_parsed parsed)
 {
+	if (m_find_env("PATH") == NULL)
+		return (ERROR);
 	if (parsed.cmd[1][0] != '\0')
 	{
 		// env: illegal option -- q

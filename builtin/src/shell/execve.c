@@ -13,7 +13,6 @@ int run_execved(char *pipe_str, t_parsed parsed)
 
 	exec_str = m_split_char(pipe_str, ' ');
 	path_arr = m_split_char(m_find_env("PATH"), 58);
-	print_parsed(parsed);
 	if (!path_arr)
 	{
 		printf("Error: not found\n");
