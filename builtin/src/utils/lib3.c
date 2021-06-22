@@ -5,6 +5,8 @@ char	*m_strdup(char *src)
 	char	*dest;
 	size_t	len;
 
+	if (!src)
+		return (NULL);
 	len = m_strlen(src);
 	if (!(dest = (char *)malloc(len + 1)))
 		return (NULL);
@@ -22,6 +24,35 @@ int		m_arrsize(char **arr)
 	return (i);
 }
 
+char *m_substr(char *s, unsigned int start, size_t len)
+{
+	char *dest;
+
+	if (!s || !(dest = (char *)malloc(len + 1)))
+		return (NULL);
+	if ((int)start >= m_strlen(s) ||
+		!(m_strlcpy(dest, s + start, len + 1)))
+		dest[0] = '\0';
+	return (dest);
+}
+
+char	*m_strjoin(char *s1, char *s2)
+{
+	char	*dest;
+	size_t	i;
+	size_t	j;
+
+	if (!s1 || !s2)
+		return (NULL);
+	i = m_strlen(s1);
+	j = m_strlen(s2);
+	dest = (char *)malloc(i + j + 1);
+	if (!dest)
+		return (NULL);
+	m_strlcpy(dest, s1, i + 1);
+	m_strlcpy(dest + i, s2, j + 1);
+	return (dest);
+}
 
 // int			find_str(char *str, char *to_find, int n)
 // {

@@ -9,3 +9,8 @@ minishell 하기싫어..
 	-> cd / cd ~
 	-> 환경변수
 	-> 에러메세지
+
+- error
+	-> syntax
+	-> " 안닫긴거 에러처리
+	-> parsing (;  ` -> unexpected argument)

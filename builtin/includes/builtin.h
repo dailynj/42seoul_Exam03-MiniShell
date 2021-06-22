@@ -13,6 +13,12 @@
 #define BUFFER_SIZE 100
 #define ENV_MAX 40000000
 #define WHITESPACE "\t\n\v\f\r "
+#define REAL_PIPE 1
+#define REAL_LL 2
+#define REAL_L 3
+#define REAL_RR 4
+#define REAL_R 5
+
 
 typedef enum	e_type
 {
@@ -60,7 +66,7 @@ void			free_tree(t_tree **tr);
 t_tree			**search_tree(char *val);
 
 void			inorder_print(t_tree *tr, int type);
-int				inorder_execve(t_tree *tr, char **output, int index);
+int				inorder_execve(t_tree *tr, char ***output, int index);
 char*			inorder_print_node(char *val, int type);
 
 
@@ -73,10 +79,10 @@ int				m_strlen(char *str);
 int				find_equal(char *str);
 
 // lib2.c
-char			**m_split(char *s, char *delim);
+char			**m_split_char(char *s, char c);
 char			*m_substr(char *s, unsigned int start, size_t len);
 char			**m_free_split(char **s, int i);
-size_t			m_check_size(char *s, char *delim);
+size_t			m_check_size(char *s, char delim);
 size_t			m_strlcpy(char *dst, char *src, size_t dstsize);
 int				m_strchr(char *s, int c);
 
@@ -85,6 +91,8 @@ char			*m_strdup(char *src);
 int				m_max(int n1, int n2);
 int				m_arrsize(char **arr);
 int				nnnn(char *line);
+char			*m_strjoin(char *s1, char *s2);
+
 
 // run_redirection.c
 int				exist_filename(char *new_filename);
@@ -94,7 +102,17 @@ void			run_redirect(char *read_buf);
 t_parsed		get_cmd_echo(char *line);
 t_parsed		get_cmd(char *line);
 
+
 // error.c
-void		print_error(char *cmd, char *arg, char *message);
-void		print_parsed(t_parsed parsed);
+void			print_error(char *cmd, char *arg, char *message);
+void			print_parsed(t_parsed parsed);
+
+// quote.c
+void			replace_env(char *buf);
+char			*m_find_env(char *envp);
+int				put_env(char **temp, char *env, int tdx);
+
+// execve.c
+int				run_execved(char *pipe_str, t_parsed parsed);
+
 #endif

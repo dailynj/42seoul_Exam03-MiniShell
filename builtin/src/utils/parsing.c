@@ -146,7 +146,7 @@ t_parsed get_cmd(char *line)
 		++line;
 	while (*line && ((*line) != 32)) // || idx != 0))
 	{
-		output.cmd[0][++i] = *line;
+		output.cmd[0][++i] = *line <= 90 ? *line + 32 : *line;
 		++line;
 	}
 	if (!m_strncmp(output.cmd[0], "echo", 4))
@@ -158,6 +158,5 @@ t_parsed get_cmd(char *line)
 	{
 		cmd_else(&output, line);
 	}
-	
 	return (output);
 }

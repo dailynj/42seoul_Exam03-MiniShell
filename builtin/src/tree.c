@@ -149,12 +149,14 @@ char*	inorder_print_node(char *val, int type)
 	return (NULL);
 }
 
-int inorder_execve(t_tree *tr, char **output, int index)
+int inorder_execve(t_tree *tr, char ***output, int index)
 {
 	if (tr == NULL)
 		return (index);
 	index = inorder_execve(tr->left, output, index);
-	output[index] = m_strdup(tr->val);
+	if (m_strlen((*output)[index]) == 0)
+		(*output)[index] = m_strdup(tr->val);
+	printf("dupval[%d] : %s\n", index, (*output)[index]);
 	index = inorder_execve(tr->right, output, index + 1);
 	return (index);
 }

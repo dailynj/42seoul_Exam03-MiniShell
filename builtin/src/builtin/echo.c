@@ -47,7 +47,7 @@ int m_echo(t_parsed parsed)
 	idx = -1;
 	if (parsed.cmd[1][++idx] == '-')
 	{
-		printf("option : %s\n", parsed.cmd[1]);
+		// printf("option : %s\n", parsed.cmd[1]);
 		while (parsed.cmd[1][++idx] == 'n')
 			;
 		if (parsed.cmd[1][idx] && parsed.cmd[1][idx] != 'n')

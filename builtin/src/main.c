@@ -47,46 +47,19 @@ int main(int ac, char **av, char **env)
 	return (0);
 }
 
-int copy_size(char *env)
-{
-	int idx;
+// int copy_size(char *env)
+// {
+// 	int idx;
 
-	idx = 0;
-	if (env[idx] != '$')
-		return (0);
-	while (env[idx] !=)
-		++idx;
-	return (idx);
-}
+// 	idx = 0;
+// 	if (env[idx] != '$')
+// 		return (0);
+// 	while (env[idx] !=)
+// 		++idx;
+// 	return (idx);
+// }
 
-int quote(char **buf)
-{
-	char	temp[BUFFER_SIZE];
-	int		idx;
-	int		tdx;
 
-	tdx = -1;
-	idx = -1;
-	m_memset(temp, 0 , sizeof(char*));
-	while(buf[++idx])
-	{
-		if (buf[idx] == "\"")
-		{
-			while (buf[++idx] != "\"")
-			{
-				m_strlcpy(buf,);
-			}
-		}
-		else if(buf[idx] == "\'")
-		{
-			while (buf[++idx] != "\'")
-			{	
-				temp[++tdx] = buf[idx];
-			}
-		}
-	}
-	m_strlcpy(*buf, temp, BUFFER_SIZE);
-}
 
 int start_shell()
 {
@@ -94,36 +67,36 @@ int start_shell()
 	char	read_buf[BUFFER_SIZE];
 	int		read_size;
 	char	**pipe_str;
+	char	**temp;
 	t_parsed parsed;
-	int		idx;
 
 	while (1)
 	{
 		print_pwd(LONG); // sunashell crab
-
-		m_memset(read_buf, 0 , sizeof(char*));
-		// stdin으로 들어온 명령어를 읽어오기
+		m_memset(read_buf, 0 , BUFFER_SIZE);
 		read_size = read(0, read_buf, BUFFER_SIZE);
 		read_buf[read_size - 1] = 0;
-		// 여기는 읽은 라인을 파이프 단위로 스플릿하기
-		pipe_str = m_split(read_buf, "|");
-		parsed = get_cmd(read_buf);
+		replace_env(read_buf);
 
-		idx = -1;
-		while(++idx < m_arrsize(pipe_str))
+		pipe_str = m_split_char(read_buf, REAL_PIPE);
+		temp = pipe_str;
+		while (*pipe_str)
 		{
+			parsed = get_cmd(*pipe_str);
+			// print_parsed(parsed);
 			// pipe -> fd[0] fd[1]
-			if (m_strchr(read_buf, '<') || m_strchr(read_buf, '>'))
-			{
-				run_redirect(read_buf);
-			}
-			else if ((!run_builtin(parsed, read_size)) )//|| (!run_execve()))
+			// if (m_strchr(read_buf, '<') || m_strchr(read_buf, '>'))
+			// {
+			// 	run_redirect(read_buf);
+			// }
+			if ((!run_builtin(parsed, read_size)) || (!run_execved(*pipe_str, parsed)))
 			{
 				printf("not command!\n");
 			}
+			m_memset(&parsed, 0 , sizeof(t_parsed));
+			++pipe_str;
 		}
-		// pipe_str 프리해주기
-		m_free_split(pipe_str, m_arrsize(pipe_str));
+		m_free_split(temp, m_arrsize(temp));
 	}
 	return (0);
 }
@@ -172,8 +145,6 @@ int		run_builtin(t_parsed parsed, int read_size)
 		// 옵션 error
 		// str error
 	}
-	else
-		return (0);
 	return (1);
 }
 
