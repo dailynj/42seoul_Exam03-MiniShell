@@ -123,7 +123,7 @@ int	put_env(char **temp, char *env, int tdx)
 // 있는 환경변수면 치환 (""사이에 있거나 그냥 있을 때만)
 
 
-void	 replace_env(char *buf)
+void	 replace_env()
 {
 	char	*temp;
 	char	*env;
@@ -132,57 +132,58 @@ void	 replace_env(char *buf)
 
 	tdx = -1;
 	idx = -1;
-	temp = malloc(BUFFER_SIZE);
+	temp = m_calloc(BUFFER_SIZE, 1);
 	if (!temp)
 		return ;  // error 처리
-	while(buf[++idx])
+	while(g_read_buf[++idx])
 	{
-		if (buf[idx] == '\"')
+		if (g_read_buf[idx] == '\"')
 		{
-			while (buf[++idx] && buf[idx] != '\"')
+			while (g_read_buf[++idx] && g_read_buf[idx] != '\"')
 			{
 				// 아래랑 똑같음
-				if (buf[idx] == '$')
+				if (g_read_buf[idx] == '$')
 				{
-					get_env(&env, buf, &idx);
+					get_env(&env, g_read_buf, &idx);
 					tdx = put_env(&temp, env, tdx);
 					free(env);
 				}
 				else
 				{
-					temp[++tdx] = buf[idx];
+					temp[++tdx] = g_read_buf[idx];
 				}
 				// -------
 			}
 		}
-		else if(buf[idx] == '\'')
+		else if(g_read_buf[idx] == '\'')
 		{
-			while (buf[++idx] && buf[idx] != '\'')
+			while (g_read_buf[++idx] && g_read_buf[idx] != '\'')
 			{
-				temp[++tdx] = buf[idx];
+				temp[++tdx] = g_read_buf[idx];
 			}
 		}
 		else
 		{
 			// 위에랑 똑같음
-			if (buf[idx] == '$')
+			if (g_read_buf[idx] == '$')
 			{
-				get_env(&env, buf, &idx);
+				get_env(&env, g_read_buf, &idx);
 				tdx = put_env(&temp, env, tdx);
 				free(env);
 			}
 			//  --------
-			else if (check_real(buf, idx))
+			else if (check_real(g_read_buf, idx))
 			{
-				temp[++tdx] = check_real(buf, idx);
-				if (check_real(buf, idx) == 2 || check_real(buf, idx) == 4)
+				temp[++tdx] = check_real(g_read_buf, idx);
+				if (check_real(g_read_buf, idx) == 2 || check_real(g_read_buf, idx) == 4)
 					++idx;
 			}
 			else
-				temp[++tdx] = buf[idx];
+				temp[++tdx] = g_read_buf[idx];
 		}
 	}
-	m_memset(buf, 0 , BUFFER_SIZE);
-	m_strlcpy(buf, temp, BUFFER_SIZE);
+	m_memset(g_read_buf, 0 , BUFFER_SIZE);
+	m_strlcpy(g_read_buf, temp, BUFFER_SIZE);
 	free(temp);
+	temp = 0;
 }

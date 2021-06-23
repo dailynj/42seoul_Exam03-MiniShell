@@ -20,6 +20,8 @@ v	-> 환경변수
 - export가 a=b 형태가 아니라 a 형태로 나왔을 때 출력문 제대로 처리하기
 
 - signal 처리 ctrl + c, ctrl + d, ctrl + \
+	-> ctrl + d 물어보기
+
 - $?
 	-> https://askubuntu.com/questions/646526/what-is-is-it-a-variable
 - $char

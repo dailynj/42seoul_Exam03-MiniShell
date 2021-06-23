@@ -7,7 +7,6 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	char **envp;
 	char **path_arr;
 	char **tmp_path_arr;
-	pid_t pid;
 	char *path;
 	int status;
 
@@ -21,8 +20,8 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	tmp_path_arr = path_arr;
 	envp = malloc(sizeof(char *) * tree()->size + 1);
 	inorder_execve(tree(), &envp, 0); // sunashell 의 환경변수 목록 넘기는 함수
-	pid = fork();
-	if (pid == 0)
+	g_pid = fork();
+	if (g_pid == 0)
 	{
 		int idx = 0;
 		while (tmp_path_arr[idx])
@@ -49,9 +48,9 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	{
 		wait(&status);
 		// 자식이 끝날 때 까지 기다렸다가 만약 자식이 error상태로 끝나면 return 에러
-		m_free_split(path_arr, m_arrsize(path_arr));
-		m_free_split(exec_str, m_arrsize(exec_str));
-
+		m_free_split(path_arr);
+		m_free_split(exec_str);
+		g_pid = 0;
 		return (1);
 	}
 }

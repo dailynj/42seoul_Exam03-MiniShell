@@ -13,7 +13,7 @@
 #define SHORT 0
 #define LONG 1
 
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 100000
 #define ENV_MAX 40000000
 
 #define WHITESPACE "\t\n\v\f\r "
@@ -26,6 +26,9 @@
 
 #define ERROR 0
 #define OK 1
+
+pid_t g_pid;
+char	g_read_buf[BUFFER_SIZE];
 
 typedef enum	e_type
 {
@@ -88,7 +91,7 @@ int				find_equal(char *str);
 // lib2.c
 char			**m_split_char(char *s, char c);
 char			*m_substr(char *s, unsigned int start, size_t len);
-char			**m_free_split(char **s, int i);
+char			**m_free_split(char **s);
 size_t			m_check_size(char *s, char delim);
 size_t			m_strlcpy(char *dst, char *src, size_t dstsize);
 int				m_strchr(char *s, int c);
@@ -100,11 +103,12 @@ int				m_arrsize(char **arr);
 int				nnnn(char *line);
 char			*m_strjoin(char *s1, char *s2);
 int				m_isnum(char *str);
+void			*m_calloc(size_t count, size_t size);
 
 
 // run_redirection.c
 int				exist_filename(char *new_filename);
-void			run_redirect(char *read_buf);
+void			run_redirect(char *g_read_buf);
 
 // parsing.c
 t_parsed		get_cmd_echo(char *line);
@@ -116,7 +120,7 @@ void			print_error(char *cmd, char *arg, char *message);
 void			print_parsed(t_parsed parsed);
 
 // quote.c
-void			replace_env(char *buf);
+void			replace_env();
 char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 

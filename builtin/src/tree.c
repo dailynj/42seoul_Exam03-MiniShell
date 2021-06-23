@@ -146,6 +146,9 @@ void free_tree(t_tree **tr)
 
 char*	inorder_print_node(char *val, int type)
 {
+	int isequal;
+
+	isequal = val[find_equal(val)] == '=' ? 1 : 0;
 	if (val == tree()->val)
 		return (NULL);
 	if (type >> 1) // environ = 2
@@ -163,7 +166,9 @@ char*	inorder_print_node(char *val, int type)
 				printf("\"");
 			++val;
 		}
-		printf("\"\n");
+		if (isequal)
+			printf("\"");
+		printf("\n");
 	}
 	return (NULL);
 }

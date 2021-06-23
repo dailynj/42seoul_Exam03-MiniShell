@@ -18,6 +18,7 @@ size_t			m_strlcpy(char *dst, char *src, size_t dstsize)
 	i = 0;
 	if (!src)
 		return (0);
+	
 	if (dstsize)
 	{
 		while (i < dstsize - 1 && src[i])
@@ -47,15 +48,29 @@ size_t	m_check_size(char *s, char c)
 	return (*(s + i) != c ? cnt + 1 : cnt);
 }
 
-char		**m_free_split(char **s, int i)
+// char		**m_free_split(char **s, int i)
+// {
+// 	while (--i >= 0 && *(s + i))
+// 	{
+// 		free(*(s + i));
+// 		*(s + i) = NULL;
+// 	}
+// 	free(s);
+// 	s = NULL;
+// 	return (NULL);
+// }
+
+char		**m_free_split(char **s)
 {
-	while (--i >= 0 && *(s + i))
+	unsigned int	i;
+
+	i = 0;
+	while (s[i] != NULL)
 	{
-		free(*(s + i));
-		*(s + i) = NULL;
+		free(s[i]);
+		i++;
 	}
 	free(s);
-	s = NULL;
 	return (NULL);
 }
 
@@ -66,7 +81,7 @@ char			**m_split_char(char *s, char c)
 	int		i;
 
 	if (!s ||
-		!(ret = (char **)malloc(sizeof(char *) * (m_check_size(s, c) + 1))))
+		!(ret = (char **)m_calloc((m_check_size(s, c) + 1), sizeof(char *))))
 		return (NULL);
 	i = 0;
 	while (*s)
@@ -77,7 +92,7 @@ char			**m_split_char(char *s, char c)
 			while (*s && *s != c)
 				++s;
 			if (!(ret[i++] = m_substr(from, 0, (s - from))))
-				return (m_free_split(ret, i));
+				return (m_free_split(ret));
 		}
 		else
 			++s;

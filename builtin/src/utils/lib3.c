@@ -26,6 +26,7 @@ char *m_substr(char *s, unsigned int start, size_t len)
 {
 	char *dest;
 
+	
 	if (!s || !(dest = (char *)malloc(len + 1)))
 		return (NULL);
 	if ((int)start >= m_strlen(s) ||
@@ -68,6 +69,16 @@ int		m_isnum(char *str)
 	return (OK);
 }
 
+void	*m_calloc(size_t count, size_t size)
+{
+	char *tmp;
+
+	tmp = malloc(count * size);
+	if (!tmp)
+		return (0);
+	m_memset(tmp, 0, count * size);
+	return (tmp);
+}
 
 // int			find_str(char *str, char *to_find, int n)
 // {

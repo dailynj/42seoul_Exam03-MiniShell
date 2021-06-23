@@ -6,11 +6,23 @@ int g_errno;
 
 void sigint_handler()
 {
-	// signal(errno, SIG_IGN);
-	printf("\b\b  \b\b\n");
-	print_pwd(LONG);
-	// start_shell();
+	printf("1here\n");
+	if (g_pid > 0)
+	{
+		printf("\b\b  \b\b\n");
+		signal(SIGINT, SIG_IGN);
+	}
+	else
+	{
+		printf("\b\b  \b\b\n");
+		print_pwd(LONG);
+	}
 	// signal(SIGINT, sigint_handler);
+}
+void sigquit_handler()
+{
+	printf("2here\n");
+	// signal(SIGINT, signal_handler);
 }
 
 int main(int ac, char **av, char **env)
@@ -25,35 +37,39 @@ int main(int ac, char **av, char **env)
 
 int start_shell()
 {
-	// char *short_pwd;
-	char	read_buf[BUFFER_SIZE];
 	int		read_size;
 	char	**pipe_str;
 	char	**temp;
 	t_parsed parsed;
-	
-	signal(SIGINT, (void *)sigint_handler);
-	// old_fun = signal(SIGQUIT, sigint_handler);
-	// old_fun = signal(SIGINT, sigint_handler);
+
+	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, sigquit_handler); // ctrl+ D 해야됨
 	while (1)
 	{
 		print_pwd(LONG); // sunashell crab
-		m_memset(read_buf, 0, BUFFER_SIZE);
-		read_size = read(0, read_buf, BUFFER_SIZE);
-		read_buf[read_size - 1] = 0;
-		replace_env(read_buf);
-
-		pipe_str = m_split_char(read_buf, REAL_PIPE);
+		m_memset(g_read_buf, 0, BUFFER_SIZE);
+		read_size = read(0, g_read_buf, BUFFER_SIZE);
+		g_read_buf[read_size - 1] = 0;
+		replace_env();
+		int i = 0;
+		while(g_read_buf[i])
+		{
+			printf("%d ", g_read_buf[i]);
+			++i;
+		}
+		// printf("1. g_read_buf : %s\n", g_read_buf);
+		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
 		while (*pipe_str)
 		{
+			// printf("2. pipe_str : %s\n", *pipe_str);
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
 			// print_parsed(parsed);
 			// pipe -> fd[0] fd[1]
-			// if (m_strchr(read_buf, '<') || m_strchr(read_buf, '>'))
+			// if (m_strchr(g_read_buf, '<') || m_strchr(g_read_buf, '>'))
 			// {
-			// 	run_redirect(read_buf);
+			// 	run_redirect(g_read_buf);
 			// }
 			if (!(run_builtin(parsed, read_size) || run_execved(*pipe_str, parsed)))
 			{
@@ -61,7 +77,7 @@ int start_shell()
 			}
 			++pipe_str;
 		}
-		m_free_split(temp, m_arrsize(temp));
+		m_free_split(temp);
 	}
 	return (0);
 }

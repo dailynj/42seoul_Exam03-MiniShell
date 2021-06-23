@@ -22,13 +22,13 @@ int exist_filename(char *new_filename)
 
 //t_bool
 // 확인 필요
-void		run_redirect(char *read_buf)
+void		run_redirect(char *g_read_buf)
 {
 	char	**redi;
 	// int		flag;
 	int		fd;
 
-	redi = m_split_char(read_buf, ' '); // redi[0] : cmd redi[2] : file_name
+	redi = m_split_char(g_read_buf, ' '); // redi[0] : cmd redi[2] : file_name
 	if (exist_filename(redi[2])) // filename 이 존재
 	{
 		if (m_strncmp(redi[1], ">", 2))
