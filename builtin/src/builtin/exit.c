@@ -9,7 +9,7 @@ int m_exit(t_parsed parsed)
 		// bash: exit: -n: numeric argument required
 		return (ERROR);
 	}
-	else if (m_isnum(parsed.cmd[2]))
+	else if (!m_isnum(parsed.cmd[2]))
 	{
 		// bash: exit: -n: numeric argument required
 		return (ERROR);

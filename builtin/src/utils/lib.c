@@ -69,7 +69,7 @@ int find_equal(char *str)
 		if (str[i] == '=')
 			return (i);
 	}
-	return (-1); // =이 없으면
+	return (i); // =이 없으면
 }
 
 int m_max(int n1, int n2)

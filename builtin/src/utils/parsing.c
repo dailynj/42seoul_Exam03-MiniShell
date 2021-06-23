@@ -24,44 +24,6 @@ int nooption(char *line)
 	return (1);
 }
 
-// 1. 명령어를 cmd[0] 에 넣는다
-// cmd[0] == echo
-// 	      ㄴ else
-// cmd_echo() -> echo cmd[1], cmd[2] 처리
-// cmd_else() -> else func cmd[1], cmd[2] 처리
-/*
-int quote(char **line)
-{
-	int ret;
-	int idx;
-	int qdx;
-	int type;
-
-	type = 0;
-	qdx = 0;
-	idx = 0;
-	while ((*line)[qdx] != '\'' || (*line)[qdx] != '\"')
-		++qdx;
-	if ((*line)[qdx] == '\'')
-		type = 1;
-	else
-		type = 2;
-	while ((*line)[qdx] != '\'' || (*line)[qdx] != '\"')
-	{
-		(*line)[idx] = (*line)[qdx];
-		++idx;
-		++qdx;
-	}
-	if (type == 1 && (*line)[qdx] == '\'')
-		ret = 1;
-	else if (type == 2 && (*line)[qdx] == '\"')
-		ret = 1;
-	(*line)[qdx] = '\0';
-	return (ret);
-}
-*/
-
-
 void cmd_echo(t_parsed *output, char *line)
 {
 	// t_parsed output;
@@ -147,7 +109,7 @@ t_parsed get_cmd(char *line)
 		++line;
 	while (*line && ((*line) != 32)) // || idx != 0))
 	{
-		output.cmd[0][++i] = *line <= 90 ? *line + 32 : *line;
+		output.cmd[0][++i] = *line;
 		++line;
 	}
 	if (!m_strncmp(output.cmd[0], "echo", 4))

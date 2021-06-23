@@ -21,13 +21,6 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	tmp_path_arr = path_arr;
 	envp = malloc(sizeof(char *) * tree()->size + 1);
 	inorder_execve(tree(), &envp, 0); // sunashell 의 환경변수 목록 넘기는 함수
-
-	int tmp = 0;
-	while (exec_str[tmp])
-	{
-		printf("exec : %s\n", exec_str[tmp]);
-		++tmp;
-	}
 	pid = fork();
 	if (pid == 0)
 	{
@@ -35,13 +28,21 @@ int run_execved(char *pipe_str, t_parsed parsed)
 		while (tmp_path_arr[idx])
 		{
 			path = m_strjoin(tmp_path_arr[idx], m_strjoin("/", parsed.cmd[0]));
-			printf("path : %s\n", path);
+			// printf("path : %s\n", path);
 			execve(path, exec_str, envp); // 에러처리 필요
 			free(path);
 			++idx;
 		}
 		// 만약 와일문을 탈출했으면 에러처리 해야함
 		// 여기서 return 말고 exit으로 처리해야함
+		if (parsed.cmd[0][0] == '/')
+		{
+			printf("%s: No such file or directory\n", parsed.cmd[0]);	
+		}
+		else 
+		{
+			printf("%s: command not found!\n", parsed.cmd[0]);
+		}
 		exit(0);
 	}
 	else

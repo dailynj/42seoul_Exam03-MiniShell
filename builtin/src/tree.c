@@ -51,13 +51,13 @@ void insert_tree(char *val)
 	tmp = tree();
 	while (1)
 	{
-		if (m_strncmp(tmp->val, val, find_equal(val)) > 0)
+		if (m_strncmp(tmp->val, val, find_equal(val) - 1) > 0)
 		{
 			if (!tmp->left && (tmp->left = new_node(val)))
 				return ;
 			tmp = tmp->left;
 		}
-		else if (m_strncmp(tmp->val, val, find_equal(val)) < 0)
+		else if (m_strncmp(tmp->val, val, find_equal(val) - 1) < 0)
 		{
 			if (!tmp->right && (tmp->right = new_node(val)))
 				return ;
@@ -80,12 +80,12 @@ t_tree **search_tree(char *val)
 	tmp = tree();
 	while (tmp)
 	{
-		if (m_strncmp(tmp->val, val, m_max(m_strlen(val), find_equal(tmp->val))) > 0)
+		if (m_strncmp(tmp->val, val, find_equal(tmp->val) - 1) > 0)
 		{
 			ret = &(tmp->left);
 			tmp = tmp->left;
 		}
-		else if (m_strncmp(tmp->val, val, m_max(m_strlen(val), find_equal(tmp->val))) < 0)
+		else if (m_strncmp(tmp->val, val, find_equal(tmp->val) - 1) < 0)
 		{
 			ret = &(tmp->right);
 			tmp = tmp->right;

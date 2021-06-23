@@ -1,12 +1,14 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
 
+#include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <dirent.h>
 #include <fcntl.h>
+
 
 #define SHORT 0
 #define LONG 1

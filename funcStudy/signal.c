@@ -6,6 +6,7 @@ void (*old_fun)(int);
 
 void sigint_handler(int signo)
 {
+
 	printf("signo : %d", signo);
    printf("Ctrl-C 키를 눌루셨죠!!\n");
    printf("또 누르시면 종료됩니다.\n");

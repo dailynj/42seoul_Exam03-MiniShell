@@ -45,6 +45,7 @@ int	m_cd(t_parsed parsed)
 {
 	int result;
 
+	print_parsed(parsed);
 	if (parsed.cmd[2][0] == '.' && parsed.cmd[2][1] == '.' && (parsed.cmd[2][2] == ' ' || parsed.cmd[2][2] == '\0'))
 	{
 		result = m_cd_up();
