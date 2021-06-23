@@ -37,7 +37,6 @@ int m_cd_env(char *envp)
 		}
 		++envp;
 	}
-	// printf("dirp : %s\n", dirp);
 	return (chdir(dirp));
 }
 
@@ -45,7 +44,6 @@ int	m_cd(t_parsed parsed)
 {
 	int result;
 
-	print_parsed(parsed);
 	if (parsed.cmd[2][0] == '.' && parsed.cmd[2][1] == '.' && (parsed.cmd[2][2] == ' ' || parsed.cmd[2][2] == '\0'))
 	{
 		result = m_cd_up();
@@ -65,15 +63,14 @@ int	m_cd(t_parsed parsed)
 		result = chdir(parsed.cmd[2]);
 	if (result != 0)
 	{
-		print_parsed(parsed);
 		if (parsed.cmd[1][0] != 0)
 		{
-			print_error("cd:", parsed.cmd[1], "invalid option");
-			print_error("cd:", NULL, "usage: cd [-L|-p] [dir]");
+			print_error(parsed, 1);
+			printf("cd:", NULL, "usage: cd [-L|-p] [dir]");
 		}
 		else
-			print_error("cd:", parsed.cmd[2], "No such file or directory");
-		return (ERROR); // print_error()
+			print_error(parsed, 127);
+		// return (ERROR); // print_error()
 	}
 	return (OK);
 }

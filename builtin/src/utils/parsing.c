@@ -26,7 +26,6 @@ int nooption(char *line)
 
 void cmd_echo(t_parsed *output, char *line)
 {
-	// t_parsed output;
 	char *temp = 0;
 	int idx;
 	int cnt;
@@ -61,14 +60,12 @@ void cmd_echo(t_parsed *output, char *line)
 
 void cmd_else(t_parsed *output, char *line)
 {
-	// char *temp;
 	int idx;
 	int cnt;
 	int i;
 
 	idx = 1;
 	cnt = 2;
-	// m_memset(output->cmd[2], 0, BUFFER_SIZE);
 	while (idx < cnt && idx < 3)
 	{
 		i = -1;
@@ -100,14 +97,13 @@ void cmd_else(t_parsed *output, char *line)
 t_parsed get_cmd(char *line)
 {
 	t_parsed output;
-	// char *temp = 0;
 	int i;
 
 	i = -1;
 	m_memset(&output, 0, sizeof(t_parsed));
 	while (*line == 32)
 		++line;
-	while (*line && ((*line) != 32)) // || idx != 0))
+	while (*line && ((*line) != 32))
 	{
 		output.cmd[0][++i] = *line;
 		++line;

@@ -48,18 +48,6 @@ size_t	m_check_size(char *s, char c)
 	return (*(s + i) != c ? cnt + 1 : cnt);
 }
 
-// char		**m_free_split(char **s, int i)
-// {
-// 	while (--i >= 0 && *(s + i))
-// 	{
-// 		free(*(s + i));
-// 		*(s + i) = NULL;
-// 	}
-// 	free(s);
-// 	s = NULL;
-// 	return (NULL);
-// }
-
 char		**m_free_split(char **s)
 {
 	unsigned int	i;

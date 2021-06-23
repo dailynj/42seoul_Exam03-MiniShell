@@ -1,12 +1,9 @@
 #include "builtin.h"
 
-
 int g_errno;
-
 
 void sigint_handler()
 {
-	printf("1here\n");
 	if (g_pid > 0)
 	{
 		printf("\b\b  \b\b\n");
@@ -17,12 +14,10 @@ void sigint_handler()
 		printf("\b\b  \b\b\n");
 		print_pwd(LONG);
 	}
-	// signal(SIGINT, sigint_handler);
 }
 void sigquit_handler()
 {
-	printf("2here\n");
-	// signal(SIGINT, signal_handler);
+	// 
 }
 
 int main(int ac, char **av, char **env)
@@ -50,19 +45,16 @@ int start_shell()
 		m_memset(g_read_buf, 0, BUFFER_SIZE);
 		read_size = read(0, g_read_buf, BUFFER_SIZE);
 		g_read_buf[read_size - 1] = 0;
-		replace_env();
-		int i = 0;
-		while(g_read_buf[i])
+		if (check_syntax())
 		{
-			printf("%d ", g_read_buf[i]);
-			++i;
+			printf("bash: Syntax error\n");
+			continue;
 		}
-		// printf("1. g_read_buf : %s\n", g_read_buf);
+		replace_env();
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
 		while (*pipe_str)
 		{
-			// printf("2. pipe_str : %s\n", *pipe_str);
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
 			// print_parsed(parsed);
@@ -71,10 +63,8 @@ int start_shell()
 			// {
 			// 	run_redirect(g_read_buf);
 			// }
-			if (!(run_builtin(parsed, read_size) || run_execved(*pipe_str, parsed)))
-			{
-				// printf("not command!\n");
-			}
+			if (!run_builtin(parsed, read_size))
+				run_execved(*pipe_str, parsed);
 			++pipe_str;
 		}
 		m_free_split(temp);

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <string.h>
 #include <dirent.h>
 #include <fcntl.h>
 
@@ -29,6 +30,7 @@
 
 pid_t g_pid;
 char	g_read_buf[BUFFER_SIZE];
+int		g_errno;
 
 typedef enum	e_type
 {
@@ -116,7 +118,7 @@ t_parsed		get_cmd(char *line);
 
 
 // error.c
-void			print_error(char *cmd, char *arg, char *message);
+void			print_error(t_parsed parsed, int status);
 void			print_parsed(t_parsed parsed);
 
 // quote.c
@@ -126,5 +128,8 @@ int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
 int				run_execved(char *pipe_str, t_parsed parsed);
+
+// syntax_error.c
+int 			check_syntax();
 
 #endif

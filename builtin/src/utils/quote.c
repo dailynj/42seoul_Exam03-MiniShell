@@ -1,36 +1,5 @@
 #include "builtin.h"
 
-// 큰 따옴표만 다 없앰
-// void	delete_quote(char *buf, char quote)
-// {
-// 	char	temp[BUFFER_SIZE];
-// 	int		idx;
-// 	int		tdx;
-// 	int flag = 0;
-// 	tdx = -1;
-// 	idx = -1;
-	
-// 	m_memset(temp, 0 , BUFFER_SIZE);
-// 	while(buf[++idx])
-// 	{
-// 		// if (buf[idx] == '\'' && flag == 0)
-// 		// 	flag = 1;
-// 		// else if (buf[idx] == '\'' && flag == 1)
-// 		// 	flag = 0;
-// 		else if (buf[idx] == quote && flag == 0)
-// 		{
-// 			while (buf[++idx] != quote)
-// 			{
-// 				temp[++tdx] = buf[idx];
-// 			}
-// 		}
-// 		else
-// 			temp[++tdx] = buf[idx];
-// 	}
-// 	m_memset(buf, 0, BUFFER_SIZE);
-// 	m_strlcpy(buf, temp, BUFFER_SIZE);
-// }
-
 char *m_find_env(char *envp)
 {
 	char	*dirp;
@@ -87,10 +56,9 @@ void get_env(char **env, char *buf, int *idx)
 
 int	put_env(char **temp, char *env, int tdx)
 {
-	// char	temp[BUFFER_SIZE];
 	char	*dirp;
 
-	if ((dirp = m_find_env(env))) // NULL 이면 볼 필요 없음
+	if ((dirp = m_find_env(env)))
 	{
 		while(*dirp)
 		{
@@ -100,28 +68,6 @@ int	put_env(char **temp, char *env, int tdx)
 	}
 	return (tdx);
 }
-
-// void	replace_env(char *buf)
-// {
-// 	printf("1. string : %s\n", buf);
-// 	delete_quote(buf, '\"');
-// 	printf("2. string : %s\n", buf);
-// 	put_env(buf);
-// 	printf("3. string : %s\n", buf);
-// 	delete_quote(buf, '\'');
-// 	printf("4. string : %s\n", buf);
-// 	while (*buf)
-// 	{
-// 		printf("%d ", (int)*buf);
-// 		++buf;
-// 	}
-// 	printf("\n");
-// }
-
-
-// 없는 환경변수면 \n
-// 있는 환경변수면 치환 (""사이에 있거나 그냥 있을 때만)
-
 
 void	 replace_env()
 {
@@ -152,7 +98,6 @@ void	 replace_env()
 				{
 					temp[++tdx] = g_read_buf[idx];
 				}
-				// -------
 			}
 		}
 		else if(g_read_buf[idx] == '\'')
