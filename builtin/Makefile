@@ -8,11 +8,10 @@ SRC		=	main.c tree.c  \
 			builtin/export.c builtin/pwd.c builtin/unset.c \
 			utils/lib.c utils/lib2.c utils/lib3.c utils/parsing.c \
 			error_handler/error_handler.c error_handler/syntax_error.c utils/quote.c \
-			shell/run_redirection.c shell/execve.c 
-
+			shell/run_redirection.c shell/execve.c
 
 SRC_DIR = ./src/
-
+SHELL	= bash
 SRCS = $(addprefix $(SRC_DIR),$(SRC))
 
 # OBJ = $(SRCS:.c=.o)
@@ -23,15 +22,17 @@ all		:	$(NAME)
 			$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(INCLUDE) $(SRCS) -o $(NAME)
+	@./a.sh
+	@$(CC) $(CFLAGS) $(INCLUDE) $(SRCS) -o $(NAME)
+
 
 bonus	: all
 
 clean	:
-			rm -f $(OBJ)
+			@rm -f $(OBJ)
 
 fclean	:	clean
-			rm -f $(NAME)
+			@rm -f $(NAME)
 
 re		:	fclean	all
 
