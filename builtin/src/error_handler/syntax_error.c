@@ -13,11 +13,18 @@ int check_syntax()
 	squote = 0;	
 	while (g_read_buf[i])
 	{
-		if (g_read_buf[i] == '\"')
+		if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
+			++i;
+		else if (g_read_buf[i] == '\"')
 		{
 			dquote = 1;
 			while (g_read_buf[++i] && g_read_buf[i] != '\"')
-				;
+			{
+				if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
+					++i;
+				else if (g_read_buf[i] == '\\' && g_read_buf[i + 1] && g_read_buf[i + 1] == '\\' && g_read_buf[i + 2])
+					i += 2;
+			}
 			if (g_read_buf[i] != '\"')
 				return (1);
 			dquote = 0;

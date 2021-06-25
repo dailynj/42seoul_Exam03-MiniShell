@@ -178,7 +178,8 @@ int inorder_execve(t_tree *tr, char ***output, int index)
 	if (tr == NULL)
 		return (index);
 	index = inorder_execve(tr->left, output, index);
-	(*output)[index] = m_strdup(tr->val);
+	if (&tr->val != &tree()->val)
+		(*output)[index] = m_strdup(tr->val);
 	index = inorder_execve(tr->right, output, index + 1);
 	return (index);
 }

@@ -83,12 +83,16 @@ void	 replace_env()
 		return ;  // error 처리
 	while(g_read_buf[++idx])
 	{
-		if (g_read_buf[idx] == '\"')
+		if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
+			temp[++tdx] = g_read_buf[++idx];
+		else if (g_read_buf[idx] == '\"')
 		{
 			while (g_read_buf[++idx] && g_read_buf[idx] != '\"')
 			{
 				// 아래랑 똑같음
-				if (g_read_buf[idx] == '$')
+				if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
+					temp[++tdx] = g_read_buf[++idx];
+				else if (g_read_buf[idx] == '$')
 				{
 					get_env(&env, g_read_buf, &idx);
 					tdx = put_env(&temp, env, tdx);
