@@ -53,6 +53,7 @@ int start_shell()
 	char	**temp;
 	int		ch;
 	int		i;
+	// int		*fds;
 	t_parsed parsed;
 
 	// signal(SIGINT, sigint_handler);
@@ -89,8 +90,13 @@ int start_shell()
 		replace_env();
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
+		// fds = malloc(sizeof(int) * m_arrsize(pipe_str));
+		// int fdx = -1;
+		// if (!fds)
+		// 	return (0);
 		while (*pipe_str)
 		{
+			// open(fds[++fdx], );
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
 			// print_parsed(parsed);
@@ -99,9 +105,10 @@ int start_shell()
 			// {
 			// 	run_redirect(g_read_buf);
 			// }
-			if (!run_builtin(parsed, i))
+			if (!run_builtin(parsed))
 				run_execved(*pipe_str, parsed);
 			++pipe_str;
+			// close(fds[fdx]);
 		}
 		m_free_split(temp);
 	}
@@ -110,7 +117,7 @@ int start_shell()
 
 
 //t_bool
-int		run_builtin(t_parsed parsed, int read_size)
+int		run_builtin(t_parsed parsed)
 {
 	char cmd[BUFFER_SIZE];
 	int i;

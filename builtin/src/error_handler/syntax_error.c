@@ -15,6 +15,8 @@ int check_syntax()
 	{
 		if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
 			++i;
+		else if (g_read_buf[i] == '\\' && !g_read_buf[i + 1])
+			return (1);
 		else if (g_read_buf[i] == '\"')
 		{
 			dquote = 1;
@@ -22,8 +24,6 @@ int check_syntax()
 			{
 				if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
 					++i;
-				else if (g_read_buf[i] == '\\' && g_read_buf[i + 1] && g_read_buf[i + 1] == '\\' && g_read_buf[i + 2])
-					i += 2;
 			}
 			if (g_read_buf[i] != '\"')
 				return (1);

@@ -11,6 +11,7 @@ int m_env(t_parsed parsed)
 		if (!m_find_env(&parsed.cmd[2][0]))
 			print_error(parsed, 127);
 		else
+			// write(g_fds[1], parsed.cmd[2], m_strlen(parsed.cmd[2]));
 			printf("env : %s\n", m_find_env(&parsed.cmd[2][0]));
 	}
 	else

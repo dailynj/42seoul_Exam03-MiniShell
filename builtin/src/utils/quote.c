@@ -90,8 +90,15 @@ void	 replace_env()
 			while (g_read_buf[++idx] && g_read_buf[idx] != '\"')
 			{
 				// 아래랑 똑같음
-				if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
+				if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1] && g_read_buf[idx + 1] == '\\')
+				{
 					temp[++tdx] = g_read_buf[++idx];
+				}
+				else if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
+				{
+					temp[++tdx] = g_read_buf[idx];
+					temp[++tdx] = g_read_buf[++idx];
+				}
 				else if (g_read_buf[idx] == '$')
 				{
 					get_env(&env, g_read_buf, &idx);

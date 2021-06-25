@@ -11,7 +11,6 @@
 #include <fcntl.h>
 #include <termios.h>
 
-
 #define SHORT 0
 #define LONG 1
 
@@ -32,7 +31,7 @@
 struct termios new_term;
 struct termios org_term;
 
-pid_t g_pid;
+pid_t	g_pid;
 char	g_read_buf[BUFFER_SIZE];
 int		g_errno;
 
@@ -61,7 +60,7 @@ typedef struct	s_parsed
 // main.c
 int				start_shell();
 void			print_pwd(int type);
-int				run_builtin(t_parsed parsed, int read_size);
+int				run_builtin(t_parsed parsed);
 
 //builtin
 int 			m_echo(t_parsed parsed);
