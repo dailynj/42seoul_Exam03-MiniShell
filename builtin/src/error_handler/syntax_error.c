@@ -42,3 +42,28 @@ int check_syntax()
 	}
 	return (dquote || squote);
 }
+
+int check_pipe()
+{
+	int i;
+	int flag;
+
+	i = -1;
+	while(g_read_buf[++i])
+	{
+		flag = 0;
+		if (g_read_buf[i] != '|')
+			continue ;
+		if (g_read_buf[i] == '|')
+		{
+			while (g_read_buf[++i] && g_read_buf[i] != '|')
+			{
+				if (g_read_buf[i] != ' ')
+					flag = 1;
+			}
+		}
+		if (flag == 0)
+			return (1);
+	}
+	return (0);
+}

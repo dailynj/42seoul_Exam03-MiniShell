@@ -53,7 +53,7 @@ int start_shell()
 	char	**temp;
 	int		ch;
 	int		i;
-	// int		*fds;
+	
 	t_parsed parsed;
 
 	// signal(SIGINT, sigint_handler);
@@ -82,7 +82,7 @@ int start_shell()
 			else
 				g_read_buf[++i] = ch;
 		}
-		if (check_syntax())
+		if (check_syntax() || check_pipe())
 		{
 			printf("bash: Syntax error\n");
 			continue;
@@ -90,15 +90,19 @@ int start_shell()
 		replace_env();
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
-		// fds = malloc(sizeof(int) * m_arrsize(pipe_str));
-		// int fdx = -1;
-		// if (!fds)
-		// 	return (0);
 		while (*pipe_str)
-		{
-			// open(fds[++fdx], );
+		{	
+			if (*(pipe_str + 1))
+				g_fds = open("a.txt", O_WRONLY | O_TRUNC);
+			else
+				g_fds = 1;
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
+			if (m_strlen(parsed.cmd[0]) == 0)
+			{
+				++pipe_str;
+				continue ;
+			}
 			// print_parsed(parsed);
 			// pipe -> fd[0] fd[1]
 			// if (m_strchr(g_read_buf, '<') || m_strchr(g_read_buf, '>'))
@@ -107,14 +111,14 @@ int start_shell()
 			// }
 			if (!run_builtin(parsed))
 				run_execved(*pipe_str, parsed);
+			if (*(pipe_str + 1))
+				close(g_fds);
 			++pipe_str;
-			// close(fds[fdx]);
 		}
 		m_free_split(temp);
 	}
 	return (0);
 }
-
 
 //t_bool
 int		run_builtin(t_parsed parsed)

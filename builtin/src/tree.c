@@ -153,8 +153,13 @@ char*	inorder_print_node(char *val, int type)
 		return (NULL);
 	if (type >> 1) // environ = 2
 	{ 			
-		if (m_strchr(val, '='))	
-			printf("%s\n", val);
+		if (m_strchr(val, '='))
+		{
+			write(g_fds, val, m_strlen(val));
+			write(g_fds, "\n", 1);
+			// printf("%s\n", val);
+		}
+			
 	}
 	else 						// export = 1
 	{

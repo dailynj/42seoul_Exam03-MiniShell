@@ -34,6 +34,7 @@ struct termios org_term;
 pid_t	g_pid;
 char	g_read_buf[BUFFER_SIZE];
 int		g_errno;
+int		g_fds;
 
 typedef enum	e_type
 {
@@ -134,5 +135,6 @@ int				run_execved(char *pipe_str, t_parsed parsed);
 
 // syntax_error.c
 int 			check_syntax();
+int 			check_pipe();
 
 #endif

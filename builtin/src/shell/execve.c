@@ -4,13 +4,30 @@
 int run_execved(char *pipe_str, t_parsed parsed)
 {
 	char **exec_str;
+	char **tmp_exec_str;
 	char **envp;
 	char **path_arr;
 	char **tmp_path_arr;
 	char *path;
+	
 	int status;
 
-	exec_str = m_split_char(pipe_str, ' ');
+	if (g_fds == 1)
+		exec_str = m_split_char(pipe_str, ' ');
+	else
+	{
+		int idx = 0;
+		m_memset(&g_read_buf, 0, BUFFER_SIZE);
+		read(g_fds, &g_read_buf, BUFFER_SIZE);
+		tmp_exec_str = m_split_char(g_read_buf, ' ');
+		exec_str = malloc(sizeof(char *) * (m_arrsize(tmp_exec_str) + 2));
+		exec_str[idx] = m_strdup(parsed.cmd[0]);
+		while(exec_str[++idx])
+		{
+			exec_str[idx] = m_strdup(tmp_exec_str[idx - 1]);
+		}
+		exec_str[idx] = 0;
+	}
 	path_arr = m_split_char(m_find_env("PATH"), 58);
 	if (!path_arr)
 	{
@@ -23,6 +40,7 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	g_pid = fork();
 	if (g_pid == 0)
 	{
+		dup2(g_fds, 1);
 		int idx = 0;
 		while (tmp_path_arr[idx])
 		{
@@ -48,8 +66,9 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	{
 		wait(&status);
 		// 자식이 끝날 때 까지 기다렸다가 만약 자식이 error상태로 끝나면 return 에러
+		if (g_fds == 1)
+			m_free_split(exec_str);
 		m_free_split(path_arr);
-		m_free_split(exec_str);
 		g_pid = 0;
 		return (1);
 	}

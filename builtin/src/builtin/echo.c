@@ -37,11 +37,13 @@ int nnnn(char *line)
 int m_echo(t_parsed parsed)
 {
 	if (!m_strncmp(parsed.cmd[1], "-n", 2))
-		// write(g_fds[1], parsed.cmd[2], m_strlen(parsed.cmd[2]));
-		printf("%s", parsed.cmd[2]);
+		write(g_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		// printf("%s", parsed.cmd[2]);
 	else
-		// write(g_fds[1], parsed.cmd[2], m_strlen(parsed.cmd[2]));
-		// write(g_fds[1], "\n", 1);
-		printf("%s\n", parsed.cmd[2]);
+	{
+		write(g_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		write(g_fds, "\n", 1);
+		// printf("%s\n", parsed.cmd[2]);
+	}
 	return (OK);
 }
