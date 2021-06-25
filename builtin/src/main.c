@@ -66,7 +66,12 @@ int start_shell()
 		{
 			write(0, &ch, sizeof(int));
 			if (ch == 4)
-				continue ;
+			{
+				if (i == -1)
+					m_exit(NULL);
+				else
+					continue ;
+			}
 			else if (ch == 127)
 			{
 				if (i >= 0)
