@@ -1,8 +1,8 @@
 i=1
 j=0
-max=15000
+max=10000
 sp="/-\|"
-echo -n "SUNASHELL is Ready"
+echo -n "SUNASHELL is Ready " 
 echo -n ' '
 while [ $j -lt $max ]
 do
