@@ -62,6 +62,8 @@ typedef struct	s_parsed
 int				start_shell();
 void			print_pwd(int type);
 int				run_builtin(t_parsed parsed);
+void			set_input_mode(void);
+void			reset_input_mode(void);
 
 //builtin
 int 			m_echo(t_parsed parsed);
