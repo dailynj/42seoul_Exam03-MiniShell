@@ -24,7 +24,6 @@ int main(int ac, char **av, char **env)
 {
 	(void) ac;
 	(void) av;
-
 	init_tree(env);
 	start_shell();
 	return (0);
@@ -38,8 +37,7 @@ void reset_input_mode(void)
 void set_input_mode(void)
 {
 	tcgetattr(STDIN_FILENO, &org_term);
-	atexit(reset_input_mode); // 빼야할 것
-	
+	// atexit(reset_input_mode); // 빼야할 것
 	tcgetattr(STDIN_FILENO, &new_term);
 	new_term.c_lflag &= ~(ICANON | ECHO);
 	new_term.c_cc[VMIN] = 1;
@@ -53,7 +51,7 @@ int start_shell()
 	char	**temp;
 	int		ch;
 	int		i;
-	
+
 	t_parsed parsed;
 
 	// signal(SIGINT, sigint_handler);
@@ -71,27 +69,32 @@ int start_shell()
 				continue ;
 			else if (ch == 127)
 			{
-				write(0, "\b \b", 3);
-				g_read_buf[i--] = 0;
+				if (i >= 0)
+				{
+					write(0, "\b \b", 3);
+					g_read_buf[i--] = 0;
+				}
 			}
 			else if (ch == '\n')
 			{
 				g_read_buf[++i] = 0;
-				break;
+				ch = 0;
+				break ;
 			}
 			else
 				g_read_buf[++i] = ch;
+			ch = 0;
 		}
 		if (check_syntax() || check_pipe())
 		{
 			printf("bash: Syntax error\n");
-			continue;
+			continue ;
 		}
 		replace_env();
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
 		while (*pipe_str)
-		{	
+		{
 			if (*(pipe_str + 1))
 				g_fds = open("a.txt", O_WRONLY | O_TRUNC);
 			else
@@ -197,10 +200,12 @@ void print_pwd(int type)
 		if (*temp == '/')
 		{
 			cnt = 0;
-			color++;
+			color = (color + 1) % 6 + 48;
 		}
 		if (cnt < max)
+		{
 			printf("\033[0;3%dm%c", color % 6, *temp);
+		}
 		++temp;
 	}
 	printf("\033[0;3%dm\n", (color + 1) % 6);
