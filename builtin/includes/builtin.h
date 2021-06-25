@@ -9,6 +9,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <termios.h>
 
 
 #define SHORT 0
@@ -27,6 +28,9 @@
 
 #define ERROR 0
 #define OK 1
+
+struct termios new_term;
+struct termios org_term;
 
 pid_t g_pid;
 char	g_read_buf[BUFFER_SIZE];

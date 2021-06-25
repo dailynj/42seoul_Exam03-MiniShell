@@ -17,7 +17,7 @@ void sigint_handler()
 }
 void sigquit_handler()
 {
-	// 
+	// ctrl + backslash
 }
 
 int main(int ac, char **av, char **env)
@@ -30,21 +30,57 @@ int main(int ac, char **av, char **env)
 	return (0);
 }
 
+void reset_input_mode(void)
+{
+	tcsetattr(STDIN_FILENO, TCSANOW, &org_term);
+}
+
+void set_input_mode(void)
+{
+	tcgetattr(STDIN_FILENO, &org_term);
+	atexit(reset_input_mode); // 빼야할 것
+	
+	tcgetattr(STDIN_FILENO, &new_term);
+	new_term.c_lflag &= ~(ICANON | ECHO);
+	new_term.c_cc[VMIN] = 1;
+	new_term.c_cc[VTIME] = 0;
+	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
+}
+
 int start_shell()
 {
-	int		read_size;
 	char	**pipe_str;
 	char	**temp;
+	int		ch;
+	int		i;
 	t_parsed parsed;
 
-	signal(SIGINT, sigint_handler);
-	signal(SIGQUIT, sigquit_handler); // ctrl+ D 해야됨
+	// signal(SIGINT, sigint_handler);
+	// signal(SIGQUIT, sigquit_handler);
+	set_input_mode();
 	while (1)
 	{
+		i = -1;
 		print_pwd(LONG); // sunashell crab
 		m_memset(g_read_buf, 0, BUFFER_SIZE);
-		read_size = read(0, g_read_buf, BUFFER_SIZE);
-		g_read_buf[read_size - 1] = 0;
+		while (read(0, &ch, 1) > 0)
+		{
+			write(0, &ch, sizeof(int));
+			if (ch == 4)
+				continue ;
+			else if (ch == 127)
+			{
+				write(0, "\b \b", 3);
+				g_read_buf[i--] = 0;
+			}
+			else if (ch == '\n')
+			{
+				g_read_buf[++i] = 0;
+				break;
+			}
+			else
+				g_read_buf[++i] = ch;
+		}
 		if (check_syntax())
 		{
 			printf("bash: Syntax error\n");
@@ -63,7 +99,7 @@ int start_shell()
 			// {
 			// 	run_redirect(g_read_buf);
 			// }
-			if (!run_builtin(parsed, read_size))
+			if (!run_builtin(parsed, i))
 				run_execved(*pipe_str, parsed);
 			++pipe_str;
 		}
@@ -85,32 +121,32 @@ int		run_builtin(t_parsed parsed, int read_size)
 	{
 		cmd[i] = (parsed.cmd[0][i] >= 65 && parsed.cmd[0][i] <= 90) ? parsed.cmd[0][i] + 32 : parsed.cmd[0][i];
 	}
-	if (!m_strncmp(cmd, "echo", read_size -1))
+	if (!m_strncmp(cmd, "echo", 5))
 	{
 		return (m_echo(parsed));
 	}
-	else if (!m_strncmp(cmd, "pwd", read_size - 1))
+	else if (!m_strncmp(cmd, "pwd", 4))
 	{
 		return (m_pwd(parsed));
 		// 옵션이 들어오면 invalid option..?
 		// 인자가 들어오면 무시
 	}
-	else if (!m_strncmp(cmd, "cd", read_size - 1))
+	else if (!m_strncmp(cmd, "cd", 3))
 	{
 		return (m_cd(parsed));
 		// 파싱해서 val 보내기
 	}
-	else if (!m_strncmp(cmd, "exit", read_size - 1))
+	else if (!m_strncmp(cmd, "exit", 5))
 	{
 		return (m_exit(parsed));
 	}
-	else if (!m_strncmp(cmd, "env", read_size - 1))
+	else if (!m_strncmp(cmd, "env", 4))
 	{
 		return (m_env(parsed));
 		// 옵션 들어오면 error 처리
 		// 옵션이 아닌 str 들어올때 error 처리
 	}
-	else if (!m_strncmp(cmd, "export", read_size - 1))
+	else if (!m_strncmp(cmd, "export", 7))
 	{
 		return (m_export(parsed));
 		// 1개 들어오면 search 하기
@@ -118,7 +154,7 @@ int		run_builtin(t_parsed parsed, int read_size)
 		// 옵션 error
 		// str error 처리
 	}
-	else if (!m_strncmp(cmd, "unset", read_size - 1))
+	else if (!m_strncmp(cmd, "unset", 6))
 	{
 		return (m_unset(parsed));
 		// 파싱해서 환경변수 이름 넣어주기
