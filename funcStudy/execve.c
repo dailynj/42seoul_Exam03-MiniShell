@@ -9,7 +9,7 @@ extern char **environ;
 int main(int argc, char *argv[])
 {
 	char	**new_argv;
-	char	command[] = "ls";
+	char	command[] = "cat";
 	int		idx;
 
 	new_argv = malloc(sizeof(char *) * argc + 1);
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	// argc를 execve 파라미터에 전달할 수 없기 때문에 NULL을 끝으로 지정해우저야 함
 	new_argv[argc] = NULL;
 
-	if (execve("/bin/ls", new_argv, environ) == -1){
+	if (execve("/bin/cat", new_argv, environ) == -1){
 		fprintf(stderr, "프로그램 실행 error: %s\n", strerror(errno));
 		return 1;
 	}
