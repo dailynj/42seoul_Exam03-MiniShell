@@ -3,9 +3,9 @@
 int m_export(t_parsed parsed)
 {
 	if (parsed.cmd[1][0] != '\0')
-		print_error(parsed, 1);
+		print_error(parsed, "?=1");
 	else if (parsed.cmd[2][0] >= '0' && parsed.cmd[2][0] <= '9')
-		print_error(parsed, 1);
+		print_error(parsed, "?=1");
 	else if (parsed.cmd[2][0] != '\0')
 		insert_tree(parsed.cmd[2]);
 	else

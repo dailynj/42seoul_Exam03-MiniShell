@@ -65,11 +65,11 @@ int	m_cd(t_parsed parsed)
 	{
 		if (parsed.cmd[1][0] != 0)
 		{
-			print_error(parsed, 1);
+			print_error(parsed, "?=1");
 			printf("cd:", NULL, "usage: cd [-L|-p] [dir]");
 		}
 		else
-			print_error(parsed, 127);
+			print_error(parsed, "?=127");
 		// return (ERROR); // print_error()
 	}
 	return (OK);

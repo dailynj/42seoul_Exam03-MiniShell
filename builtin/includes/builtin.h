@@ -33,7 +33,7 @@ struct termios org_term;
 
 pid_t	g_pid;
 char	g_read_buf[BUFFER_SIZE];
-int		g_errno;
+// int		g_errno;
 int		g_fds;
 
 typedef enum	e_type
@@ -124,7 +124,7 @@ t_parsed		get_cmd(char *line);
 
 
 // error.c
-void			print_error(t_parsed parsed, int status);
+void			print_error(t_parsed parsed, char *status);
 void			print_parsed(t_parsed parsed);
 
 // quote.c

@@ -1,13 +1,19 @@
 #include "builtin.h"
 
-void		print_error(t_parsed parsed, int status)
+void		print_error(t_parsed parsed, char *status)
 {
-	g_errno = status;
+	// g_errno = status;
 	printf("bash: %s: ", parsed.cmd[0]);
-	if (status == 1)
+	if (!m_strncmp(status, "?=1", 3))
+	{
 		printf("-%c: invalid option\n", parsed.cmd[1][1]);
-	else if (status == 127)
+		insert_tree(status);
+	}
+	else if (!m_strncmp(status, "?=127", 5))
+	{
 		printf("%s: No such file or directory\n", parsed.cmd[2]);
+		insert_tree(status);
+	}
 }
 
 // 지워도 되는거

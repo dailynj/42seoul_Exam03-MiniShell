@@ -19,6 +19,7 @@ void init_tree(char **env)
 		insert_tree(*env);
 		++env;
 	}
+	insert_tree("?=0");
 	// insert_tree("7");
 	// insert_tree("3");
 	// insert_tree("2");

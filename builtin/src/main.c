@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-int g_errno;
+// int g_errno;
 
 void sigint_handler()
 {
