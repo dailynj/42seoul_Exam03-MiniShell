@@ -101,7 +101,7 @@ int start_shell()
 		while (*pipe_str)
 		{
 			if (*(pipe_str + 1))
-				g_fds = open("a.txt", O_WRONLY | O_TRUNC);
+				g_fds = open(".a.txt", O_WRONLY | O_CREAT | O_TRUNC);
 			else
 				g_fds = 1;
 			m_memset(&parsed, 0, sizeof(t_parsed));
