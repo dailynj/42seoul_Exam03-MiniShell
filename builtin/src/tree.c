@@ -19,7 +19,8 @@ void init_tree(char **env)
 		insert_tree(*env);
 		++env;
 	}
-	insert_tree("?=0");
+	// insert_tree("?=0");
+	g_question = "0";
 	// insert_tree("7");
 	// insert_tree("3");
 	// insert_tree("2");
@@ -52,13 +53,18 @@ void insert_tree(char *val)
 	tmp = tree();
 	while (1)
 	{
-		if (m_strncmp(tmp->val, val, find_equal(val) - 1) > 0)
+		// int i = -1;  출력
+		// printf("%s vs %s\n", val, tmp->val);
+		// while (++i < find_equal(val))
+		// 	printf("%c vs %c\n", val[i], tmp->val[i]);
+		// printf("cmp result : %d\n", m_strncmp(tmp->val, val, find_equal(val)));
+		if (m_strncmp(tmp->val, val, find_equal(val)) > 0)
 		{
 			if (!tmp->left && (tmp->left = new_node(val)))
 				return ;
 			tmp = tmp->left;
 		}
-		else if (m_strncmp(tmp->val, val, find_equal(val) - 1) < 0)
+		else if (m_strncmp(tmp->val, val, find_equal(val)) < 0)
 		{
 			if (!tmp->right && (tmp->right = new_node(val)))
 				return ;
@@ -81,12 +87,12 @@ t_tree **search_tree(char *val)
 	tmp = tree();
 	while (tmp)
 	{
-		if (m_strncmp(tmp->val, val, find_equal(tmp->val) - 1) > 0)
+		if (m_strncmp(tmp->val, val, find_equal(tmp->val)) > 0)
 		{
 			ret = &(tmp->left);
 			tmp = tmp->left;
 		}
-		else if (m_strncmp(tmp->val, val, find_equal(tmp->val) - 1) < 0)
+		else if (m_strncmp(tmp->val, val, find_equal(tmp->val)) < 0)
 		{
 			ret = &(tmp->right);
 			tmp = tmp->right;

@@ -31,6 +31,7 @@
 struct termios new_term;
 struct termios org_term;
 
+char	*g_question;
 pid_t	g_pid;
 char	g_read_buf[BUFFER_SIZE];
 // int		g_errno;

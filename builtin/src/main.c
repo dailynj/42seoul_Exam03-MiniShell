@@ -94,6 +94,7 @@ int start_shell()
 			{
 				g_read_buf[++i] = 0;
 				ch = 0;
+				g_question = "0";
 				break ;
 			}
 			else
@@ -113,6 +114,7 @@ int start_shell()
 			g_fds = 1;
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
+			g_question = "0";
 			if (m_strlen(parsed.cmd[0]) != 0)
 			{
 				if (!run_builtin(parsed))
@@ -131,6 +133,7 @@ int start_shell()
 				g_fds = open(".a.txt", O_WRONLY | O_CREAT | O_TRUNC);
 				m_memset(&parsed, 0, sizeof(t_parsed));
 				parsed = get_cmd(*pipe_str);
+				g_question = "0";
 				if (m_strlen(parsed.cmd[0]) == 0)
 				{
 					close(g_fds);
@@ -146,6 +149,7 @@ int start_shell()
 				{
 					run_execved(*pipe_str, parsed, i, final);
 				}
+				
 				close(g_fds);
 				++pipe_str;
 			}
