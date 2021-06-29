@@ -44,6 +44,16 @@ void set_input_mode(void)
 	new_term.c_cc[VTIME] = 0;
 	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
 }
+/***************  for debug  * *************/
+void printpipe(char **pipe_str)
+{
+	int i = -1;
+	while (*pipe_str)
+	{
+		printf("pipe_str %d : %s\n", ++i, *pipe_str);
+		++pipe_str;	
+	}
+}
 
 int start_shell()
 {
@@ -98,30 +108,47 @@ int start_shell()
 		replace_env();
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
-		while (*pipe_str)
+		if (m_arrsize(pipe_str) == 1) // pipe 한개
 		{
-			if (*(pipe_str + 1))
-				g_fds = open(".a.txt", O_WRONLY | O_CREAT | O_TRUNC);
-			else
-				g_fds = 1;
+			g_fds = 1;
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
-			if (m_strlen(parsed.cmd[0]) == 0)
+			if (m_strlen(parsed.cmd[0]) != 0)
 			{
-				++pipe_str;
-				continue ;
+				if (!run_builtin(parsed))
+					run_execved(*pipe_str, parsed, 0, 0);
 			}
-			// print_parsed(parsed);
-			// pipe -> fd[0] fd[1]
-			// if (m_strchr(g_read_buf, '<') || m_strchr(g_read_buf, '>'))
-			// {
-			// 	run_redirect(g_read_buf);
-			// }
-			if (!run_builtin(parsed))
-				run_execved(*pipe_str, parsed);
-			if (*(pipe_str + 1))
+		}
+		else // pipe 여러개
+		{
+			i = -1;
+			int pipe_len = m_arrsize(pipe_str);
+			int final = 0;
+			while (++i < pipe_len)
+			{
+				if (i == pipe_len - 1)
+					final = 1;
+				g_fds = open(".a.txt", O_WRONLY | O_CREAT | O_TRUNC);
+				m_memset(&parsed, 0, sizeof(t_parsed));
+				parsed = get_cmd(*pipe_str);
+				if (m_strlen(parsed.cmd[0]) == 0)
+				{
+					close(g_fds);
+					++pipe_str;
+					continue;
+				}
+				// pipe -> fd[0] fd[1]
+				// if (m_strchr(g_read_buf, '<') || m_strchr(g_read_buf, '>'))
+				// {
+				// 	run_redirect(g_read_buf);
+				// }
+				if (!run_builtin(parsed))
+				{
+					run_execved(*pipe_str, parsed, i, final);
+				}
 				close(g_fds);
-			++pipe_str;
+				++pipe_str;
+			}
 		}
 		m_free_split(temp);
 	}
@@ -213,6 +240,7 @@ void print_pwd(int type)
 		}
 		++temp;
 	}
-	printf("\033[0;3%dm\n", (color + 1) % 6);
+	// printf("\033[0;3%dm\n", (color + 1) % 6);
+	printf("\033[0;37m\n");
 	write(1, " > ", 3);
 }

@@ -64,6 +64,7 @@ void			print_pwd(int type);
 int				run_builtin(t_parsed parsed);
 void			set_input_mode(void);
 void			reset_input_mode(void);
+void			printpipe(char **pipe_str);
 
 //builtin
 int 			m_echo(t_parsed parsed);
@@ -133,7 +134,7 @@ char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
-int				run_execved(char *pipe_str, t_parsed parsed);
+int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final);
 
 // syntax_error.c
 int 			check_syntax();

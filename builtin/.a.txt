@@ -1,6 +1,0 @@
-Makefile
-includes
-spinner.sh
-src
-sunashell
-wave.sh

@@ -1,7 +1,8 @@
 #include "builtin.h"
 
 // fork 해서 자식 프로세스가 실행하도록
-int run_execved(char *pipe_str, t_parsed parsed)
+
+int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
 {
 	char **exec_str;
 	char **envp;
@@ -11,8 +12,8 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	char	*path;
 	int		status;
 
-	// exec_str = m_split_char(pipe_str, ' ');
-	if (g_fds == 1)
+
+	if (pnum == 0)
 		exec_str = m_split_char(pipe_str, ' ');
 	else
 	{
@@ -22,7 +23,7 @@ int run_execved(char *pipe_str, t_parsed parsed)
 		tmp_exec_str = m_split_char(g_read_buf, ' ');
 		exec_str = malloc(sizeof(char *) * (m_arrsize(tmp_exec_str) + 2));
 		exec_str[idx] = m_strdup(parsed.cmd[0]);
-		while(exec_str[++idx])
+		while(tmp_exec_str[++idx - 1])
 		{
 			exec_str[idx] = m_strdup(tmp_exec_str[idx - 1]);
 		}
@@ -40,7 +41,8 @@ int run_execved(char *pipe_str, t_parsed parsed)
 	g_pid = fork();
 	if (g_pid == 0)
 	{
-		dup2(g_fds, 1);
+		if (!final)
+			dup2(g_fds, 1);
 		reset_input_mode();
 		int idx = 0;
 		while (tmp_path_arr[idx])

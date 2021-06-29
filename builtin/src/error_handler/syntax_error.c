@@ -67,3 +67,5 @@ int check_pipe()
 	}
 	return (0);
 }
+// ls || 
+// ls |
