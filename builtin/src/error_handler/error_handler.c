@@ -18,10 +18,4 @@ void		print_error(t_parsed parsed, char *status)
 	}
 }
 
-// 지워도 되는거
-void print_parsed(t_parsed parsed)
-{
-	printf("0 : [%s]\n", parsed.cmd[0]);
-	printf("1 : [%s]\n", parsed.cmd[1]);
-	printf("2 : [%s]\n", parsed.cmd[2]);
-}
+

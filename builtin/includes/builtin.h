@@ -28,14 +28,18 @@
 #define ERROR 0
 #define OK 1
 
-struct termios new_term;
-struct termios org_term;
+typedef struct	s_term
+{
+	struct termios new_term;
+	struct termios org_term;
+}				t_term;
 
+int g_errno;
 char	*g_question;
 pid_t	g_pid;
-char	g_read_buf[BUFFER_SIZE];
-// int		g_errno;
+// char	g_read_buf[BUFFER_SIZE];
 int		g_fds;
+
 
 typedef enum	e_type
 {
@@ -63,8 +67,6 @@ typedef struct	s_parsed
 int				start_shell();
 void			print_pwd(int type);
 int				run_builtin(t_parsed parsed);
-void			set_input_mode(void);
-void			reset_input_mode(void);
 void			printpipe(char **pipe_str);
 
 //builtin
@@ -130,7 +132,7 @@ void			print_error(t_parsed parsed, char *status);
 void			print_parsed(t_parsed parsed);
 
 // quote.c
-void			replace_env();
+void	 replace_env(char *g_read_buf);
 char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 
@@ -138,7 +140,16 @@ int				put_env(char **temp, char *env, int tdx);
 int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final);
 
 // syntax_error.c
-int 			check_syntax();
-int 			check_pipe();
+int 			check_syntax(char *g_read_buf);
+int 			check_pipe(char *g_read_buf);
+
+// term.c
+void init_term(t_term *term);
+void reset_input_mode(t_term *term);
+void set_input_mode(t_term *term);
+
+// signal.c
+void sigint_handler();
+void sigquit_handler();
 
 #endif

@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-int check_syntax()
+int check_syntax(char *g_read_buf)
 {
 	int i;
 	int dquote;
@@ -10,7 +10,7 @@ int check_syntax()
 		return (1);
 	i = 0;
 	dquote = 0;
-	squote = 0;	
+	squote = 0;
 	while (g_read_buf[i])
 	{
 		if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
@@ -43,7 +43,7 @@ int check_syntax()
 	return (dquote || squote);
 }
 
-int check_pipe()
+int check_pipe(char *g_read_buf)
 {
 	int i;
 	int flag;
@@ -67,5 +67,5 @@ int check_pipe()
 	}
 	return (0);
 }
-// ls || 
+// ls ||
 // ls |

@@ -11,6 +11,7 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
 	char **tmp_path_arr;
 	char	*path;
 	int		status;
+	char g_read_buf[BUFFER_SIZE];
 
 
 	if (pnum == 0)
@@ -43,7 +44,6 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
 	{
 		if (!final)
 			dup2(g_fds, 1);
-		reset_input_mode();
 		int idx = 0;
 		while (tmp_path_arr[idx])
 		{
@@ -68,7 +68,6 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
 	else
 	{
 		wait(&status);
-		set_input_mode();
 		// 자식이 끝날 때 까지 기다렸다가 만약 자식이 error상태로 끝나면 return 에러
 		if (g_fds == 1)
 			m_free_split(exec_str);

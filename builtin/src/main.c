@@ -1,112 +1,93 @@
 #include "builtin.h"
 
-// int g_errno;
-
-void sigint_handler()
-{
-	if (g_pid > 0)
-	{
-		printf("\b\b  \b\b\n");
-		signal(SIGINT, SIG_IGN);
-	}
-	else
-	{
-		printf("\b\b  \b\b\n");
-		print_pwd(LONG);
-	}
-}
-void sigquit_handler()
-{
-	// ctrl + backslash
-}
-
 int main(int ac, char **av, char **env)
 {
-	(void) ac;
-	(void) av;
+	t_term term;
+
+	(void)ac;
+	(void)av;
 	init_tree(env);
-	start_shell();
+	init_term(&term);
+	start_shell(&term);
 	return (0);
 }
 
-void reset_input_mode(void)
+void noncanonical_input(char *g_read_buf, t_term *term)
 {
-	tcsetattr(STDIN_FILENO, TCSANOW, &org_term);
-}
-
-void set_input_mode(void)
-{
-	tcgetattr(STDIN_FILENO, &org_term);
-	// atexit(reset_input_mode); // 빼야할 것
-	tcgetattr(STDIN_FILENO, &new_term);
-	new_term.c_lflag &= ~(ICANON | ECHO);
-	new_term.c_cc[VMIN] = 1;
-	new_term.c_cc[VTIME] = 0;
-	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
-}
-/***************  for debug  * *************/
-void printpipe(char **pipe_str)
-{
-	int i = -1;
-	while (*pipe_str)
-	{
-		printf("pipe_str %d : %s\n", ++i, *pipe_str);
-		++pipe_str;	
-	}
-}
-
-int start_shell()
-{
-	char	**pipe_str;
-	char	**temp;
 	int		ch;
 	int		i;
 
-	t_parsed parsed;
+	ch = 0;
+	i = -1;
+	m_memset(g_read_buf, 0, BUFFER_SIZE);
+	set_input_mode(term);
+	while (read(0, &ch, 1) > 0)
+	{
+		if (ch == 4)
+		{
+			if (i == -1)
+				m_exit(NULL);
+			else
+				continue;
+		}
+		else if (ch == 3)
+		{
+			g_errno = 126;
+			break;
+		}
+		else if (ch == 127)
+		{
+			if (i >= 0)
+			{
+				write(0, "\b \b", 3);
+				g_read_buf[i--] = 0;
+			}
+		}
+		else if (ch == '\n')
+		{
+			g_read_buf[++i] = 0;
+			write(0, &ch, sizeof(int));
+			ch = 0;
+			g_question = "0";
+			break;
+		}
+		else
+		{
+			g_read_buf[++i] = ch;
+			write(0, &ch, sizeof(int));
+		}
+		ch = 0;
+	}
+	reset_input_mode(term);
+}
 
-	// signal(SIGINT, sigint_handler);
-	// signal(SIGQUIT, sigquit_handler);
-	set_input_mode();
+int start_shell(t_term *term)
+{
+	char *g_read_buf;
+	char **pipe_str;
+	char **temp;
+	int i;
+
+	t_parsed parsed;
+	g_read_buf = malloc(BUFFER_SIZE + 1);
+	// read
 	while (1)
 	{
-		i = -1;
+		g_errno = 0;
 		print_pwd(LONG); // sunashell crab
-		m_memset(g_read_buf, 0, BUFFER_SIZE);
-		while (read(0, &ch, 1) > 0)
-		{
-			write(0, &ch, sizeof(int));
-			if (ch == 4)
-			{
-				if (i == -1)
-					m_exit(NULL);
-				else
-					continue ;
-			}
-			else if (ch == 127)
-			{
-				if (i >= 0)
-				{
-					write(0, "\b \b", 3);
-					g_read_buf[i--] = 0;
-				}
-			}
-			else if (ch == '\n')
-			{
-				g_read_buf[++i] = 0;
-				ch = 0;
-				g_question = "0";
-				break ;
-			}
-			else
-				g_read_buf[++i] = ch;
-			ch = 0;
-		}
-		if (check_syntax() || check_pipe())
+		// here!
+		noncanonical_input(g_read_buf, term);
+
+		if (g_errno)
+			continue;
+		if (check_syntax(g_read_buf) || check_pipe(g_read_buf))
 		{
 			printf("bash: Syntax error\n");
-			continue ;
+			continue;
 		}
-		replace_env();
+
+		replace_env(g_read_buf);
+
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
 		if (m_arrsize(pipe_str) == 1) // pipe 한개
@@ -149,18 +130,19 @@ int start_shell()
 				{
 					run_execved(*pipe_str, parsed, i, final);
 				}
-				
+
 				close(g_fds);
 				++pipe_str;
 			}
 		}
 		m_free_split(temp);
 	}
+	free(g_read_buf);
 	return (0);
 }
 
-//t_bool
-int		run_builtin(t_parsed parsed)
+// t_bool
+int run_builtin(t_parsed parsed)
 {
 	char cmd[BUFFER_SIZE];
 	int i;
@@ -169,7 +151,9 @@ int		run_builtin(t_parsed parsed)
 	m_memset(&cmd, 0, BUFFER_SIZE);
 	while (parsed.cmd[0][++i])
 	{
-		cmd[i] = (parsed.cmd[0][i] >= 65 && parsed.cmd[0][i] <= 90) ? parsed.cmd[0][i] + 32 : parsed.cmd[0][i];
+		cmd[i] = (parsed.cmd[0][i] >= 65 && parsed.cmd[0][i] <= 90)
+			? parsed.cmd[0][i] + 32
+			: parsed.cmd[0][i];
 	}
 	if (!m_strncmp(cmd, "echo", 5))
 	{
@@ -228,7 +212,7 @@ void print_pwd(int type)
 	color = 1;
 	m_memset(cwd, 0, PATH_MAX);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
-		return ;
+		return;
 	printf("\033[0mSuNaSHELL🦀 ");
 	while (*temp)
 	{

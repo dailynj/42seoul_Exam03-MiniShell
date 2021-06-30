@@ -58,7 +58,7 @@ int	put_env(char **temp, char *env, int tdx)
 {
 	char	*dirp;
 
-	
+
 	if ((dirp = m_find_env(env)))
 	{
 		while(*dirp)
@@ -70,7 +70,7 @@ int	put_env(char **temp, char *env, int tdx)
 	return (tdx);
 }
 
-void	 replace_env()
+void	 replace_env(char *g_read_buf)
 {
 	char	*temp;
 	char	*env;
@@ -127,7 +127,7 @@ void	 replace_env()
 				if (g_read_buf[idx + 1] == '?')
 				{
 					char *tmp;
-					
+
 					tmp = g_question;
 					while(*tmp)
 					{
