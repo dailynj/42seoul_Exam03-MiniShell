@@ -9,9 +9,18 @@ minishell 하기싫어..
 - cmd || cmd : OR 연산 (pipe x)
 	https://unix.stackexchange.com/questions/190543/what-does-mean-in-bash
 
-- echo a | cat
-하면 a 가 나와야 한다
 
-- ctrl+C 하면 빠져나와버림.. (수정한거 같은데?)
 
 - 화살표 위,아래
+
+- <<
+
+- builtin redirection
+
+- $? 에 error 제대로 넣기
+
+- exit 할때, 인자로 0-255 아니면 exit(256) 출력하기
+
+- t_bool
+
+- Norm

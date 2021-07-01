@@ -32,15 +32,20 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 		
 		
 		g_fds = open("a.txt", O_WRONLY, 0777);
-		out_fds = open(std_out->tail->left->val, O_WRONLY, 0777);
-		printf("val : %s\n", std_in->tail->left->val);
-		in_fds = open(std_in->tail->left->val, O_WRONLY, 0777);
+		if (std_out->tail->left->db)
+			out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+		else
+			out_fds = open(std_out->tail->left->val, O_WRONLY, 0777);
+		in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
+		
+		// printf("val : %s\n", std_in->tail->left->val);
+		// in_fds = (in_fds == -1) ? 0 : in_fds;
+		// out_fds = (out_fds == -1) ? 1 : out_fds;
 		printf("in : %d, out : %d\n", in_fds, out_fds);
-
 
 		dup2(in_fds, STDIN_FILENO);
 		dup2(out_fds, STDOUT_FILENO);
-
+		
 		close(g_fds);
 		close(out_fds);
 		close(in_fds);
