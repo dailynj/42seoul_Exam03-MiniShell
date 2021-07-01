@@ -2,38 +2,21 @@
 
 // fork 해서 자식 프로세스가 실행하도록
 
-int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
+int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out)
 {
 	char **exec_str;
 	char **envp;
 	char **path_arr;
-	char **tmp_exec_str;
+	// char **tmp_exec_str;
 	char **tmp_path_arr;
-	char	*path;
-	int		status;
-	char g_read_buf[BUFFER_SIZE];
+	char *path;
+	int status;
+	// char g_read_buf[BUFFER_SIZE];
 
-
-	if (pnum == 0)
-		exec_str = m_split_char(pipe_str, ' ');
-	else
-	{
-		int idx = 0;
-		m_memset(&g_read_buf, 0, BUFFER_SIZE);
-		close(g_fds);
-		g_fds = open("a.txt", O_RDONLY);
-		read(g_fds, &g_read_buf, BUFFER_SIZE);
-		printf("g_read_buf : %s : %d\n", g_read_buf, g_fds);
-		tmp_exec_str = m_split_char(g_read_buf, ' ');
-		exec_str = malloc(sizeof(char *) * (m_arrsize(tmp_exec_str) + 2));
-		exec_str[idx] = m_strdup(parsed.cmd[0]);
-		while(tmp_exec_str[++idx - 1])
-		{
-			exec_str[idx] = m_strdup(tmp_exec_str[idx - 1]);
-		}
-		exec_str[idx] = 0;
-	}
+	exec_str = m_split_char(pipe_str, ' ');
 	path_arr = m_split_char(m_find_env("PATH"), 58);
+	(void)pnum;
+	(void) final;
 	if (!path_arr)
 	{
 		printf("Error: not found\n");
@@ -45,9 +28,22 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
 	g_pid = fork();
 	if (g_pid == 0)
 	{
-		if (!final)
-			dup2(g_fds, 1);
 		int idx = 0;
+		
+		
+		g_fds = open("a.txt", O_WRONLY, 0777);
+		out_fds = open(std_out->tail->left->val, O_WRONLY, 0777);
+		printf("val : %s\n", std_in->tail->left->val);
+		in_fds = open(std_in->tail->left->val, O_WRONLY, 0777);
+		printf("in : %d, out : %d\n", in_fds, out_fds);
+
+
+		dup2(in_fds, STDIN_FILENO);
+		dup2(out_fds, STDOUT_FILENO);
+
+		close(g_fds);
+		close(out_fds);
+		close(in_fds);
 		while (tmp_path_arr[idx])
 		{
 			path = m_strjoin(tmp_path_arr[idx], m_strjoin("/", parsed.cmd[0]));

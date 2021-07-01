@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv, char **envp)
 {
-    int fd = open("a.txt",  O_WRONLY | O_TRUNC);
+    int fd = open("a.txt",  O_WRONLY | O_TRUNC, 0777);
     
     dup2(fd, 1);
     // dup2(fd, 0);

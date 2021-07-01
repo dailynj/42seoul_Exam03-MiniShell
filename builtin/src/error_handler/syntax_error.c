@@ -67,5 +67,29 @@ int check_pipe(char *g_read_buf)
 	}
 	return (0);
 }
-// ls ||
-// ls |
+
+// int check_redirection(char *g_read_buf)
+// {
+	
+// 	bash-3.2$ cat <<
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ cat <
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ cat <
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ cat >
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ < cat
+// bash: cat: No such file or directory
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ >
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ <<
+// bash: syntax error near unexpected token `newline'
+// bash-3.2$ >>
+// bash: syntax error near unexpected token `newline'
+
+// bash-3.2$ > cat       에러아님
+// bash-3.2$ <	         에러아님
+// 	return (1);
+// }

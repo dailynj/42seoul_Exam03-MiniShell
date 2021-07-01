@@ -1,79 +1,177 @@
 #include "builtin.h"
 
-// 확인 필요
-int exist_filename(char *new_filename)
+char	*first_word(char *line)
 {
-	struct dirent	*dir_entry;
-	DIR				*dir_info;
+	char	*tmp;
+	int		i;
+	int		j;
 
-	dir_info = opendir(".");
-	if (dir_info)
+	i = 0;
+	j = -1;
+	tmp = malloc(BUFFER_SIZE);
+	if (!line || !tmp)
+		return (NULL);
+	while(line[++i])
 	{
-		while((dir_entry = readdir(dir_info)))
+		if (line[i] != ' ')
 		{
-			if (m_strncmp(dir_entry->d_name, new_filename,
-				m_max(m_strlen(dir_entry->d_name), m_strlen(new_filename))))
-			return (1);
+			while (line[i] != ' ')
+			{
+				tmp[++j] = line[i];
+				++i;
+			}
+			return (tmp);
 		}
-		closedir(dir_info);
 	}
-	return (0);
+	tmp[i] = 0;
+	return (tmp);
 }
 
-//t_bool
-// 확인 필요
-void		run_redirect(char *g_read_buf)
+void fill_list(char *line, char ch, t_dummy *std)
 {
-	char	**redi;
-	// int		flag;
-	int		fd;
-
-	redi = m_split_char(g_read_buf, ' '); // redi[0] : cmd redi[2] : file_name
-	if (exist_filename(redi[2])) // filename 이 존재
+	char	*tmp;
+	// int		in_fds;
+	
+	while (*line)
 	{
-		if (m_strncmp(redi[1], ">", 2))
+		if (*line == ch) // < 
 		{
-			// 기존 파일 모두 지우고 write
-			fd = open(redi[2], O_WRONLY | O_TRUNC);
-			write(fd, redi[0], m_strlen(redi[0]));
-			close(fd);
+			if (*(line + 1) == ch)  // <<
+			{
+				tmp = first_word(++line);
+				add_list(std->tail, &tmp, 1);
+			}
+			else
+			{
+				tmp = first_word(line);
+				add_list(std->tail, &tmp, 0);
+			}
+			free(tmp);
 		}
-		else if (m_strncmp(redi[1], ">>", 2))
-		{
-			fd = open(redi[2], O_WRONLY | O_APPEND);
-			write(fd, redi[0], m_strlen(redi[0]));
-			close(fd);
-		}
-		else if (m_strncmp(redi[1], "<", 2))
-		{
-
-		}
-		else if (m_strncmp(redi[1], "<<", 2))
-		{
-
-		}
+		++line;
 	}
-	else // filename 이 존재 x
+	
+}
+
+// head->right 가 매개변수로 들어옴
+int		redi_stdin(t_list *node)
+{
+	t_list *tmp;
+	char read_buf[BUFFER_SIZE];
+	int fd;
+
+	tmp = node;
+	fd = 0;
+	while(tmp->right)
 	{
-		if (m_strncmp(redi[1], ">", 2))
+		if (tmp->db == 0) // <
 		{
-			fd = open(redi[2], O_WRONLY | O_CREAT | O_TRUNC);
-			write(fd, redi[0], m_strlen(redi[0]));
+			fd = open(tmp->val, O_WRONLY, 0777);
+			if (fd == -1)
+				return (return_message(tmp->val, "No such file or directory", -1));
+			close (fd);
+		}
+		else if (tmp->db == 1) // <<
+		{
+			fd = open(tmp->val, O_WRONLY | O_TRUNC, 0777);
+			while (1)
+			{
+				m_memset(&read_buf, 0, BUFFER_SIZE);
+				write(1, " > ", 3);
+				read(0, &read_buf, BUFFER_SIZE);
+				if (!m_strncmp(tmp->val, read_buf, BUFFER_SIZE))
+					break ;
+				else
+					write(fd, &read_buf, m_strlen(read_buf));
+			}
 			close(fd);
 		}
-		else if (m_strncmp(redi[1], ">>", 2))
-		{
-			fd = open(redi[2], O_WRONLY | O_CREAT | O_TRUNC);
-			write(fd, redi[0], m_strlen(redi[0]));
-			close(fd);
-		}
-		else if (m_strncmp(redi[1], "<", 2))
-		{
-
-		}
-		else if (m_strncmp(redi[1], "<<", 2))
-		{
-
-		}
+		tmp = tmp->right;
 	}
+	return (fd);
+}
+
+// head->right 가 매개변수로 들어옴
+int		redi_stdout(t_list *node)
+{
+	t_list *tmp;
+	int fd;
+
+	tmp = node;
+	fd = 1;
+	while(tmp->right)
+	{ // >> 
+		fd = open(tmp->val, O_WRONLY | (O_APPEND & (tmp->db << 3)) | O_CREAT, 0777);
+		tmp = tmp->right;
+		close(fd);
+	}
+	return (fd);
+}
+
+char *core_cmd(char *line)
+{
+	char *temp;
+	int tdx;
+
+	tdx = -1;
+	temp = malloc(BUFFER_SIZE);
+	m_memset(temp, 0, BUFFER_SIZE);
+	if (!temp)
+		return (NULL);
+	while(*line)
+	{
+		if (*line == '<' || *line == '>')
+		{
+			if (*(line + 1) == '<' || *(line + 1) == '>')
+				++line;
+			++line;
+			while(*line == ' ')
+				++line;
+			while(*line != ' ')
+				++line;
+			while(*line == ' ')
+				++line;
+			if (*line == '<' || *line == '>')
+				;
+			else
+			{
+				while(*line != ' ')
+				{
+					temp[++tdx] = *line;
+					++line;
+				}
+				temp[++tdx] = ' ';
+			}
+			--line;
+		}
+		else
+			temp[++tdx] = *line;
+		++line;
+	}
+	temp[++tdx] = 0;
+	return temp;
+}
+
+char *join_parsed(t_parsed parsed)
+{
+	char *ret;
+	int cnt;
+	int idx;
+	int rdx;
+
+	
+	cnt = -1;
+	rdx = -1;
+	ret = malloc(BUFFER_SIZE);
+	while (++cnt < 3)
+	{
+		idx = -1;
+		while (parsed.cmd[cnt][++idx])
+		{
+			ret[++rdx] = parsed.cmd[cnt][idx];
+		}
+		ret[++rdx] = ' ';
+	}
+	ret[++rdx] = 0;
+	return (ret);
 }

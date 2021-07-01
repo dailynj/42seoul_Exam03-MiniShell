@@ -28,8 +28,8 @@ int main(int ac, char **av, char **env)
 
 void noncanonical_input(char *g_read_buf, t_term *term)
 {
-	int		ch;
-	int		i;
+	int ch;
+	int i;
 
 	ch = 0;
 	i = -1;
@@ -51,7 +51,7 @@ void noncanonical_input(char *g_read_buf, t_term *term)
 		{
 			g_errno = 126;
 			write(1, "\n", 1);
-			break ;
+			break;
 		}
 		else if (ch == 127)
 		{
@@ -88,76 +88,84 @@ int start_shell(t_term *term)
 
 	t_parsed parsed;
 	g_read_buf = malloc(BUFFER_SIZE + 1);
-	// read
 	while (1)
 	{
 		g_errno = 0;
-		print_pwd(LONG); // sunashell crab
-		// here!
+		print_pwd(LONG);
 		noncanonical_input(g_read_buf, term);
 
-
-		// 합치기
 		if (g_errno)
 			continue;
-		if (check_syntax(g_read_buf) || check_pipe(g_read_buf))
+		if (check_syntax(g_read_buf) || check_pipe(g_read_buf)) //|| check_redirection(g_read_buf))
 		{
 			printf("bash: Syntax error\n");
 			continue;
 		}
 
 		replace_env(g_read_buf);
-
-		//
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
-		if (m_arrsize(pipe_str) == 1) // pipe 한개
+
+		i = -1;
+		int pipe_len = m_arrsize(pipe_str);
+		int final = 0;
+		while (++i < pipe_len)
 		{
-			g_fds = 1;
+			if (i == pipe_len - 1)
+				final = 1;
+			else
+			{
+				g_fds = open("a.txt", O_WRONLY | O_TRUNC, 0777); //O_CREAT |
+				close(g_fds);
+			}
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(*pipe_str);
+
+			// << function
+			t_dummy		std_in; // < <<
+			t_dummy		std_out; // > >>
+			char *tmp;
+
+			// printf("cmd[2] : %s\n", parsed.cmd[2]);
+			// print_parsed(parsed);
+			init_list(&std_in);
+			init_list(&std_out);
+			fill_list(parsed.cmd[2], '<', &std_in);
+			fill_list(parsed.cmd[2], '>', &std_out);
+			tmp = core_cmd(parsed.cmd[2]);
+			m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
+			m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
+			free(tmp);
+			// printf("<std_in> \n");
+			// printf("val : %s\n", std_in.tail->left->val);
+			// prt_list(std_in.head);
+			// printf("<std_in> \n");
+			// prt_list(std_out.head);
+			int in_fds;
+			int out_fds;
+			in_fds = redi_stdin(std_in.head->right);
+			out_fds = redi_stdout(std_out.head->right);
+			if (in_fds == -1)
+				continue;
+			(void)out_fds;
+			// 만약 error면 break;
 			g_question = "0";
-			if (m_strlen(parsed.cmd[0]) != 0)
+			if (m_strlen(parsed.cmd[0]) == 0)
 			{
-				if (!run_builtin(parsed))
-					run_execved(*pipe_str, parsed, 0, 0);
-			}
-		}
-		else // pipe 여러개
-		{
-			i = -1;
-			int pipe_len = m_arrsize(pipe_str);
-			int final = 0;
-			while (++i < pipe_len)
-			{
-				if (i == pipe_len - 1)
-					final = 1;
-				else
-					g_fds = open("a.txt", O_WRONLY | O_TRUNC); //O_CREAT |
-				printf("g_fds : %d\n", g_fds);
-				m_memset(&parsed, 0, sizeof(t_parsed));
-				parsed = get_cmd(*pipe_str);
-				g_question = "0";
-				if (m_strlen(parsed.cmd[0]) == 0)
-				{
-					close(g_fds);
-					++pipe_str;
-					continue;
-				}
-				// pipe -> fd[0] fd[1]
-				// if (m_strchr(g_read_buf, '<') || m_strchr(g_read_buf, '>'))
-				// {
-				// 	run_redirect(g_read_buf);
-				// }
-				// printf("g_read_buf : %s : %d\n\n", g_read_buf, g_fds);
-				if (!run_builtin(parsed))
-				{
-					run_execved(*pipe_str, parsed, i, final);
-				}
-				if (final != 1)
-					close(g_fds);
+				close(g_fds);
 				++pipe_str;
+				continue;
 			}
+			tmp = join_parsed(parsed);
+			if (!run_builtin(parsed))
+			{
+				run_execved(tmp, parsed, i, final, in_fds, out_fds, &std_in, &std_out);
+			}
+			free(tmp);
+			tmp = 0;
+			if (final != 1)
+				close(g_fds);
+			++pipe_str;
 		}
 		m_free_split(temp);
 	}
@@ -176,8 +184,8 @@ int run_builtin(t_parsed parsed)
 	while (parsed.cmd[0][++i])
 	{
 		cmd[i] = (parsed.cmd[0][i] >= 65 && parsed.cmd[0][i] <= 90)
-			? parsed.cmd[0][i] + 32
-			: parsed.cmd[0][i];
+					 ? parsed.cmd[0][i] + 32
+					 : parsed.cmd[0][i];
 	}
 	if (!m_strncmp(cmd, "echo", 5))
 	{

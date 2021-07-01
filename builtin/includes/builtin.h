@@ -28,6 +28,9 @@
 #define ERROR 0
 #define OK 1
 
+#define HEAD 0
+#define TAIL 1
+
 typedef struct	s_term
 {
 	struct termios new_term;
@@ -55,6 +58,20 @@ typedef struct	s_tree
 	struct s_tree	*left;
 	struct s_tree	*right;
 }				t_tree;
+
+typedef struct	s_list
+{
+	char			val[BUFFER_SIZE];
+	int				db;
+	struct s_list	*left;
+	struct s_list	*right;
+}				t_list;
+
+typedef struct		s_dummy
+{
+	struct s_list	*head;
+	struct s_list	*tail;
+}					t_dummy;
 
 typedef struct	s_parsed
 {
@@ -119,8 +136,12 @@ void			*m_calloc(size_t count, size_t size);
 
 
 // run_redirection.c
-int				exist_filename(char *new_filename);
-void			run_redirect(char *g_read_buf);
+char			*first_word(char *line);
+void			fill_list(char *line, char ch, t_dummy *std);
+int				redi_stdin(t_list *node);
+int				redi_stdout(t_list *node);
+char			*core_cmd(char *line);
+char 			*join_parsed(t_parsed parsed);
 
 // parsing.c
 t_parsed		get_cmd_echo(char *line);
@@ -129,29 +150,37 @@ t_parsed		get_cmd(char *line);
 
 // error.c
 void			print_error(t_parsed parsed, char *status);
-int			return_error(char *message);
+int				return_message(char *file, char *message, int ret);
 
 void			print_parsed(t_parsed parsed);
 
 // quote.c
-void	 replace_env(char *g_read_buf);
+void			replace_env(char *g_read_buf);
 char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
-int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final);
+// int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final);
+int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out);
 
 // syntax_error.c
 int 			check_syntax(char *g_read_buf);
 int 			check_pipe(char *g_read_buf);
+int				check_redirection(char *g_read_buf);
 
 // term.c
-void init_term(t_term *term);
-void reset_input_mode(t_term *term);
-void set_input_mode(t_term *term);
+void			init_term(t_term *term);
+void			reset_input_mode(t_term *term);
+void			set_input_mode(t_term *term);
 
 // signal.c
-void sigint_handler();
-void sigquit_handler();
+void			sigint_handler();
+void			sigquit_handler();
+
+// list.c
+t_list			*new_list(char *val, int db);
+int				init_list(t_dummy *dummy);
+int				add_list(t_list *tail, char **val, int db);
+void			prt_list(t_list *head);
 
 #endif

@@ -26,14 +26,14 @@ int 	check_real(char* buf, int idx)
 {
 	if (buf[idx] == '|')
 		return (REAL_PIPE);
-	else if (buf[idx] == '<' && buf[idx + 1] == '<')
-		return (REAL_LL);
-	else if (buf[idx] == '<')
-		return (REAL_L);
-	else if (buf[idx] == '>' && buf[idx + 1] == '>')
-		return (REAL_RR);
-	else if (buf[idx] == '>')
-		return (REAL_R);
+	// else if (buf[idx] == '<' && buf[idx + 1] == '<')
+	// 	return (REAL_LL);
+	// else if (buf[idx] == '<')
+	// 	return (REAL_L);
+	// else if (buf[idx] == '>' && buf[idx + 1] == '>')
+	// 	return (REAL_RR);
+	// else if (buf[idx] == '>')
+	// 	return (REAL_R);
 	return (0);
 }
 
@@ -147,8 +147,8 @@ void	 replace_env(char *g_read_buf)
 			else if (check_real(g_read_buf, idx))
 			{
 				temp[++tdx] = check_real(g_read_buf, idx);
-				if (check_real(g_read_buf, idx) == 2 || check_real(g_read_buf, idx) == 4)
-					++idx;
+				// if (check_real(g_read_buf, idx) == 2 || check_real(g_read_buf, idx) == 4)
+				// 	++idx;
 			}
 			else
 				temp[++tdx] = g_read_buf[idx];
