@@ -129,6 +129,8 @@ t_parsed		get_cmd(char *line);
 
 // error.c
 void			print_error(t_parsed parsed, char *status);
+int			return_error(char *message);
+
 void			print_parsed(t_parsed parsed);
 
 // quote.c

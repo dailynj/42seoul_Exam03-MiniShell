@@ -20,7 +20,10 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final)
 	{
 		int idx = 0;
 		m_memset(&g_read_buf, 0, BUFFER_SIZE);
+		close(g_fds);
+		g_fds = open("a.txt", O_RDONLY);
 		read(g_fds, &g_read_buf, BUFFER_SIZE);
+		printf("g_read_buf : %s : %d\n", g_read_buf, g_fds);
 		tmp_exec_str = m_split_char(g_read_buf, ' ');
 		exec_str = malloc(sizeof(char *) * (m_arrsize(tmp_exec_str) + 2));
 		exec_str[idx] = m_strdup(parsed.cmd[0]);

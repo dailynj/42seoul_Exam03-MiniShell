@@ -18,4 +18,8 @@ void		print_error(t_parsed parsed, char *status)
 	}
 }
 
-
+int			return_error(char *message)
+{
+	(void) message;
+	return (printf("bash: Syntax error\n"));
+}

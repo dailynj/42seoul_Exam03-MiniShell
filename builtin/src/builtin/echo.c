@@ -43,6 +43,7 @@ int m_echo(t_parsed parsed)
 	{
 		write(g_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
 		write(g_fds, "\n", 1);
+		// printf("%s, %d\n", parsed.cmd[2], m_strlen(parsed.cmd[2]));
 		// printf("%s\n", parsed.cmd[2]);
 	}
 	return (OK);

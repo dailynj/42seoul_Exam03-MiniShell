@@ -1,11 +1,25 @@
 #include "builtin.h"
 
+void sigint_handler()
+{
+	if (g_pid > 0)
+	{
+		printf("\n");
+	}
+	// else
+	// {
+	// 	printf("\b\b  \b\b\n");
+	// 	print_pwd(LONG);
+	// }
+}
+
 int main(int ac, char **av, char **env)
 {
 	t_term term;
 
 	(void)ac;
 	(void)av;
+	signal(SIGINT, sigint_handler);
 	init_tree(env);
 	init_term(&term);
 	start_shell(&term);
@@ -26,14 +40,18 @@ void noncanonical_input(char *g_read_buf, t_term *term)
 		if (ch == 4)
 		{
 			if (i == -1)
+			{
+				reset_input_mode(term);
 				m_exit(NULL);
+			}
 			else
 				continue;
 		}
 		else if (ch == 3)
 		{
 			g_errno = 126;
-			break;
+			write(1, "\n", 1);
+			break ;
 		}
 		else if (ch == 127)
 		{
@@ -78,6 +96,8 @@ int start_shell(t_term *term)
 		// here!
 		noncanonical_input(g_read_buf, term);
 
+
+		// 합치기
 		if (g_errno)
 			continue;
 		if (check_syntax(g_read_buf) || check_pipe(g_read_buf))
@@ -88,6 +108,7 @@ int start_shell(t_term *term)
 
 		replace_env(g_read_buf);
 
+		//
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		temp = pipe_str;
 		if (m_arrsize(pipe_str) == 1) // pipe 한개
@@ -111,7 +132,9 @@ int start_shell(t_term *term)
 			{
 				if (i == pipe_len - 1)
 					final = 1;
-				g_fds = open(".a.txt", O_WRONLY | O_CREAT | O_TRUNC);
+				else
+					g_fds = open("a.txt", O_WRONLY | O_TRUNC); //O_CREAT |
+				printf("g_fds : %d\n", g_fds);
 				m_memset(&parsed, 0, sizeof(t_parsed));
 				parsed = get_cmd(*pipe_str);
 				g_question = "0";
@@ -126,12 +149,13 @@ int start_shell(t_term *term)
 				// {
 				// 	run_redirect(g_read_buf);
 				// }
+				// printf("g_read_buf : %s : %d\n\n", g_read_buf, g_fds);
 				if (!run_builtin(parsed))
 				{
 					run_execved(*pipe_str, parsed, i, final);
 				}
-
-				close(g_fds);
+				if (final != 1)
+					close(g_fds);
 				++pipe_str;
 			}
 		}
