@@ -26,31 +26,70 @@ void	sigint_handler(int errno)
 	// }
 }
 
+
 int		main(int ac, char **av, char **env)
 {
 	t_term term;
+	t_dummy history;
 
 	(void)ac;
 	(void)av;
 	signal(SIGINT, sigint_handler);
 	init_tree(env);
 	init_term(&term);
-	start_shell(&term);
+	init_list(&history);
+	start_shell(&term, &history);
 	return (0);
 }
 
-void	noncanonical_input(char *g_read_buf, t_term *term)
+void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 {
+	char tmp_read_buf[BUFFER_SIZE];
 	int	ch;
 	int	i;
+	int k;
+	int hdx;
 
 	ch = 0;
 	i = -1;
+	hdx = 0;
+	m_memset(tmp_read_buf, 0, BUFFER_SIZE);
 	m_memset(g_read_buf, 0, BUFFER_SIZE);
 	set_input_mode(term);
-	while (read(0, &ch, 1) > 0)
+	while (read(0, &ch, sizeof(ch)) > 0)
 	{
-		if (ch == 4)
+		if (ch == 4283163) // up
+		{
+			if (history_up(i, hdx, history, &g_read_buf))
+			{
+				k = -1;
+				while (g_read_buf[++k])
+					write(1, &g_read_buf[k], 1);
+				i = k - 1;
+				++hdx;
+			}
+		}
+		else if (ch == 4348699) // down
+		{
+			if (hdx == 1 && history_down(i, hdx, history, &g_read_buf))
+			{
+				m_strlcpy(g_read_buf, tmp_read_buf, m_strlen(tmp_read_buf) + 1);
+				k = -1;
+				while (g_read_buf[++k])
+					write(1, &g_read_buf[k], 1);
+				i = k - 1;
+				--hdx;
+			}
+			else if (hdx != 0 && history_down(i, hdx, history, &g_read_buf))
+			{
+				k = -1;
+				while (g_read_buf[++k])
+					write(1, &g_read_buf[k], 1);
+				i = k - 1;
+				--hdx;
+			}
+		}
+		else if (ch == 4)
 		{
 			if (i == -1)
 			{
@@ -71,14 +110,18 @@ void	noncanonical_input(char *g_read_buf, t_term *term)
 		{
 			if (i >= 0)
 			{
-				write(0, "\b \b", 3);
+				write(1, "\b \b", 3);
+				tmp_read_buf[i] = 0;
 				g_read_buf[i--] = 0;
 			}
 		}
 		else if (ch == '\n')
 		{
 			g_read_buf[++i] = 0;
-			write(0, &ch, sizeof(int));
+			tmp_read_buf[i] = 0;
+			write(1, &ch, 1);
+			if (g_read_buf[0] != '\0')
+				add_list(history->tail, g_read_buf, 0);
 			ch = 0;
 			g_question = "0";
 			break ;
@@ -86,14 +129,15 @@ void	noncanonical_input(char *g_read_buf, t_term *term)
 		else
 		{
 			g_read_buf[++i] = ch;
-			write(0, &ch, sizeof(int));
+			tmp_read_buf[i] = ch;
+			write(1, &ch, 1);
 		}
 		ch = 0;
 	}
 	reset_input_mode(term);
 }
 
-int		start_shell(t_term *term)
+int		start_shell(t_term *term, t_dummy *history)
 {
 	char		*g_read_buf;
 	char		**pipe_str;
@@ -106,7 +150,7 @@ int		start_shell(t_term *term)
 	{
 		g_errno = 0;
 		print_pwd(LONG);
-		noncanonical_input(g_read_buf, term);
+		noncanonical_input(g_read_buf, term, history);
 		if (g_errno)
 			continue ;
 		if (check_syntax(g_read_buf) || check_pipe(g_read_buf)) //|| check_redirection(g_read_buf))
@@ -127,6 +171,7 @@ int		start_shell(t_term *term)
 			t_dummy		std_out; // > >>
 			init_list(&std_out);
 			init_list(&std_in);
+			
 
 			if (i == pipe_len - 1)
 				final = 1;

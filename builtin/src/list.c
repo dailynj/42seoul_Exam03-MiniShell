@@ -59,19 +59,7 @@ int	add_list(t_list *tail, char *val, int db)
 	return (OK);
 }
 
-// int srh_list(t_list *list, char *find)
-// {
-// 	t_list *tmp;
 
-// 	tmp = list->link[1];
-// 	while (tmp->link[ht()->stack[t]->val])
-// 	{
-// 		if (tmp->val == find)
-// 			return (1);
-// 		tmp = tmp->link[ht()->stack[t]->val];
-// 	}
-// 	return (0);
-// }
 
 void prt_list(t_list *head)
 {
@@ -84,4 +72,55 @@ void prt_list(t_list *head)
 		tmp = tmp->right;
 	}
 	printf("\n");
+}
+
+int		history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
+{
+	int len;
+	t_list *tmp;
+
+	tmp = history->tail;
+	if (hdx == 0)
+		len = m_strlen(*g_read_buf);
+	else
+	{
+		while (--hdx >= 0)
+		{
+			tmp = tmp->left;
+			if (tmp->left->db == -1)
+				break ;
+		}
+		len = m_strlen(tmp->val);
+	}
+	if (tmp->left->db == -1)
+	{
+		return (ERROR);
+	}
+	else
+	{
+		m_strlcpy(*g_read_buf, tmp->left->val, m_strlen(tmp->left->val) + 1);
+		while (--len >= 0 && i-- >= 0)
+			write(0, "\b \b", 3);
+		return (OK);
+	}
+}
+
+int		history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
+{
+	int len;
+	t_list *tmp;
+
+	tmp = history->tail;
+	while (--hdx >= 0)
+	{
+		tmp = tmp->left;
+		if (tmp->left->db == -1)
+			break ;
+	}
+	len = m_strlen(tmp->val);
+	while (--len >= 0 && i-- >= 0)
+		write(0, "\b \b", 3);
+	if (tmp->right->db != -1)
+		m_strlcpy(*g_read_buf, tmp->right->val, m_strlen(tmp->right->val) + 1);
+	return (OK);
 }

@@ -90,11 +90,12 @@ typedef struct	s_parsed
 }				t_parsed;
 
 // main.c
-int				start_shell(t_term *term);
+int				start_shell(t_term *term, t_dummy *history);
 void			print_pwd(int type);
 int				run_builtin(t_parsed parsed, t_dummy *std_out);
 void			printpipe(char **pipe_str);
-void			noncanonical_input(char *g_read_buf, t_term *term);
+void			noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history);
+
 
 //builtin
 int				m_echo(t_parsed parsed, t_dummy *std_out);
@@ -188,5 +189,7 @@ t_list			*new_list(char *val, int db);
 int				init_list(t_dummy *dummy);
 int				add_list(t_list *tail, char *val, int db);
 void			prt_list(t_list *head);
+int				history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
+int				history_down(int i, int hdx, t_dummy *history, char **g_read_buf);
 
 #endif
