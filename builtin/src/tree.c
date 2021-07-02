@@ -31,16 +31,7 @@ void init_tree(char **env)
 		insert_tree(*env);
 		++env;
 	}
-	// insert_tree("?=0");
 	g_question = "0";
-	// insert_tree("7");
-	// insert_tree("3");
-	// insert_tree("2");
-	// insert_tree("1");
-	// insert_tree("6");
-	// insert_tree("4");
-	// insert_tree("9");
-	// insert_tree("8");
 }
 
 t_tree *new_node(char *val)
@@ -163,7 +154,7 @@ void free_tree(t_tree **tr)
 	*tr = 0;
 }
 
-char*	inorder_print_node(char *val, int type)
+char*	inorder_print_node(char *val, int type, int out_fds)
 {
 	int isequal;
 
@@ -174,25 +165,24 @@ char*	inorder_print_node(char *val, int type)
 	{ 			
 		if (m_strchr(val, '='))
 		{
-			write(g_fds, val, m_strlen(val));
-			write(g_fds, "\n", 1);
+			write(out_fds, val, m_strlen(val));
+			write(out_fds, "\n", 1);
 			// printf("%s\n", val);
 		}
-			
 	}
 	else 						// export = 1
 	{
-		printf("declare -x ");
+		write(out_fds, "declare -x ", 11);
 		while (*val)
 		{
-			printf("%c", *val);
+			write(out_fds, val, 1);
 			if (*val == '=')
-				printf("\"");
+				write(out_fds, "\"", 1);
 			++val;
 		}
 		if (isequal)
-			printf("\"");
-		printf("\n");
+			write(out_fds, "\"", 1);
+		write(out_fds, "\n", 1);
 	}
 	return (NULL);
 }
@@ -208,13 +198,13 @@ int inorder_execve(t_tree *tr, char ***output, int index)
 	return (index);
 }
 
-void inorder_print(t_tree *tr, int type)
+void inorder_print(t_tree *tr, int type, int out_fds)
 {
 	if (tree()->size == 0)
 		return ;
 	if (tr == NULL)
 		return ;
-	inorder_print(tr->left, type);
-	inorder_print_node(tr->val, type);
-	inorder_print(tr->right, type);
+	inorder_print(tr->left, type, out_fds);
+	inorder_print_node(tr->val, type, out_fds);
+	inorder_print(tr->right, type, out_fds);
 }

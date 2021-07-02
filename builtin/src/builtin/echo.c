@@ -39,14 +39,25 @@ int		nnnn(char *line, int idx, int flag, int ret)
 	return (ret);
 }
 
-int		m_echo(t_parsed parsed)
+int		m_echo(t_parsed parsed, t_dummy *std_out)
 {
+	int out_fds;
+
+	if (std_out->tail->left->db == -1)
+		out_fds = 1;
+	else if (std_out->tail->left->db)
+		out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+	else
+		out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
+
 	if (!m_strncmp(parsed.cmd[1], "-n", 2))
-		write(g_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
 	else
 	{
-		write(g_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
-		write(g_fds, "\n", 1);
+		write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		write(out_fds, "\n", 1);
 	}
+	if (out_fds != 1)
+		close(out_fds);
 	return (OK);
 }

@@ -126,7 +126,13 @@ void	 replace_env(char *g_read_buf)
 		else
 		{
 			// 위에랑 똑같음
-			if (g_read_buf[idx] == '$')
+			if (g_read_buf[idx] == ' ')
+			{
+				temp[++tdx] = ' ';
+				while (g_read_buf[idx + 1] == ' ')
+					++idx;
+			}
+			else if (g_read_buf[idx] == '$')
 			{
 				if (g_read_buf[idx + 1] == '?')
 				{

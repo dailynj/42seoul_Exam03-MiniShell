@@ -92,17 +92,17 @@ typedef struct	s_parsed
 // main.c
 int				start_shell(t_term *term);
 void			print_pwd(int type);
-int				run_builtin(t_parsed parsed);
+int				run_builtin(t_parsed parsed, t_dummy *std_out);
 void			printpipe(char **pipe_str);
 void			noncanonical_input(char *g_read_buf, t_term *term);
 
 //builtin
-int 			m_echo(t_parsed parsed);
+int				m_echo(t_parsed parsed, t_dummy *std_out);
 int				m_cd(t_parsed parsed);
-int				m_pwd(t_parsed parsed);
+int				m_pwd(t_parsed parsed, t_dummy *std_out);
 int				m_exit(t_parsed parsed);
-int				m_env(t_parsed parsed);
-int				m_export(t_parsed parsed);
+int				m_env(t_parsed parsed, t_dummy *std_out);
+int				m_export(t_parsed parsed, t_dummy *std_out);
 int				m_unset(t_parsed parsed);
 
 // tree.c
@@ -113,9 +113,9 @@ void			delete_tree(char *val);
 void			free_tree(t_tree **tr);
 t_tree			**search_tree(char *val);
 
-void			inorder_print(t_tree *tr, int type);
+void			inorder_print(t_tree *tr, int type, int out_fds);
 int				inorder_execve(t_tree *tr, char ***output, int index);
-char			*inorder_print_node(char *val, int type);
+char			*inorder_print_node(char *val, int type, int out_fds);
 
 // lib.c
 int				m_strncmp(char *s1, char *s2, size_t n);

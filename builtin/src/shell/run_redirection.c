@@ -50,7 +50,6 @@ void	fill_list(char *line, char ch, t_dummy *std)
 			if (*(line + 1) == ch)  // <<
 			{
 				tmp = first_word(++line);
-
 				add_list(std->tail, tmp, 1);
 			}
 			else
@@ -83,16 +82,20 @@ int		redi_stdin(t_list *node)
 		}
 		else if (tmp->db == 1)
 		{
-			fd = open("a.txt", O_WRONLY | O_TRUNC, 0777);
+			fd = open("a.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777);
 			while (1)
 			{
 				m_memset(&read_buf, 0, BUFFER_SIZE);
 				write(1, " > ", 3);
 				read(0, &read_buf, BUFFER_SIZE);
-				if (!m_strncmp(tmp->val, read_buf, BUFFER_SIZE))
+				read_buf[m_strlen(read_buf) - 1] = 0;
+				if (!m_strncmp(tmp->val, read_buf, m_strlen(tmp->val) + 1))
 					break ;
 				else
+				{
 					write(fd, &read_buf, m_strlen(read_buf));
+					write(fd, "\n", 1);
+				}
 			}
 			close(fd);
 		}

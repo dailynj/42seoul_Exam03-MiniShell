@@ -132,7 +132,7 @@ int		start_shell(t_term *term)
 				final = 1;
 			else
 			{
-				g_fds = open("a.txt", O_WRONLY | O_TRUNC, 0777); //O_CREAT |
+				g_fds = open("a.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
 				close(g_fds);
 				add_list(std_in.tail, "a.txt", 0);
 			}
@@ -142,6 +142,7 @@ int		start_shell(t_term *term)
 
 			fill_list(parsed.cmd[2], '<', &std_in);
 			fill_list(parsed.cmd[2], '>', &std_out);
+
 			tmp = core_cmd(parsed.cmd[2]);
 			m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
 			m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
@@ -163,7 +164,7 @@ int		start_shell(t_term *term)
 				continue ;
 			}
 			tmp = join_parsed(parsed);
-			if (!run_builtin(parsed))
+			if (!run_builtin(parsed, &std_out))
 			{
 				run_execved(tmp, parsed, i, final, in_fds, out_fds, &std_in, &std_out);
 			}
@@ -180,7 +181,7 @@ int		start_shell(t_term *term)
 }
 
 // t_bool
-int		run_builtin(t_parsed parsed)
+int		run_builtin(t_parsed parsed, t_dummy *std_out)
 {
 	char	cmd[BUFFER_SIZE];
 	int		i;
@@ -195,11 +196,11 @@ int		run_builtin(t_parsed parsed)
 	}
 	if (!m_strncmp(cmd, "echo", 5))
 	{
-		return (m_echo(parsed));
+		return (m_echo(parsed, std_out));
 	}
 	else if (!m_strncmp(cmd, "pwd", 4))
 	{
-		return (m_pwd(parsed));
+		return (m_pwd(parsed, std_out));
 		// 옵션이 들어오면 invalid option..?
 		// 인자가 들어오면 무시
 	}
@@ -214,13 +215,13 @@ int		run_builtin(t_parsed parsed)
 	}
 	else if (!m_strncmp(cmd, "env", 4))
 	{
-		return (m_env(parsed));
+		return (m_env(parsed, std_out));
 		// 옵션 들어오면 error 처리
 		// 옵션이 아닌 str 들어올때 error 처리
 	}
 	else if (!m_strncmp(cmd, "export", 7))
 	{
-		return (m_export(parsed));
+		return (m_export(parsed, std_out));
 		// 1개 들어오면 search 하기
 		// 0개 들어오면 전체 출력
 		// 옵션 error

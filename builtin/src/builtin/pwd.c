@@ -12,17 +12,24 @@
 
 #include "builtin.h"
 
-int m_pwd(t_parsed parsed)
+int m_pwd(t_parsed parsed, t_dummy *std_out)
 {
 	char cwd[PATH_MAX];
+	int out_fds;
+
+	if (std_out->tail->left->db == -1)
+		out_fds = 1;
+	else if (std_out->tail->left->db)
+		out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+	else
+		out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
 
 	if (parsed.cmd[1][0] != '\0')
 		print_error(parsed, "?=1");
 	else if (getcwd(cwd, sizeof(cwd)) != NULL)
 	{
-		write(g_fds, cwd, m_strlen(cwd));
-		write(g_fds, "\n", 1);
-		// printf("%s\n", cwd);
+		write(out_fds, cwd, m_strlen(cwd));
+		write(out_fds, "\n", 1);
 	}
 	else
 		perror("getcwd() error\n");
