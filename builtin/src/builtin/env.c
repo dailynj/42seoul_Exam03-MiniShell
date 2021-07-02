@@ -24,7 +24,7 @@ int m_env(t_parsed parsed, t_dummy *std_out)
 		out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
 
 	if (m_find_env("PATH") == NULL)
-		return (OK);
+		return (TRUE);
 	if (parsed.cmd[1][0] != '\0')
 		print_error(parsed, "?=1");
 	else if (parsed.cmd[2][0] != '\0')
@@ -32,10 +32,9 @@ int m_env(t_parsed parsed, t_dummy *std_out)
 		if (!m_find_env(&parsed.cmd[2][0]))
 			print_error(parsed, "?=127");
 		else
-			write(g_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
-			// printf("env : %s\n", m_find_env(&parsed.cmd[2][0]));
+			write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
 	}
 	else
 		inorder_print(tree(), environ, out_fds);
-	return (OK); // 수정
+	return (TRUE);
 }

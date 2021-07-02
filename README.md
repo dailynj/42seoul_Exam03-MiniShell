@@ -1,8 +1,7 @@
 # minishell
-minishell 하기싫어..
+minishell 너무쉽당.. 할만하네~ 
 
 ## To-Do List
-- 화살표 위,아래
 
 - syntax error (<> , > 이후에 아무것도 안들어오면)
 

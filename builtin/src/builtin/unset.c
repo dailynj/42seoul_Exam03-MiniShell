@@ -18,5 +18,5 @@ int m_unset(t_parsed parsed)
 		print_error(parsed, "?=1");
 	else
 		delete_tree(parsed.cmd[2]);
-	return (OK);
+	return (TRUE);
 }

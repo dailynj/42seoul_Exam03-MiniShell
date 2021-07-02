@@ -83,5 +83,5 @@ int		m_cd(t_parsed parsed)
 		else
 			print_error(parsed, "?=127");
 	}
-	return (OK);
+	return (TRUE);
 }

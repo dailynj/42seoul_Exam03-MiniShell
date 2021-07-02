@@ -130,6 +130,7 @@ char	*core_cmd(char *line)
 	m_memset(temp, 0, BUFFER_SIZE);
 	if (!temp)
 		return (NULL);
+	printf("temp : %s\n", temp);
 	while (*line)
 	{
 		if (*line == '<' || *line == '>')
@@ -139,12 +140,14 @@ char	*core_cmd(char *line)
 			++line;
 			while (*line == ' ')
 				++line;
-			while (*line != ' ')
+			while (*line != ' ' && *line != '\0')
 				++line;
-			while (*line == ' ')
+			while (*line == ' ' && *line != '\0')
 				++line;
+			if (*line == '\0')
+				break;
 			if (*line == '<' || *line == '>')
-				;
+				continue ;
 			else
 			{
 				while (*line != ' ')
@@ -161,6 +164,7 @@ char	*core_cmd(char *line)
 		++line;
 	}
 	temp[++tdx] = 0;
+	printf("temp : %s\n", temp);
 	return (temp);
 }
 

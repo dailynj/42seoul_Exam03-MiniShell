@@ -77,10 +77,10 @@ int		m_isnum(char *str)
 	while (str[i])
 	{
 		if (str[i] < '0' || str[i] > '9')
-			return (ERROR);
+			return (FALSE);
 		++i;
 	}
-	return (OK);
+	return (TRUE);
 }
 
 void	*m_calloc(size_t count, size_t size)

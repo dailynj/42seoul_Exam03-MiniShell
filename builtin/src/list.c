@@ -35,12 +35,12 @@ int	init_list(t_dummy *dummy)
 	new_head = new_list("", -1);
 	new_tail = new_list("", -1);
 	if (!new_head || !new_tail)
-		return (ERROR);
+		return (FALSE);
 	new_head->right = new_tail;
 	new_tail->left = new_head;
 	dummy->head = new_head;
 	dummy->tail = new_tail;
-	return (OK);
+	return (TRUE);
 }
 
 int	add_list(t_list *tail, char *val, int db)
@@ -51,12 +51,12 @@ int	add_list(t_list *tail, char *val, int db)
 	tmp = tail;
 	new_node = new_list(val, db);
 	if (!new_node)
-		return (ERROR);
+		return (FALSE);
 	tmp->left->right = new_node;
 	new_node->left = tmp->left;
 	new_node->right = tmp;
 	tmp->left = new_node;
-	return (OK);
+	return (TRUE);
 }
 
 
@@ -74,7 +74,7 @@ void prt_list(t_list *head)
 	printf("\n");
 }
 
-int		history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
+t_bool		history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
 {
 	int len;
 	t_list *tmp;
@@ -94,18 +94,18 @@ int		history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
 	}
 	if (tmp->left->db == -1)
 	{
-		return (ERROR);
+		return (FALSE);
 	}
 	else
 	{
 		m_strlcpy(*g_read_buf, tmp->left->val, m_strlen(tmp->left->val) + 1);
 		while (--len >= 0 && i-- >= 0)
 			write(0, "\b \b", 3);
-		return (OK);
+		return (TRUE);
 	}
 }
 
-int		history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
+t_bool		history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
 {
 	int len;
 	t_list *tmp;
@@ -122,5 +122,34 @@ int		history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
 		write(0, "\b \b", 3);
 	if (tmp->right->db != -1)
 		m_strlcpy(*g_read_buf, tmp->right->val, m_strlen(tmp->right->val) + 1);
-	return (OK);
+	return (TRUE);
+}
+
+void	delete_val(int hdx, t_dummy *history)
+{
+	t_list *tmp;
+
+	tmp = history->tail;
+	while (--hdx >= 0)
+	{
+		tmp = tmp->left;
+		if (tmp->left->db == -1)
+			break ;
+	}
+	tmp->val[m_strlen(tmp->val) - 1] = 0;
+}
+
+void	write_val(int hdx, t_dummy *history, int ch)
+{
+	t_list *tmp;
+
+	tmp = history->tail;
+	while (--hdx >= 0)
+	{
+		tmp = tmp->left;
+		if (tmp->left->db == -1)
+			break ;
+	}
+	tmp->val[m_strlen(tmp->val)] = ch;
+	tmp->val[m_strlen(tmp->val) + 1] = 0;
 }

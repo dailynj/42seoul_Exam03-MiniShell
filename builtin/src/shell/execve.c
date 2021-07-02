@@ -28,7 +28,7 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 	exec_str = m_split_char(pipe_str, ' ');
 	path_arr = m_split_char(m_find_env("PATH"), 58);
 	(void)pnum;
-	(void) final;
+	(void)final;
 	if (!path_arr)
 	{
 		printf("Error: not found\n");
@@ -42,7 +42,6 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 	{
 		int idx = 0;
 		
-		g_fds = open("a.txt", O_WRONLY, 0777);
 		printf("in -> %s\n", std_in->tail->left->val);
 		printf("out -> %s\n", std_out->tail->left->val);
 		if (std_out->tail->left->db)
@@ -53,12 +52,8 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 			in_fds = open("a.txt", O_RDONLY, 0777);
 		else
 			in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
-		// printf("val : %s\n", std_in->tail->left->val);
-		// in_fds = (in_fds == -1) ? 0 : in_fds;
-		// out_fds = (out_fds == -1) ? 1 : out_fds;
 		dup2(in_fds, STDIN_FILENO);
 		dup2(out_fds, STDOUT_FILENO);
-		close(g_fds);
 		close(out_fds);
 		close(in_fds);
 		while (tmp_path_arr[idx])
@@ -84,8 +79,7 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 	{
 		wait(&status);
 		// 자식이 끝날 때 까지 기다렸다가 만약 자식이 error상태로 끝나면 return 에러
-		if (g_fds == 1)
-			m_free_split(exec_str);
+		m_free_split(exec_str);
 		m_free_split(path_arr);
 		g_pid = 0;
 		return (1);

@@ -33,5 +33,5 @@ int m_pwd(t_parsed parsed, t_dummy *std_out)
 	}
 	else
 		perror("getcwd() error\n");
-	return (OK);
+	return (TRUE);
 }

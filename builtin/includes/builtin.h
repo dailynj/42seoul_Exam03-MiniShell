@@ -32,28 +32,21 @@
 # define WHITESPACE "\t\n\v\f\r "
 
 # define REAL_PIPE 1
-# define REAL_LL 2
-# define REAL_L 3
-# define REAL_RR 4
-# define REAL_R 5
 
-# define ERROR 0
-# define OK 1
+# define FALSE 0
+# define TRUE 1
 
-# define HEAD 0
-# define TAIL 1
+int		g_errno;
+char	*g_question;
+pid_t	g_pid;
+
+typedef int		t_bool;
 
 typedef struct	s_term
 {
 	struct termios new_term;
 	struct termios org_term;
 }				t_term;
-
-int		g_errno;
-char	*g_question;
-pid_t	g_pid;
-// char	g_read_buf[BUFFER_SIZE];
-int		g_fds;
 
 typedef enum	e_type
 {
@@ -189,7 +182,9 @@ t_list			*new_list(char *val, int db);
 int				init_list(t_dummy *dummy);
 int				add_list(t_list *tail, char *val, int db);
 void			prt_list(t_list *head);
-int				history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
-int				history_down(int i, int hdx, t_dummy *history, char **g_read_buf);
+t_bool			history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
+t_bool			history_down(int i, int hdx, t_dummy *history, char **g_read_buf);
+void			delete_val(int hdx, t_dummy *history);
+void			write_val(int hdx, t_dummy *history, int ch);
 
 #endif

@@ -113,6 +113,7 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 				write(1, "\b \b", 3);
 				tmp_read_buf[i] = 0;
 				g_read_buf[i--] = 0;
+				delete_val(hdx, history);
 			}
 		}
 		else if (ch == '\n')
@@ -130,6 +131,7 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 		{
 			g_read_buf[++i] = ch;
 			tmp_read_buf[i] = ch;
+			write_val(hdx, history, ch);
 			write(1, &ch, 1);
 		}
 		ch = 0;
@@ -165,6 +167,7 @@ int		start_shell(t_term *term, t_dummy *history)
 		i = -1;
 		int pipe_len = m_arrsize(pipe_str);
 		int final = 0;
+		int fds = 0;
 		while (++i < pipe_len)
 		{
 			t_dummy		std_in; // < <<
@@ -177,8 +180,8 @@ int		start_shell(t_term *term, t_dummy *history)
 				final = 1;
 			else
 			{
-				g_fds = open("a.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
-				close(g_fds);
+				fds = open("a.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
+				close(fds);
 				add_list(std_in.tail, "a.txt", 0);
 			}
 			m_memset(&parsed, 0, sizeof(t_parsed));
@@ -187,7 +190,6 @@ int		start_shell(t_term *term, t_dummy *history)
 
 			fill_list(parsed.cmd[2], '<', &std_in);
 			fill_list(parsed.cmd[2], '>', &std_out);
-
 			tmp = core_cmd(parsed.cmd[2]);
 			m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
 			m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
@@ -199,12 +201,10 @@ int		start_shell(t_term *term, t_dummy *history)
 			out_fds = redi_stdout(std_out.head->right);
 			if (in_fds == -1)
 				continue ;
-			(void)out_fds;
 			// 만약 error면 break ;
 			g_question = "0";
 			if (m_strlen(parsed.cmd[0]) == 0)
 			{
-				close(g_fds);
 				++pipe_str;
 				continue ;
 			}
@@ -215,8 +215,6 @@ int		start_shell(t_term *term, t_dummy *history)
 			}
 			free(tmp);
 			tmp = 0;
-			if (final != 1)
-				close(g_fds);
 			++pipe_str;
 		}
 		m_free_split(temp);

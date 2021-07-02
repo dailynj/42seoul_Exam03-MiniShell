@@ -59,5 +59,5 @@ int		m_echo(t_parsed parsed, t_dummy *std_out)
 	}
 	if (out_fds != 1)
 		close(out_fds);
-	return (OK);
+	return (TRUE);
 }

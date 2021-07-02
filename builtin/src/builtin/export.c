@@ -31,5 +31,5 @@ int m_export(t_parsed parsed, t_dummy *std_out)
 		insert_tree(parsed.cmd[2]);
 	else
 		inorder_print(tree(), export, out_fds);
-	return (OK);
+	return (TRUE);
 }
