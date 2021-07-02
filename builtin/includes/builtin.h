@@ -104,7 +104,7 @@ t_tree			*tree(void);
 void			init_tree(char **env);
 void			insert_tree(char *val);
 void			delete_tree(char *val);
-void			free_tree(t_tree **tr);
+void			free_tree();
 t_tree			**search_tree(char *val);
 
 void			inorder_print(t_tree *tr, int type, int out_fds);
@@ -160,7 +160,7 @@ char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
-int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final,
+int				run_execved(char *pipe_str, t_parsed parsed,
 				int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out);
 
 // syntax_error.c

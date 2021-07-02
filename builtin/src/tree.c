@@ -139,19 +139,14 @@ void delete_tree(char *val)
 }
 
 
-/*
-** how to free
-** free_tree(tree()->right);
-** free_tree(tree()->left);
-*/
-void free_tree(t_tree **tr)
+void free_tree(void)
 {
-	if (*tr == NULL)
+	if (tree()->left == NULL && tree()->right == NULL)
 		return ;
-	free_tree(&((*tr)->left));
-	free_tree(&((*tr)->right));
-	free(*tr);
-	*tr = 0;
+	while(tree()->left)	
+		delete_tree(tree()->left->val);
+	while(tree()->right)
+		delete_tree(tree()->right->val);
 }
 
 char*	inorder_print_node(char *val, int type, int out_fds)
@@ -167,7 +162,6 @@ char*	inorder_print_node(char *val, int type, int out_fds)
 		{
 			write(out_fds, val, m_strlen(val));
 			write(out_fds, "\n", 1);
-			// printf("%s\n", val);
 		}
 	}
 	else 						// export = 1

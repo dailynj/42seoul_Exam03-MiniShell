@@ -52,9 +52,7 @@ void get_env(char **env, char *buf, int *idx)
 		return ;
 	while (buf[(*idx)] && buf[(*idx)] != ' '
 		&& buf[(*idx)] != '\'' && buf[(*idx)] != '\"')
-	{
 		(*env)[++edx] = buf[(*idx)++];
-	}
 	--(*idx);
 	(*env)[++edx] = 0;
 }
@@ -96,9 +94,7 @@ void	 replace_env(char *g_read_buf)
 			{
 				// 아래랑 똑같음
 				if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1] && g_read_buf[idx + 1] == '\\')
-				{
 					temp[++tdx] = g_read_buf[++idx];
-				}
 				else if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
 				{
 					temp[++tdx] = g_read_buf[idx];
@@ -111,9 +107,7 @@ void	 replace_env(char *g_read_buf)
 					free(env);
 				}
 				else
-				{
 					temp[++tdx] = g_read_buf[idx];
-				}
 			}
 		}
 		else if(g_read_buf[idx] == '\'')
@@ -153,13 +147,8 @@ void	 replace_env(char *g_read_buf)
 					free(env);
 				}
 			}
-			//  --------
 			else if (check_real(g_read_buf, idx))
-			{
 				temp[++tdx] = check_real(g_read_buf, idx);
-				// if (check_real(g_read_buf, idx) == 2 || check_real(g_read_buf, idx) == 4)
-				// 	++idx;
-			}
 			else
 				temp[++tdx] = g_read_buf[idx];
 		}

@@ -45,9 +45,9 @@ void	fill_list(char *line, char ch, t_dummy *std)
 
 	while (*line)
 	{
-		if (*line == ch) // < 
+		if (*line == ch)
 		{
-			if (*(line + 1) == ch)  // <<
+			if (*(line + 1) == ch)
 			{
 				tmp = first_word(++line);
 				add_list(std->tail, tmp, 1);

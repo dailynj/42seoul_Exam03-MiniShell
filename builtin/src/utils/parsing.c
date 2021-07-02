@@ -93,7 +93,7 @@ void cmd_else(t_parsed *output, char *line)
 		}
 		else
 		{
-			while(*line != '\0') // && *line != ' ')
+			while(*line != '\0')
 			{
 				output->cmd[2][++i] = *line;
 				++line;

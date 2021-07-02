@@ -12,23 +12,17 @@
 
 #include "builtin.h"
 
-// fork 해서 자식 프로세스가 실행하도록
-
-int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out)
+int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out)
 {
 	char **exec_str;
 	char **envp;
 	char **path_arr;
-	// char **tmp_exec_str;
 	char **tmp_path_arr;
 	char *path;
 	int status;
-	// char g_read_buf[BUFFER_SIZE];
 
 	exec_str = m_split_char(pipe_str, ' ');
 	path_arr = m_split_char(m_find_env("PATH"), 58);
-	(void)pnum;
-	(void)final;
 	if (!path_arr)
 	{
 		printf("Error: not found\n");
@@ -36,14 +30,11 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 	}
 	tmp_path_arr = path_arr;
 	envp = malloc(sizeof(char *) * tree()->size + 1);
-	inorder_execve(tree(), &envp, 0); // sunashell 의 환경변수 목록 넘기는 함수
+	inorder_execve(tree(), &envp, 0);
 	g_pid = fork();
 	if (g_pid == 0)
 	{
 		int idx = 0;
-		
-		printf("in -> %s\n", std_in->tail->left->val);
-		printf("out -> %s\n", std_out->tail->left->val);
 		if (std_out->tail->left->db)
 			out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
 		else
@@ -78,7 +69,7 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 	else
 	{
 		wait(&status);
-		// 자식이 끝날 때 까지 기다렸다가 만약 자식이 error상태로 끝나면 return 에러
+		m_free_split(envp);
 		m_free_split(exec_str);
 		m_free_split(path_arr);
 		g_pid = 0;

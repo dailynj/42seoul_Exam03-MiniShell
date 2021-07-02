@@ -39,6 +39,9 @@ int		main(int ac, char **av, char **env)
 	init_term(&term);
 	init_list(&history);
 	start_shell(&term, &history);
+	free_tree();
+	while(1)
+		;
 	return (0);
 }
 
@@ -211,7 +214,7 @@ int		start_shell(t_term *term, t_dummy *history)
 			tmp = join_parsed(parsed);
 			if (!run_builtin(parsed, &std_out))
 			{
-				run_execved(tmp, parsed, i, final, in_fds, out_fds, &std_in, &std_out);
+				run_execved(tmp, parsed, in_fds, out_fds, &std_in, &std_out);
 			}
 			free(tmp);
 			tmp = 0;

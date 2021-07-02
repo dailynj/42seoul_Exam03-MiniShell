@@ -49,20 +49,6 @@ int		m_strlen(char *str)
 	return (i);
 }
 
-// int m_strcmp(char *s1, char *s2)
-// {
-// 	while (*s1 != '\0' || *s2 != '\0')
-// 	{
-// 		if (*s1 > *s2)
-// 			return 1;
-// 		else if (*s1 < *s2)
-// 			return -1;
-// 		s1++;
-// 		s2++;
-// 	}
-// 	return 0;
-// }
-
 char *m_strcpy(char *dest, char *src)
 {
 	char *tmp = dest;
