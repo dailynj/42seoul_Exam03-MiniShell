@@ -1,35 +1,47 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:01:52 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:01:53 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef BUILTIN_H
-#define BUILTIN_H
+# define BUILTIN_H
 
-#include <signal.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <limits.h>
-#include <string.h>
-#include <dirent.h>
-#include <fcntl.h>
-#include <termios.h>
+# include <signal.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <limits.h>
+# include <string.h>
+# include <dirent.h>
+# include <fcntl.h>
+# include <termios.h>
 
-#define SHORT 0
-#define LONG 1
+# define SHORT 0
+# define LONG 1
 
-#define BUFFER_SIZE 100000
-#define ENV_MAX 40000000
+# define BUFFER_SIZE 100000
+# define ENV_MAX 40000000
 
-#define WHITESPACE "\t\n\v\f\r "
+# define WHITESPACE "\t\n\v\f\r "
 
-#define REAL_PIPE 1
-#define REAL_LL 2
-#define REAL_L 3
-#define REAL_RR 4
-#define REAL_R 5
+# define REAL_PIPE 1
+# define REAL_LL 2
+# define REAL_L 3
+# define REAL_RR 4
+# define REAL_R 5
 
-#define ERROR 0
-#define OK 1
+# define ERROR 0
+# define OK 1
 
-#define HEAD 0
-#define TAIL 1
+# define HEAD 0
+# define TAIL 1
 
 typedef struct	s_term
 {
@@ -37,12 +49,11 @@ typedef struct	s_term
 	struct termios org_term;
 }				t_term;
 
-int g_errno;
+int		g_errno;
 char	*g_question;
 pid_t	g_pid;
 // char	g_read_buf[BUFFER_SIZE];
 int		g_fds;
-
 
 typedef enum	e_type
 {
@@ -75,39 +86,36 @@ typedef struct		s_dummy
 
 typedef struct	s_parsed
 {
-	char cmd[3][BUFFER_SIZE];
-	// char opt[BUFFER_SIZE];
-	// char arv[BUFFER_SIZE];
+	char	cmd[3][BUFFER_SIZE];
 }				t_parsed;
 
 // main.c
-int				start_shell();
+int				start_shell(t_term *term);
 void			print_pwd(int type);
 int				run_builtin(t_parsed parsed);
 void			printpipe(char **pipe_str);
+void			noncanonical_input(char *g_read_buf, t_term *term);
 
 //builtin
 int 			m_echo(t_parsed parsed);
 int				m_cd(t_parsed parsed);
 int				m_pwd(t_parsed parsed);
-int				m_exit();
+int				m_exit(t_parsed parsed);
 int				m_env(t_parsed parsed);
 int				m_export(t_parsed parsed);
 int				m_unset(t_parsed parsed);
-
 
 // tree.c
 t_tree			*tree(void);
 void			init_tree(char **env);
 void			insert_tree(char *val);
-void			delete_tree();
+void			delete_tree(char *val);
 void			free_tree(t_tree **tr);
 t_tree			**search_tree(char *val);
 
 void			inorder_print(t_tree *tr, int type);
 int				inorder_execve(t_tree *tr, char ***output, int index);
-char*			inorder_print_node(char *val, int type);
-
+char			*inorder_print_node(char *val, int type);
 
 // lib.c
 int				m_strncmp(char *s1, char *s2, size_t n);
@@ -129,11 +137,10 @@ int				m_strchr(char *s, int c);
 char			*m_strdup(char *src);
 int				m_max(int n1, int n2);
 int				m_arrsize(char **arr);
-int				nnnn(char *line);
+int				nnnn(char *line, int idx, int flag, int ret);
 char			*m_strjoin(char *s1, char *s2);
 int				m_isnum(char *str);
 void			*m_calloc(size_t count, size_t size);
-
 
 // run_redirection.c
 char			*first_word(char *line);
@@ -147,7 +154,6 @@ char 			*join_parsed(t_parsed parsed);
 t_parsed		get_cmd_echo(char *line);
 t_parsed		get_cmd(char *line);
 
-
 // error.c
 void			print_error(t_parsed parsed, char *status);
 int				return_message(char *file, char *message, int ret);
@@ -160,8 +166,8 @@ char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
-// int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final);
-int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out);
+int				run_execved(char *pipe_str, t_parsed parsed, int pnum, int final,
+				int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out);
 
 // syntax_error.c
 int 			check_syntax(char *g_read_buf);
@@ -174,13 +180,13 @@ void			reset_input_mode(t_term *term);
 void			set_input_mode(t_term *term);
 
 // signal.c
-void			sigint_handler();
-void			sigquit_handler();
+void			sigint_handler(int errno);
+void			sigquit_handler(void);
 
 // list.c
 t_list			*new_list(char *val, int db);
 int				init_list(t_dummy *dummy);
-int				add_list(t_list *tail, char **val, int db);
+int				add_list(t_list *tail, char *val, int db);
 void			prt_list(t_list *head);
 
 #endif

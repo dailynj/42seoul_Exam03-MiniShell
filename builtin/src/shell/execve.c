@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execve.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:03:54 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:03:56 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 // fork 해서 자식 프로세스가 실행하도록
@@ -30,29 +42,23 @@ int run_execved(char *pipe_str, t_parsed parsed, int pnum, int final, int in_fds
 	{
 		int idx = 0;
 		
-		
 		g_fds = open("a.txt", O_WRONLY, 0777);
 		if (std_out->tail->left->db)
 			out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
 		else
-			out_fds = open(std_out->tail->left->val, O_WRONLY, 0777);
+			out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
 		in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
-		
 		// printf("val : %s\n", std_in->tail->left->val);
 		// in_fds = (in_fds == -1) ? 0 : in_fds;
 		// out_fds = (out_fds == -1) ? 1 : out_fds;
-		printf("in : %d, out : %d\n", in_fds, out_fds);
-
 		dup2(in_fds, STDIN_FILENO);
 		dup2(out_fds, STDOUT_FILENO);
-		
 		close(g_fds);
 		close(out_fds);
 		close(in_fds);
 		while (tmp_path_arr[idx])
 		{
 			path = m_strjoin(tmp_path_arr[idx], m_strjoin("/", parsed.cmd[0]));
-			// printf("path : %s\n", path);
 			execve(path, exec_str, envp); // 에러처리 필요
 			free(path);
 			++idx;

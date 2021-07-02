@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   quote.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:04:47 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:04:48 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 char *m_find_env(char *envp)
@@ -15,7 +27,7 @@ char *m_find_env(char *envp)
 		if (*envp == '=')
 		{
 			dirp = ++envp;
-			break;
+			break ;
 		}
 		++envp;
 	}
@@ -26,14 +38,6 @@ int 	check_real(char* buf, int idx)
 {
 	if (buf[idx] == '|')
 		return (REAL_PIPE);
-	// else if (buf[idx] == '<' && buf[idx + 1] == '<')
-	// 	return (REAL_LL);
-	// else if (buf[idx] == '<')
-	// 	return (REAL_L);
-	// else if (buf[idx] == '>' && buf[idx + 1] == '>')
-	// 	return (REAL_RR);
-	// else if (buf[idx] == '>')
-	// 	return (REAL_R);
 	return (0);
 }
 
@@ -45,8 +49,9 @@ void get_env(char **env, char *buf, int *idx)
 	(*idx)++;
 	*env = malloc(BUFFER_SIZE);
 	if (!*env)
-		return ; // error 처리
-	while (buf[(*idx)] && buf[(*idx)] != ' ' && buf[(*idx)] != '\'' && buf[(*idx)] != '\"')
+		return ;
+	while (buf[(*idx)] && buf[(*idx)] != ' '
+		&& buf[(*idx)] != '\'' && buf[(*idx)] != '\"')
 	{
 		(*env)[++edx] = buf[(*idx)++];
 	}
@@ -58,10 +63,9 @@ int	put_env(char **temp, char *env, int tdx)
 {
 	char	*dirp;
 
-
 	if ((dirp = m_find_env(env)))
 	{
-		while(*dirp)
+		while (*dirp)
 		{
 			(*temp)[++tdx] = *dirp;
 			++dirp;
@@ -154,7 +158,7 @@ void	 replace_env(char *g_read_buf)
 				temp[++tdx] = g_read_buf[idx];
 		}
 	}
-	m_memset(g_read_buf, 0 , BUFFER_SIZE);
+	m_memset(g_read_buf, 0, BUFFER_SIZE);
 	m_strlcpy(g_read_buf, temp, BUFFER_SIZE);
 	free(temp);
 	temp = 0;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:04:43 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:04:43 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 int check(char *line)
@@ -35,11 +47,11 @@ void cmd_echo(t_parsed *output, char *line)
 	while (idx < cnt && idx < 3)
 	{
 		while (*line == 32)
-				++line;
-		if (nnnn(line) > 0 && idx == 1)
+			++line;
+		if (nnnn(line, 0, 0, 0) > 0 && idx == 1)
 		{
 			m_strcpy(output->cmd[1], "-n");
-			line += (nnnn(line));
+			line += (nnnn(line, 0, 0, 0));
 		}
 		else
 		{

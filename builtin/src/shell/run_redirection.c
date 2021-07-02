@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   run_redirection.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:04:00 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:04:01 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 char	*first_word(char *line)
@@ -11,7 +23,7 @@ char	*first_word(char *line)
 	tmp = malloc(BUFFER_SIZE);
 	if (!line || !tmp)
 		return (NULL);
-	while(line[++i])
+	while (line[++i])
 	{
 		if (line[i] != ' ')
 		{
@@ -27,11 +39,10 @@ char	*first_word(char *line)
 	return (tmp);
 }
 
-void fill_list(char *line, char ch, t_dummy *std)
+void	fill_list(char *line, char ch, t_dummy *std)
 {
 	char	*tmp;
-	// int		in_fds;
-	
+
 	while (*line)
 	{
 		if (*line == ch) // < 
@@ -39,41 +50,40 @@ void fill_list(char *line, char ch, t_dummy *std)
 			if (*(line + 1) == ch)  // <<
 			{
 				tmp = first_word(++line);
-				add_list(std->tail, &tmp, 1);
+
+				add_list(std->tail, tmp, 1);
 			}
 			else
 			{
 				tmp = first_word(line);
-				add_list(std->tail, &tmp, 0);
+				add_list(std->tail, tmp, 0);
 			}
 			free(tmp);
 		}
 		++line;
 	}
-	
 }
 
-// head->right 가 매개변수로 들어옴
 int		redi_stdin(t_list *node)
 {
-	t_list *tmp;
-	char read_buf[BUFFER_SIZE];
-	int fd;
+	t_list	*tmp;
+	char	read_buf[BUFFER_SIZE];
+	int		fd;
 
 	tmp = node;
 	fd = 0;
-	while(tmp->right)
+	while (tmp->right)
 	{
-		if (tmp->db == 0) // <
+		if (tmp->db == 0)
 		{
 			fd = open(tmp->val, O_WRONLY, 0777);
 			if (fd == -1)
 				return (return_message(tmp->val, "No such file or directory", -1));
 			close (fd);
 		}
-		else if (tmp->db == 1) // <<
+		else if (tmp->db == 1)
 		{
-			fd = open(tmp->val, O_WRONLY | O_TRUNC, 0777);
+			fd = open("a.txt", O_WRONLY | O_TRUNC, 0777);
 			while (1)
 			{
 				m_memset(&read_buf, 0, BUFFER_SIZE);
@@ -91,16 +101,15 @@ int		redi_stdin(t_list *node)
 	return (fd);
 }
 
-// head->right 가 매개변수로 들어옴
 int		redi_stdout(t_list *node)
 {
-	t_list *tmp;
-	int fd;
+	t_list	*tmp;
+	int		fd;
 
 	tmp = node;
 	fd = 1;
-	while(tmp->right)
-	{ // >> 
+	while (tmp->right)
+	{
 		fd = open(tmp->val, O_WRONLY | (O_APPEND & (tmp->db << 3)) | O_CREAT, 0777);
 		tmp = tmp->right;
 		close(fd);
@@ -108,7 +117,7 @@ int		redi_stdout(t_list *node)
 	return (fd);
 }
 
-char *core_cmd(char *line)
+char	*core_cmd(char *line)
 {
 	char *temp;
 	int tdx;
@@ -118,24 +127,24 @@ char *core_cmd(char *line)
 	m_memset(temp, 0, BUFFER_SIZE);
 	if (!temp)
 		return (NULL);
-	while(*line)
+	while (*line)
 	{
 		if (*line == '<' || *line == '>')
 		{
 			if (*(line + 1) == '<' || *(line + 1) == '>')
 				++line;
 			++line;
-			while(*line == ' ')
+			while (*line == ' ')
 				++line;
-			while(*line != ' ')
+			while (*line != ' ')
 				++line;
-			while(*line == ' ')
+			while (*line == ' ')
 				++line;
 			if (*line == '<' || *line == '>')
 				;
 			else
 			{
-				while(*line != ' ')
+				while (*line != ' ')
 				{
 					temp[++tdx] = *line;
 					++line;
@@ -149,17 +158,16 @@ char *core_cmd(char *line)
 		++line;
 	}
 	temp[++tdx] = 0;
-	return temp;
+	return (temp);
 }
 
-char *join_parsed(t_parsed parsed)
+char	*join_parsed(t_parsed parsed)
 {
-	char *ret;
-	int cnt;
-	int idx;
-	int rdx;
+	char	*ret;
+	int		cnt;
+	int		idx;
+	int		rdx;
 
-	
 	cnt = -1;
 	rdx = -1;
 	ret = malloc(BUFFER_SIZE);

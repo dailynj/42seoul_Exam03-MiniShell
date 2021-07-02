@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tree.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:04:12 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:04:13 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 t_tree	*tree(void)
@@ -144,7 +156,7 @@ void delete_tree(char *val)
 void free_tree(t_tree **tr)
 {
 	if (*tr == NULL)
-		return;
+		return ;
 	free_tree(&((*tr)->left));
 	free_tree(&((*tr)->right));
 	free(*tr);

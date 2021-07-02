@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   list.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:03:43 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:03:44 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 t_list	*new_list(char *val, int db)
@@ -31,13 +43,13 @@ int	init_list(t_dummy *dummy)
 	return (OK);
 }
 
-int	add_list(t_list *tail, char **val, int db)
+int	add_list(t_list *tail, char *val, int db)
 {
 	t_list	*new_node;
 	t_list	*tmp;
 
 	tmp = tail;
-	new_node = new_list(*val, db);
+	new_node = new_list(val, db);
 	if (!new_node)
 		return (ERROR);
 	tmp->left->right = new_node;

@@ -1,28 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cd.c                                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:02:25 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:02:26 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
-int m_cd_up()
+int		m_cd_up(void)
 {
-	char cwd[PATH_MAX];
-	int idx;
+	char	cwd[PATH_MAX];
+	int		idx;
 
 	getcwd(cwd, sizeof(cwd));
 	idx = m_strlen(cwd);
-	while(--idx >= 0)
+	while (--idx >= 0)
 	{
 		if (cwd[idx] == '/')
 		{
 			cwd[idx] = '\0';
-			break;
+			break ;
 		}
 		cwd[idx] = '\0';
 	}
 	return (chdir(cwd));
 }
 
-int m_cd_env(char *envp)
+int		m_cd_env(char *envp)
 {
-	char *dirp;
-	t_tree **output;
+	char	*dirp;
+	t_tree	**output;
 
 	output = search_tree(envp);
 	if (output == NULL)
@@ -33,16 +45,16 @@ int m_cd_env(char *envp)
 		if (*envp == '=')
 		{
 			dirp = ++envp;
-			break;
+			break ;
 		}
 		++envp;
 	}
 	return (chdir(dirp));
 }
 
-int	m_cd(t_parsed parsed)
+int		m_cd(t_parsed parsed)
 {
-	int result;
+	int	result;
 
 	if (parsed.cmd[2][0] == '.' && parsed.cmd[2][1] == '.' && (parsed.cmd[2][2] == ' ' || parsed.cmd[2][2] == '\0'))
 	{
@@ -70,7 +82,6 @@ int	m_cd(t_parsed parsed)
 		}
 		else
 			print_error(parsed, "?=127");
-		// return (ERROR); // print_error()
 	}
 	return (OK);
 }
