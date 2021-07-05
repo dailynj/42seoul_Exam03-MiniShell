@@ -3,8 +3,6 @@ minishell 너무쉽당.. 할만하네~
 
 ## To-Do List
 
-- syntax error (<> , > 이후에 아무것도 안들어오면)
-
 - exit 할때, 인자로 0-255 아니면 exit(256) 출력하기
 
 - t_bool

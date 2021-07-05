@@ -42,17 +42,23 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 		}
 		else
 		{
-			if (std_out->tail->left->db)
-				out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
-			else
-				out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
-			if (std_in->tail->left->db)
+			int temp_fds;
+			if (std_in->tail->left->db == -1)
+				in_fds = -1;
+			else if (std_in->tail->left->db)
 				in_fds = open("a.txt", O_RDONLY, 0777);
 			else
 				in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
-			dup2(in_fds, STDIN_FILENO);
+			temp_fds = dup(in_fds);
+			if (std_out->tail->left->db == -1)
+				out_fds = -1;
+			else if (std_out->tail->left->db)
+				out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+			else
+				out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
 			dup2(out_fds, STDOUT_FILENO);
 			close(out_fds);
+			dup2(temp_fds, STDIN_FILENO);
 			close(in_fds);
 			while (path_arr[idx])
 			{
@@ -66,19 +72,25 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 		}
 		// 만약 와일문을 탈출했으면 에러처리 해야함
 		// 여기서 return 말고 exit으로 처리해야함
-		if (parsed.cmd[0][0] == '/')
-			exit(1);
+		if (m_strchr(parsed.cmd[0], '/'))
+		{
+			printf("here\n");
+			exit(259);
+		}
 		else
 			exit(127);
-
 	}
 	else
 	{
 		wait(&status);
+		errno = status >> 8;
+		if (errno == 0)
+			errno = (status & 255) + 128;
+		// printf("status : %d, errno : %d\n", status, errno);
 		if (status >> 8 == 127)
-			printf("%s: command not found!\n", parsed.cmd[0]);
-		else if(status >> 8 == 1)
-			printf("%s: No such file or directory\n", parsed.cmd[0]);
+			printf("bash: %s: command not found!\n", parsed.cmd[0]);
+		else if(status  == 768)
+			printf("bash: %s: No such file or directory\n", parsed.cmd[0]);
 		m_free_split(envp);
 		m_free_split(exec_str);
 		m_free_split(path_arr);

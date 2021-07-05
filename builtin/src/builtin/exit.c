@@ -14,10 +14,24 @@
 
 int		m_exit(t_parsed parsed)
 {
-	printf("exit\n");
+	long long arg;
+
+	// ㄱㅐㅅ구 체크해서 return (TRUE);
+	
 	if (parsed.cmd[1][0] != '\0')
+		arg = m_atoi(parsed.cmd[1]);
+	else
+		arg = m_atoi(parsed.cmd[2]);
+	printf("exit\n");
+	if (parsed.cmd[1][0] != '\0' && !m_isnum(parsed.cmd[1]))
+	{
 		printf("bash: exit: %s: numeric argument required\n", parsed.cmd[1]);
-	else if (!m_isnum(parsed.cmd[2]))
+		exit(255);
+	}
+	else if (parsed.cmd[2][0] != '\0' && !m_isnum(parsed.cmd[2]))
+	{
 		printf("bash: exit: %s: numeric argument required\n", parsed.cmd[2]);
-	exit(errno);
+		exit(255);
+	}
+	exit((256 + arg) % 256);
 }

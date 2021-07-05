@@ -12,22 +12,16 @@
 
 #include "builtin.h"
 
-
-
 void	sigint_handler(int err)
 {
 	(void)err;
+	printf("\n");
+}
 
-	if (g_pid > 0)
-	{
-		errno = 130;
-		printf("\n");
-	}
-	// else
-	// {
-	// 	printf("\b\b  \b\b\n");
-	// 	print_pwd(LONG);
-	// }
+void	sigquit_handler(int err)
+{
+	(void)err;
+	printf("\n");
 }
 
 int		main(int ac, char **av, char **env)
@@ -38,6 +32,7 @@ int		main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	signal(SIGINT, sigint_handler);
+	signal(SIGQUIT, sigquit_handler);
 
 	init_term(&term);
 	init_list(&history);
@@ -49,7 +44,7 @@ int		main(int ac, char **av, char **env)
 	}
 
 	start_shell(&term, &history);
-	// free_list(&env_list);
+	free_list(&env_list);
 	return (0);
 }
 
@@ -188,6 +183,9 @@ int		start_shell(t_term *term, t_dummy *history)
 			std_out = malloc(sizeof(t_dummy));
 			init_list(std_out);
 			init_list(std_in);
+			// pipe(pp);
+			if (i !=0)
+				add_list(std_in->tail, "a.txt", 0);
 			if (i != pipe_len - 1)
 				add_list(std_out->tail, "a.txt", 0);
 			m_memset(&parsed, 0, sizeof(t_parsed));

@@ -80,49 +80,21 @@ int check_pipe(char *g_read_buf)
 	return (0);
 }
 
-int check_redi(char *g_read_buf)
+int check_redi(char *line)
 {
-	int i;
-	int flag;
-
-	i = -1;
-	while(g_read_buf[++i])
+	while(*line)
 	{
-		flag = 0;
-		if (g_read_buf[i] != '|')
-			continue ;
-		if (g_read_buf[i] == '|')
+		if (*line == '<' || *line == '>')
 		{
-			while (g_read_buf[++i] && g_read_buf[i] != '|')
-			{
-				if (g_read_buf[i] != ' ')
-					flag = 1;
-			}
+			if (*(line + 1) == '<' || *(line + 1) == '>')
+				++line;
+			++line;
+			while (*line == ' ')
+				++line;
+			if (*line == '\0')
+				return (1);
 		}
-		if (flag == 0)
-			return (1);
+		++line;
 	}
 	return (0);
 }
-
-
-// bash-3.2$ cat <<
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ cat <
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ cat <
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ cat >
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ < cat
-// bash: cat: No such file or directory
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ >
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ <<
-// bash: syntax error near unexpected token `newline'
-// bash-3.2$ >>
-// bash: syntax error near unexpected token `newline'
-
-// bash-3.2$ > cat       에러아님
-// bash-3.2$ < cat	         에러아님

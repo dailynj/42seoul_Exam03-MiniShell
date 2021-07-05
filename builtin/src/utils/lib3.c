@@ -131,3 +131,29 @@ char		*m_itoa(int n)
 		ptr[tmp] = buf[len - 1 - tmp];
 	return (ptr);
 }
+
+long long		m_atoi(char *str)
+{
+	int	minus;
+	long long answer;
+	int	i;
+
+	i = 0;
+	minus = 1;
+	answer = 0;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			minus *= -1;
+		i++;
+	}
+	while (str[i] != '\0')
+	{
+		if (str[i] >= '0' && str[i] <= '9')
+			answer = answer * 10 + str[i] - '0';
+		else
+			break ;
+		i++;
+	}
+	return (minus * answer);
+}

@@ -37,9 +37,11 @@
 # define FALSE 0
 # define TRUE 1
 
-extern int errno;
+// extern int errno;
 
 pid_t	g_pid;
+// int		pp[2];
+
 
 typedef int		t_bool;
 
@@ -87,6 +89,8 @@ typedef struct	s_parsed
 t_dummy env_list;
 
 // main.c
+void			sigint_handler(int err);
+void			sigquit_handler(int err);
 int				start_shell(t_term *term, t_dummy *history);
 void			print_pwd(int type);
 int				run_builtin(t_parsed parsed, t_dummy *std_out);
@@ -140,6 +144,8 @@ char			*m_strjoin(char *s1, char *s2);
 int				m_isnum(char *str);
 void			*m_calloc(size_t count, size_t size);
 char			*m_itoa(int n);
+long long		m_atoi(char *str);
+
 
 // run_redirection.c
 char			*first_word(char *line);
