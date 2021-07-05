@@ -28,8 +28,12 @@ int m_export(t_parsed parsed, t_dummy *std_out)
 	else if (parsed.cmd[2][0] >= '0' && parsed.cmd[2][0] <= '9')
 		print_error(parsed, "?=1");
 	else if (parsed.cmd[2][0] != '\0')
-		insert_tree(parsed.cmd[2]);
+		// insert_tree(parsed.cmd[2]);
+		;
 	else
-		inorder_print(tree(), export, out_fds);
+		// inorder_print(tree(), export, out_fds);
+		print_list(&env_list);
+	if (out_fds != 1)
+		close(out_fds);
 	return (TRUE);
 }

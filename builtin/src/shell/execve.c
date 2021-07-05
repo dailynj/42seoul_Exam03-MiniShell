@@ -22,15 +22,23 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 	int status;
 
 	exec_str = m_split_char(pipe_str, ' ');
-	path_arr = m_split_char(m_find_env("PATH"), 58);
+	char *find_env;
+	// find_env = m_find_env("PATH");
+	find_env = m_find_env_list(&env_list, "PATH");
+	// printf(" --> %s\n", find_env);
+	path_arr = m_split_char(find_env, 58);
+	free(find_env);
+	// free (find_env);
+	// path_arr = NULL;
 	if (!path_arr)
 	{
 		printf("Error: not found\n");
 		return (0); // error 처리
 	}
 	tmp_path_arr = path_arr;
-	envp = malloc(sizeof(char *) * tree()->size + 1);
-	inorder_execve(tree(), &envp, 0);
+	// envp = malloc(sizeof(char *) * tree()->size + 1);
+	envp = make_envp(&env_list);
+	// inorder_execve(tree(), &envp, 0);
 	g_pid = fork();
 	if (g_pid == 0)
 	{
@@ -47,12 +55,22 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 		dup2(out_fds, STDOUT_FILENO);
 		close(out_fds);
 		close(in_fds);
-		while (tmp_path_arr[idx])
+		if (m_strchr(parsed.cmd[0], '/'))
 		{
-			path = m_strjoin(tmp_path_arr[idx], m_strjoin("/", parsed.cmd[0]));
-			execve(path, exec_str, envp); // 에러처리 필요
-			free(path);
-			++idx;
+			execve(parsed.cmd[0], exec_str, envp);
+		}
+		else
+		{
+			while (tmp_path_arr[idx])
+			{
+				char *temp = m_strjoin("/", parsed.cmd[0]);
+				path = m_strjoin(tmp_path_arr[idx], temp);
+				printf("-> %s\n", path);
+				free(temp);
+				execve(path, exec_str, envp); // 에러처리 필요
+				free(path);
+				++idx;
+			}
 		}
 		// 만약 와일문을 탈출했으면 에러처리 해야함
 		// 여기서 return 말고 exit으로 처리해야함

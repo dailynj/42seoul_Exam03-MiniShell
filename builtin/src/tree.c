@@ -21,7 +21,6 @@ t_tree	*tree(void)
 
 void init_tree(char **env)
 {
-	(void) env;
 	m_strcpy(tree()->val, "5=h");
 	tree()->left = NULL;
 	tree()->right = NULL;
@@ -56,11 +55,6 @@ void insert_tree(char *val)
 	tmp = tree();
 	while (1)
 	{
-		// int i = -1;  출력
-		// printf("%s vs %s\n", val, tmp->val);
-		// while (++i < find_equal(val))
-		// 	printf("%c vs %c\n", val[i], tmp->val[i]);
-		// printf("cmp result : %d\n", m_strncmp(tmp->val, val, find_equal(val)));
 		if (m_strncmp(tmp->val, val, find_equal(val)) > 0)
 		{
 			if (!tmp->left && (tmp->left = new_node(val)))
@@ -143,7 +137,7 @@ void free_tree(void)
 {
 	if (tree()->left == NULL && tree()->right == NULL)
 		return ;
-	while(tree()->left)	
+	while(tree()->left)
 		delete_tree(tree()->left->val);
 	while(tree()->right)
 		delete_tree(tree()->right->val);
@@ -157,7 +151,7 @@ char*	inorder_print_node(char *val, int type, int out_fds)
 	if (val == tree()->val)
 		return (NULL);
 	if (type >> 1) // environ = 2
-	{ 			
+	{
 		if (m_strchr(val, '='))
 		{
 			write(out_fds, val, m_strlen(val));

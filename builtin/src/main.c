@@ -12,6 +12,8 @@
 
 #include "builtin.h"
 
+
+
 void	sigint_handler(int errno)
 {
 	(void)errno;
@@ -38,10 +40,16 @@ int		main(int ac, char **av, char **env)
 	init_tree(env);
 	init_term(&term);
 	init_list(&history);
+	init_list(&env_list);
+	while (*env)
+	{
+		add_list_sort(&env_list, *env);
+		++env;
+	}
+	// print_list(&env_list);
 	start_shell(&term, &history);
 	free_tree();
-	while(1)
-		;
+	free_list(&env_list);
 	return (0);
 }
 
@@ -177,7 +185,7 @@ int		start_shell(t_term *term, t_dummy *history)
 			t_dummy		std_out; // > >>
 			init_list(&std_out);
 			init_list(&std_in);
-			
+
 
 			if (i == pipe_len - 1)
 				final = 1;

@@ -35,6 +35,7 @@ int m_env(t_parsed parsed, t_dummy *std_out)
 			write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
 	}
 	else
-		inorder_print(tree(), environ, out_fds);
+		// inorder_print(tree(), environ, out_fds);
+		print_list(&env_list);
 	return (TRUE);
 }

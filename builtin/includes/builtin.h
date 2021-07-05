@@ -42,6 +42,7 @@ pid_t	g_pid;
 
 typedef int		t_bool;
 
+
 typedef struct	s_term
 {
 	struct termios new_term;
@@ -82,6 +83,7 @@ typedef struct	s_parsed
 	char	cmd[3][BUFFER_SIZE];
 }				t_parsed;
 
+t_dummy env_list;
 // main.c
 int				start_shell(t_term *term, t_dummy *history);
 void			print_pwd(int type);
@@ -186,5 +188,9 @@ t_bool			history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
 t_bool			history_down(int i, int hdx, t_dummy *history, char **g_read_buf);
 void			delete_val(int hdx, t_dummy *history);
 void			write_val(int hdx, t_dummy *history, int ch);
-
+int				add_list_sort(t_dummy *dummy, char *val);
+void			print_list(t_dummy *dummy);
+void			free_list(t_dummy *dummy);
+char			**make_envp(t_dummy *dummy);
+char *m_find_env_list(t_dummy *dummy, char *val);
 #endif
