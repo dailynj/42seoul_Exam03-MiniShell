@@ -160,7 +160,7 @@ int				return_message(char *file, char *message, int ret);
 void			print_parsed(t_parsed parsed);
 
 // quote.c
-void			replace_env(char *g_read_buf);
+void	 		replace_env(char *g_read_buf, int before_errno);
 char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 

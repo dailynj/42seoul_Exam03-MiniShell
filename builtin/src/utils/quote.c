@@ -72,7 +72,7 @@ int	put_env(char **temp, char *env, int tdx)
 	return (tdx);
 }
 
-void	 replace_env(char *g_read_buf)
+void	 replace_env(char *g_read_buf, int before_errno)
 {
 	char	*temp;
 	char	*env;
@@ -132,11 +132,10 @@ void	 replace_env(char *g_read_buf)
 				{
 					char	*err;
 					int		edx = -1;
-					err = m_itoa(errno);
-					while(err[edx])
+					err = m_itoa(before_errno);
+					while(err[++edx])
 					{
 						temp[++tdx] = err[edx];
-						++edx;
 					}
 					free(err);
 					++idx;

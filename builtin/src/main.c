@@ -20,6 +20,7 @@ void	sigint_handler(int err)
 
 	if (g_pid > 0)
 	{
+		errno = 130;
 		printf("\n");
 	}
 	// else
@@ -114,7 +115,7 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 		}
 		else if (ch == 3)
 		{
-			errno = 126;
+			errno = 1;
 			write(1, "\n", 1);
 			break ;
 		}
@@ -130,13 +131,13 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 		}
 		else if (ch == '\n')
 		{
+
 			g_read_buf[++i] = 0;
 			tmp_read_buf[i] = 0;
 			write(1, &ch, 1);
 			if (g_read_buf[0] != '\0')
 				add_list(history->tail, g_read_buf, 0);
 			ch = 0;
-			errno = 0;
 			break ;
 		}
 		else
@@ -158,21 +159,23 @@ int		start_shell(t_term *term, t_dummy *history)
 	char		**pipe_str;
 	t_parsed	parsed;
 	int			i;
+	int			before_errno;
 
 	g_read_buf = malloc(BUFFER_SIZE + 1);
 	while (1)
 	{
+		before_errno = errno;
 		errno = 0;
 		print_pwd(LONG);
 		noncanonical_input(g_read_buf, term, history);
-		if (errno)
-			continue ;
 		if (check_syntax(g_read_buf) || check_pipe(g_read_buf) || check_redi(g_read_buf))
 		{
 			printf("bash: Syntax error\n");
 			continue ;
 		}
-		replace_env(g_read_buf);
+		if (errno)
+			continue ;
+		replace_env(g_read_buf, before_errno);
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
 		i = -1;
 		int pipe_len = m_arrsize(pipe_str);
@@ -206,7 +209,6 @@ int		start_shell(t_term *term, t_dummy *history)
 			if (in_fds == -1)
 				continue ;
 			// 만약 error면 break ;
-			errno = 0;
 			if (m_strlen(parsed.cmd[0]) == 0)
 			{
 				++pdx;
@@ -214,9 +216,8 @@ int		start_shell(t_term *term, t_dummy *history)
 			}
 			tmp = join_parsed(parsed);
 			if (!run_builtin(parsed, std_out))
-			{
 				run_execved(tmp, parsed, in_fds, out_fds, std_in, std_out);
-			}
+			
 			free(tmp);
 			free_list(&std_in);
 			free_list(&std_out);
