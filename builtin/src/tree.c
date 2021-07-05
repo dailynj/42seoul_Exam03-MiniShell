@@ -30,7 +30,7 @@ void init_tree(char **env)
 		insert_tree(*env);
 		++env;
 	}
-	g_question = "0";
+	errno = 0;
 }
 
 t_tree *new_node(char *val)

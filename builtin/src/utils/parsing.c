@@ -114,7 +114,7 @@ t_parsed get_cmd(char *line)
 	m_memset(&output, 0, sizeof(t_parsed));
 	while (*line == 32)
 		++line;
-	while (*line && ((*line) != 32))
+	while (*line && ((*line) != 32) && (*line !=  '<') && (*line != '>'))
 	{
 		output.cmd[0][++i] = *line;
 		++line;

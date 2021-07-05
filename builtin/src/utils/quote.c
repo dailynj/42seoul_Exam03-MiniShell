@@ -130,14 +130,15 @@ void	 replace_env(char *g_read_buf)
 			{
 				if (g_read_buf[idx + 1] == '?')
 				{
-					char *tmp;
-
-					tmp = g_question;
-					while(*tmp)
+					char	*err;
+					int		edx = -1;
+					err = m_itoa(errno);
+					while(err[edx])
 					{
-						temp[++tdx] = *tmp;
-						++tmp;
+						temp[++tdx] = err[edx];
+						++edx;
 					}
+					free(err);
 					++idx;
 				}
 				else

@@ -17,55 +17,47 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 	char **exec_str;
 	char **envp;
 	char **path_arr;
-	char **tmp_path_arr;
 	char *path;
 	int status;
-
-	exec_str = m_split_char(pipe_str, ' ');
 	char *find_env;
-	// find_env = m_find_env("PATH");
+
+	status = 0;
+	exec_str = m_split_char(pipe_str, ' ');
 	find_env = m_find_env_list(&env_list, "PATH");
-	// printf(" --> %s\n", find_env);
 	path_arr = m_split_char(find_env, 58);
 	free(find_env);
-	// free (find_env);
-	// path_arr = NULL;
 	if (!path_arr)
 	{
-		printf("Error: not found\n");
+		printf("Error: not found\n"); 
 		return (0); // error 처리
 	}
-	tmp_path_arr = path_arr;
-	// envp = malloc(sizeof(char *) * tree()->size + 1);
 	envp = make_envp(&env_list);
-	// inorder_execve(tree(), &envp, 0);
 	g_pid = fork();
 	if (g_pid == 0)
 	{
 		int idx = 0;
-		if (std_out->tail->left->db)
-			out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
-		else
-			out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
-		if (std_in->tail->left->db)
-			in_fds = open("a.txt", O_RDONLY, 0777);
-		else
-			in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
-		dup2(in_fds, STDIN_FILENO);
-		dup2(out_fds, STDOUT_FILENO);
-		close(out_fds);
-		close(in_fds);
 		if (m_strchr(parsed.cmd[0], '/'))
 		{
 			execve(parsed.cmd[0], exec_str, envp);
 		}
 		else
 		{
-			while (tmp_path_arr[idx])
+			if (std_out->tail->left->db)
+				out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+			else
+				out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
+			if (std_in->tail->left->db)
+				in_fds = open("a.txt", O_RDONLY, 0777);
+			else
+				in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
+			dup2(in_fds, STDIN_FILENO);
+			dup2(out_fds, STDOUT_FILENO);
+			close(out_fds);
+			close(in_fds);
+			while (path_arr[idx])
 			{
 				char *temp = m_strjoin("/", parsed.cmd[0]);
-				path = m_strjoin(tmp_path_arr[idx], temp);
-				printf("-> %s\n", path);
+				path = m_strjoin(path_arr[idx], temp);
 				free(temp);
 				execve(path, exec_str, envp); // 에러처리 필요
 				free(path);
@@ -75,18 +67,18 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 		// 만약 와일문을 탈출했으면 에러처리 해야함
 		// 여기서 return 말고 exit으로 처리해야함
 		if (parsed.cmd[0][0] == '/')
-		{
-			printf("%s: No such file or directory\n", parsed.cmd[0]);
-		}
+			exit(1);
 		else
-		{
-			printf("%s: command not found!\n", parsed.cmd[0]);
-		}
-		exit(0);
+			exit(127);
+
 	}
 	else
 	{
 		wait(&status);
+		if (status >> 8 == 127)
+			printf("%s: command not found!\n", parsed.cmd[0]);
+		else if(status >> 8 == 1)
+			printf("%s: No such file or directory\n", parsed.cmd[0]);
 		m_free_split(envp);
 		m_free_split(exec_str);
 		m_free_split(path_arr);

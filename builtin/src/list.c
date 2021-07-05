@@ -75,8 +75,8 @@ void prt_list(t_list *head)
 
 t_bool		history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
 {
-	int len;
-	t_list *tmp;
+	int		len;
+	t_list	*tmp;
 
 	tmp = history->tail;
 	if (hdx == 0)
@@ -153,8 +153,6 @@ void	write_val(int hdx, t_dummy *history, int ch)
 	tmp->val[m_strlen(tmp->val) + 1] = 0;
 }
 
-
-
 // 넣을 장소 찾아서 넣기
 int add_list_sort(t_dummy *dummy, char *val)
 {
@@ -164,12 +162,12 @@ int add_list_sort(t_dummy *dummy, char *val)
 	tmp = dummy->head;
 	while (tmp->right->db != -1)
 	{
-		if (m_strncmp(tmp->right->val, val, find_equal(val)) > 0)
+		if (m_strncmp(tmp->right->val, val, find_equal(val)) >= 0)
 			break ;
 		tmp = tmp->right;
 	}
-	if (m_strncmp(tmp->val, val, find_equal(val)) == 0)
-		m_strlcpy(tmp->val, val, m_strlen(val) + 1);
+	if (m_strncmp(tmp->right->val, val, find_equal(val)) == 0)
+		m_strlcpy(tmp->right->val, val, m_strlen(val) + 1);
 	else
 	{
 		new_node = new_list(val, 0);
@@ -197,20 +195,27 @@ void print_list(t_dummy *dummy)
 	}
 }
 
-void free_list(t_dummy *dummy)
+void free_list(t_dummy **dummy)
 {
-	t_list *del_node;
-	t_list *cur_node;
+	t_dummy **cur_node;
 
-	cur_node = dummy->head;
-	while (!cur_node)
+	cur_node = dummy;
+	while ((*cur_node)->head->right->db != -1)
 	{
-		del_node = cur_node;
-		cur_node = cur_node->right;
-		del_node->right = 0;
-		del_node->left = 0;
-		free(del_node);
+		delete_list(*dummy, (*cur_node)->head->right->val);
+		
+		// del_node = (*cur_node)->head->;
+		// *cur_node = (*cur_node)->head->right;
+		// del_node->right = 0;
+		// del_node->left = 0;
+		// free(del_node);
 	}
+	free((*cur_node)->head);
+	(*cur_node)->head = 0;
+	free((*cur_node)->tail);
+	(*cur_node)->tail = 0;
+	free(*dummy);
+	*dummy = 0;
 }
 
 char **make_envp(t_dummy *dummy)
@@ -235,6 +240,20 @@ char **make_envp(t_dummy *dummy)
 	return (ret);
 }
 
+int	search_list(t_dummy *dummy, char *val)
+{
+	t_list *tmp;
+
+	tmp = dummy->head->right;
+	while (tmp->db != -1)
+	{
+		if (!m_strncmp(tmp->val, val, find_equal(tmp->val)))
+			return (TRUE);
+		tmp = tmp->right;
+	}
+	return (FALSE);
+}
+
 char *m_find_env_list(t_dummy *dummy, char *val)
 {
 	char *ret;
@@ -245,10 +264,33 @@ char *m_find_env_list(t_dummy *dummy, char *val)
 	{
 		if (!m_strncmp(tmp->val, val, find_equal(tmp->val)))
 		{
-			ret = m_strdup(&tmp->val[5]);
+			ret = m_strdup(&tmp->val[find_equal(tmp->val) + 1]);
 			return (ret);
 		}
 		tmp = tmp->right;
 	}
 	return (NULL);
+}
+
+int delete_list(t_dummy *dummy, char *val)
+{
+	t_list	*tmp;
+	t_list	*del_node;
+
+	tmp = dummy->head;
+	while (tmp->right->db != -1)
+	{
+		if (m_strncmp(tmp->right->val, val, find_equal(val)) >= 0)
+			break ;
+		tmp = tmp->right;
+	}
+	if (m_strncmp(tmp->right->val, val, find_equal(val)) == 0)
+	{
+		del_node = tmp->right;
+		tmp->right = tmp->right->right;
+		tmp->right->left = tmp;
+		free(del_node);
+		del_node = 0;
+	}
+	return (TRUE);
 }

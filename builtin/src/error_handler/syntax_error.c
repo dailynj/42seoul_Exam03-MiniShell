@@ -80,10 +80,33 @@ int check_pipe(char *g_read_buf)
 	return (0);
 }
 
-// int check_redirection(char *g_read_buf)
-// {
-	
-// 	bash-3.2$ cat <<
+int check_redi(char *g_read_buf)
+{
+	int i;
+	int flag;
+
+	i = -1;
+	while(g_read_buf[++i])
+	{
+		flag = 0;
+		if (g_read_buf[i] != '|')
+			continue ;
+		if (g_read_buf[i] == '|')
+		{
+			while (g_read_buf[++i] && g_read_buf[i] != '|')
+			{
+				if (g_read_buf[i] != ' ')
+					flag = 1;
+			}
+		}
+		if (flag == 0)
+			return (1);
+	}
+	return (0);
+}
+
+
+// bash-3.2$ cat <<
 // bash: syntax error near unexpected token `newline'
 // bash-3.2$ cat <
 // bash: syntax error near unexpected token `newline'
@@ -102,6 +125,4 @@ int check_pipe(char *g_read_buf)
 // bash: syntax error near unexpected token `newline'
 
 // bash-3.2$ > cat       에러아님
-// bash-3.2$ <	         에러아님
-// 	return (1);
-// }
+// bash-3.2$ < cat	         에러아님

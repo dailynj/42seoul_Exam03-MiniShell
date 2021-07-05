@@ -14,9 +14,10 @@
 
 
 
-void	sigint_handler(int errno)
+void	sigint_handler(int err)
 {
-	(void)errno;
+	(void)err;
+
 	if (g_pid > 0)
 	{
 		printf("\n");
@@ -28,7 +29,6 @@ void	sigint_handler(int errno)
 	// }
 }
 
-
 int		main(int ac, char **av, char **env)
 {
 	t_term term;
@@ -37,7 +37,7 @@ int		main(int ac, char **av, char **env)
 	(void)ac;
 	(void)av;
 	signal(SIGINT, sigint_handler);
-	init_tree(env);
+
 	init_term(&term);
 	init_list(&history);
 	init_list(&env_list);
@@ -46,10 +46,9 @@ int		main(int ac, char **av, char **env)
 		add_list_sort(&env_list, *env);
 		++env;
 	}
-	// print_list(&env_list);
+
 	start_shell(&term, &history);
-	free_tree();
-	free_list(&env_list);
+	// free_list(&env_list);
 	return (0);
 }
 
@@ -67,8 +66,10 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 	m_memset(tmp_read_buf, 0, BUFFER_SIZE);
 	m_memset(g_read_buf, 0, BUFFER_SIZE);
 	set_input_mode(term);
+	// printf("g_read_buf : %s\n", g_read_buf);
 	while (read(0, &ch, sizeof(ch)) > 0)
 	{
+		// printf("ch : %c             = \n", ch);
 		if (ch == 4283163) // up
 		{
 			if (history_up(i, hdx, history, &g_read_buf))
@@ -113,7 +114,7 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 		}
 		else if (ch == 3)
 		{
-			g_errno = 126;
+			errno = 126;
 			write(1, "\n", 1);
 			break ;
 		}
@@ -135,11 +136,12 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 			if (g_read_buf[0] != '\0')
 				add_list(history->tail, g_read_buf, 0);
 			ch = 0;
-			g_question = "0";
+			errno = 0;
 			break ;
 		}
 		else
 		{
+			// printf("in\n");
 			g_read_buf[++i] = ch;
 			tmp_read_buf[i] = ch;
 			write_val(hdx, history, ch);
@@ -155,80 +157,73 @@ int		start_shell(t_term *term, t_dummy *history)
 	char		*g_read_buf;
 	char		**pipe_str;
 	t_parsed	parsed;
-	char		**temp;
 	int			i;
 
 	g_read_buf = malloc(BUFFER_SIZE + 1);
 	while (1)
 	{
-		g_errno = 0;
+		errno = 0;
 		print_pwd(LONG);
 		noncanonical_input(g_read_buf, term, history);
-		if (g_errno)
+		if (errno)
 			continue ;
-		if (check_syntax(g_read_buf) || check_pipe(g_read_buf)) //|| check_redirection(g_read_buf))
+		if (check_syntax(g_read_buf) || check_pipe(g_read_buf) || check_redi(g_read_buf))
 		{
 			printf("bash: Syntax error\n");
 			continue ;
 		}
 		replace_env(g_read_buf);
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
-		temp = pipe_str;
-
 		i = -1;
 		int pipe_len = m_arrsize(pipe_str);
-		int final = 0;
-		int fds = 0;
+		int pdx = -1;
 		while (++i < pipe_len)
 		{
-			t_dummy		std_in; // < <<
-			t_dummy		std_out; // > >>
-			init_list(&std_out);
-			init_list(&std_in);
-
-
-			if (i == pipe_len - 1)
-				final = 1;
-			else
-			{
-				fds = open("a.txt", O_WRONLY | O_CREAT | O_TRUNC, 0777);
-				close(fds);
-				add_list(std_in.tail, "a.txt", 0);
-			}
+			t_dummy		*std_in; // < <<
+			t_dummy		*std_out; // > >>
+			std_in = malloc(sizeof(t_dummy));
+			std_out = malloc(sizeof(t_dummy));
+			init_list(std_out);
+			init_list(std_in);
+			if (i != pipe_len - 1)
+				add_list(std_out->tail, "a.txt", 0);
 			m_memset(&parsed, 0, sizeof(t_parsed));
-			parsed = get_cmd(*pipe_str);
+			parsed = get_cmd(pipe_str[++pdx]);
 			char *tmp;
+			fill_list(parsed.cmd[2], '<', std_in);
+			fill_list(parsed.cmd[2], '>', std_out);
 
-			fill_list(parsed.cmd[2], '<', &std_in);
-			fill_list(parsed.cmd[2], '>', &std_out);
 			tmp = core_cmd(parsed.cmd[2]);
+
 			m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
 			m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
 			free(tmp);
 
 			int in_fds;
 			int out_fds;
-			in_fds = redi_stdin(std_in.head->right);
-			out_fds = redi_stdout(std_out.head->right);
+			in_fds = redi_stdin(std_in->head->right);
+			out_fds = redi_stdout(std_out->head->right);
 			if (in_fds == -1)
 				continue ;
 			// 만약 error면 break ;
-			g_question = "0";
+			errno = 0;
 			if (m_strlen(parsed.cmd[0]) == 0)
 			{
-				++pipe_str;
+				++pdx;
 				continue ;
 			}
 			tmp = join_parsed(parsed);
-			if (!run_builtin(parsed, &std_out))
+			if (!run_builtin(parsed, std_out))
 			{
-				run_execved(tmp, parsed, in_fds, out_fds, &std_in, &std_out);
+				run_execved(tmp, parsed, in_fds, out_fds, std_in, std_out);
 			}
 			free(tmp);
+			free_list(&std_in);
+			free_list(&std_out);
 			tmp = 0;
-			++pipe_str;
+
 		}
-		m_free_split(temp);
+		m_free_split(pipe_str);
 	}
 	free(g_read_buf);
 	return (0);

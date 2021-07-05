@@ -25,9 +25,9 @@ char	*first_word(char *line)
 		return (NULL);
 	while (line[++i])
 	{
-		if (line[i] != ' ')
+		if (line[i] != ' ' && line[i] != '<' && line[i] != '>')
 		{
-			while (line[i] != ' ')
+			while (line[i] != ' ' && line[i] != '<' && line[i] != '>')
 			{
 				tmp[++j] = line[i];
 				++i;
@@ -130,7 +130,6 @@ char	*core_cmd(char *line)
 	m_memset(temp, 0, BUFFER_SIZE);
 	if (!temp)
 		return (NULL);
-	printf("temp : %s\n", temp);
 	while (*line)
 	{
 		if (*line == '<' || *line == '>')
@@ -148,23 +147,24 @@ char	*core_cmd(char *line)
 				break;
 			if (*line == '<' || *line == '>')
 				continue ;
-			else
-			{
-				while (*line != ' ')
-				{
-					temp[++tdx] = *line;
-					++line;
-				}
-				temp[++tdx] = ' ';
-			}
-			--line;
+			while (*line != ' ' && *line != '\0')
+				++line;
+			// else
+			// {
+			// 	while (*line != ' ')
+			// 	{
+			// 		temp[++tdx] = *line;
+			// 		++line;
+			// 	}
+			// 	temp[++tdx] = ' ';
+			// }
+			// --line;
 		}
 		else
 			temp[++tdx] = *line;
 		++line;
 	}
 	temp[++tdx] = 0;
-	printf("temp : %s\n", temp);
 	return (temp);
 }
 

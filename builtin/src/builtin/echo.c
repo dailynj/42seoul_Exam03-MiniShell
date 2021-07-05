@@ -46,9 +46,9 @@ int		m_echo(t_parsed parsed, t_dummy *std_out)
 	if (std_out->tail->left->db == -1)
 		out_fds = 1;
 	else if (std_out->tail->left->db)
-		out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+		out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND | O_CREAT, 0777);
 	else
-		out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
+		out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC | O_CREAT, 0777);
 
 	if (!m_strncmp(parsed.cmd[1], "-n", 2))
 		write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));

@@ -93,3 +93,41 @@ void	*m_calloc(size_t count, size_t size)
 	m_memset(tmp, 0, count * size);
 	return (tmp);
 }
+
+char	*m_handle_zero(void)
+{
+	char	*ptr;
+
+	if (!(ptr = (char *)m_calloc(2, sizeof(char))))
+		return (NULL);
+	ptr[0] = '0';
+	return (ptr);
+}
+
+char		*m_itoa(int n)
+{
+	char	*ptr;
+	char	buf[20];
+	int		tmp;
+	int		len;
+
+	if (n == 0)
+		return (m_handle_zero());
+	tmp = n;
+	len = 0;
+	while (tmp)
+	{
+		buf[len] = (tmp % 10 > 0) ? (tmp % 10) + '0' : -(tmp % 10) + '0';
+		tmp /= 10;
+		len++;
+	}
+	if (n < 0)
+		len++;
+	if (!(ptr = (char *)m_calloc(len + 1, sizeof(char))))
+		return (NULL);
+	tmp = (n < 0) ? 0 : -1;
+	ptr[0] = (n < 0) ? '-' : ptr[0];
+	while ((++tmp) < len)
+		ptr[tmp] = buf[len - 1 - tmp];
+	return (ptr);
+}
