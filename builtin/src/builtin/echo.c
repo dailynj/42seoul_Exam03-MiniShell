@@ -12,7 +12,7 @@
 
 #include "builtin.h"
 
-int		nnnn(char *line, int idx, int flag, int ret)
+int	nnnn(char *line, int idx, int flag, int ret)
 {
 	if (line[idx] != '-')
 		return (0);
@@ -39,27 +39,28 @@ int		nnnn(char *line, int idx, int flag, int ret)
 	return (ret);
 }
 
-int		m_echo(t_parsed parsed, t_dummy *std_out)
+int	m_echo(t_parsed *parsed, t_dummy *std_out)
 {
-	int out_fds;
+	int	ofd;
 
 	if (std_out->tail->left->db > 2)
-		out_fds = std_out->tail->left->db;
+		ofd = std_out->tail->left->db;
 	else if (std_out->tail->left->db == 1)
-		out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND | O_CREAT, 0777);
+		ofd = open(std_out->tail->left->val,
+				O_WRONLY | O_APPEND | O_CREAT, 0777);
 	else if (std_out->tail->left->db == 0)
-		out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	else 
-		out_fds = 1;
-	printf("print -> %d\n", out_fds);
+		ofd = open(std_out->tail->left->val,
+				O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	else
+		ofd = 1;
 	if (!m_strncmp(parsed.cmd[1], "-n", 2))
-		write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		write(ofd, parsed.cmd[2], m_strlen(parsed.cmd[2]));
 	else
 	{
-		write(out_fds, parsed.cmd[2], m_strlen(parsed.cmd[2]));
-		write(out_fds, "\n", 1);
+		write(ofd, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		write(ofd, "\n", 1);
 	}
-	if (out_fds != 1)
-		close(out_fds);
+	if (ofd != 1)
+		close(ofd);
 	return (TRUE);
 }

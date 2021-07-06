@@ -12,9 +12,9 @@
 
 #include "builtin.h"
 
-int check(char *line)
+int	check(char *line)
 {
-	char *temp;
+	char	*temp;
 
 	temp = line;
 	while (*temp == 32)
@@ -24,9 +24,9 @@ int check(char *line)
 	return (0);
 }
 
-int nooption(char *line)
+int	nooption(char *line)
 {
-	char *temp;
+	char	*temp;
 
 	temp = line;
 	while (*temp == 32)
@@ -36,14 +36,15 @@ int nooption(char *line)
 	return (1);
 }
 
-void cmd_echo(t_parsed *output, char *line)
+void	cmd_echo(t_parsed *output, char *line)
 {
-	char *temp = 0;
-	int idx;
-	int cnt;
+	char	*temp;
+	int		idx;
+	int		cnt;
 
 	idx = 1;
 	cnt = 2;
+	temp = 0;
 	while (idx < cnt && idx < 3)
 	{
 		while (*line == 32)
@@ -70,11 +71,11 @@ void cmd_echo(t_parsed *output, char *line)
 	}
 }
 
-void cmd_else(t_parsed *output, char *line)
+void	cmd_else(t_parsed *output, char *line)
 {
-	int idx;
-	int cnt;
-	int i;
+	int	idx;
+	int	cnt;
+	int	i;
 
 	idx = 1;
 	cnt = 2;
@@ -82,10 +83,10 @@ void cmd_else(t_parsed *output, char *line)
 	{
 		i = -1;
 		while (*line == 32)
-				++line;
+			++line;
 		if (*line == '-' && idx == 1)
 		{
-			while(*line != '\0' && *line != ' ')
+			while (*line != '\0' && *line != ' ')
 			{
 				output->cmd[1][++i] = *line;
 				++line;
@@ -93,7 +94,7 @@ void cmd_else(t_parsed *output, char *line)
 		}
 		else
 		{
-			while(*line != '\0')
+			while (*line != '\0')
 			{
 				output->cmd[2][++i] = *line;
 				++line;
@@ -105,10 +106,10 @@ void cmd_else(t_parsed *output, char *line)
 	}
 }
 
-t_parsed get_cmd(char *line)
+t_parsed	get_cmd(char *line)
 {
-	t_parsed output;
-	int i;
+	t_parsed	output;
+	int			i;
 
 	i = -1;
 	m_memset(&output, 0, sizeof(t_parsed));
@@ -122,11 +123,9 @@ t_parsed get_cmd(char *line)
 	if (!m_strncmp(output.cmd[0], "echo", 4))
 	{
 		if (check(line))
-		cmd_echo(&output, line);
+			cmd_echo(&output, line);
 	}
 	else
-	{
 		cmd_else(&output, line);
-	}
 	return (output);
 }

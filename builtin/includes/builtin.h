@@ -42,9 +42,7 @@
 pid_t	g_pid;
 int		pipes[2];
 
-
 typedef int		t_bool;
-
 
 typedef struct	s_term
 {
@@ -58,14 +56,6 @@ typedef enum	e_type
 	export,
 	environ
 }				t_type;
-
-typedef struct	s_tree
-{
-	char			val[ENV_MAX];
-	int				size;
-	struct s_tree	*left;
-	struct s_tree	*right;
-}				t_tree;
 
 typedef struct	s_list
 {
@@ -92,32 +82,19 @@ t_dummy env_list;
 void			sigint_handler(int err);
 void			sigquit_handler(int err);
 int				start_shell(t_term *term, t_dummy *history);
-void			print_pwd(int type);
-int				run_builtin(t_parsed parsed, t_dummy *std_out);
+int				print_pwd(int type);
+int				run_builtin(t_parsed *parsed, t_dummy *std_out);
 void			printpipe(char **pipe_str);
 void			noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history);
 
-
 //builtin
-int				m_echo(t_parsed parsed, t_dummy *std_out);
-int				m_cd(t_parsed parsed);
-int				m_pwd(t_parsed parsed, t_dummy *std_out);
-int				m_exit(t_parsed parsed);
-int				m_env(t_parsed parsed, t_dummy *std_out);
-int				m_export(t_parsed parsed, t_dummy *std_out);
-int				m_unset(t_parsed parsed);
-
-// tree.c
-t_tree			*tree(void);
-void			init_tree(char **env);
-void			insert_tree(char *val);
-void			delete_tree(char *val);
-void			free_tree();
-t_tree			**search_tree(char *val);
-
-void			inorder_print(t_tree *tr, int type, int out_fds);
-int				inorder_execve(t_tree *tr, char ***output, int index);
-char			*inorder_print_node(char *val, int type, int out_fds);
+int				m_echo(t_parsed *parsed, t_dummy *std_out);
+int				m_cd(t_parsed *parsed);
+int				m_pwd(t_parsed *parsed, t_dummy *std_out);
+int				m_exit(t_parsed *parsed);
+int				m_env(t_parsed *parsed, t_dummy *std_out);
+int				m_export(t_parsed *parsed, t_dummy *std_out);
+int				m_unset(t_parsed *parsed);
 
 // lib.c
 int				m_strncmp(char *s1, char *s2, size_t n);
@@ -146,7 +123,6 @@ void			*m_calloc(size_t count, size_t size);
 char			*m_itoa(int n);
 long long		m_atoi(char *str);
 
-
 // run_redirection.c
 char			*first_word(char *line);
 void			fill_list(char *line, char ch, t_dummy *std);
@@ -161,13 +137,12 @@ t_parsed		get_cmd(char *line);
 
 // error.c
 void			print_error(t_parsed parsed, char *status);
-int				return_message(char *file, char *message, int ret);
+int				ret_mesg(char *file, char *message, int ret);
 
 void			print_parsed(t_parsed parsed);
 
 // quote.c
-void	 		replace_env(char *g_read_buf, int before_errno);
-char			*m_find_env(char *envp);
+int		 		replace_env(char *g_read_buf, int before_errno);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
@@ -177,7 +152,7 @@ int				run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *st
 int 			check_syntax(char *g_read_buf);
 int 			check_pipe(char *g_read_buf);
 int				check_redi(char *g_read_buf);
-
+int				check_print(int boo);
 // term.c
 void			init_term(t_term *term);
 void			reset_input_mode(t_term *term);
@@ -191,7 +166,6 @@ void			sigint_handler(int err);
 t_list			*new_list(char *val, int db);
 int				init_list(t_dummy *dummy);
 int				add_list(t_list *tail, char *val, int db);
-void			prt_list(t_list *head);
 t_bool			history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
 t_bool			history_down(int i, int hdx, t_dummy *history, char **g_read_buf);
 void			delete_val(int hdx, t_dummy *history);

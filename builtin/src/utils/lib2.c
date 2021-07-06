@@ -12,9 +12,9 @@
 
 #include "builtin.h"
 
-int		m_strchr(char *s, int c)
+int	m_strchr(char *s, int c)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (s[++i])
@@ -23,14 +23,13 @@ int		m_strchr(char *s, int c)
 	return (0);
 }
 
-size_t			m_strlcpy(char *dst, char *src, size_t dstsize)
+size_t	m_strlcpy(char *dst, char *src, size_t dstsize)
 {
 	size_t	i;
 
 	i = 0;
 	if (!src)
 		return (0);
-	
 	if (dstsize)
 	{
 		while (i < dstsize - 1 && src[i])
@@ -57,10 +56,12 @@ size_t	m_check_size(char *s, char c)
 	while (*(++i + s + 1))
 		if (*(i + s) != c && *(i + s + 1) == c)
 			++cnt;
-	return (*(s + i) != c ? cnt + 1 : cnt);
+	if (*(s + i) != c)
+		return (cnt + 1);
+	return (cnt);
 }
 
-char		**m_free_split(char **s)
+char	**m_free_split(char **s)
 {
 	unsigned int	i;
 
@@ -74,14 +75,14 @@ char		**m_free_split(char **s)
 	return (NULL);
 }
 
-char			**m_split_char(char *s, char c)
+char	**m_split_char(char *s, char c)
 {
 	char	**ret;
 	char	*from;
 	int		i;
 
-	if (!s ||
-		!(ret = (char **)m_calloc((m_check_size(s, c) + 1), sizeof(char *))))
+	ret = (char **)m_calloc((m_check_size(s, c) + 1), sizeof(char *));
+	if (!s || !ret)
 		return (NULL);
 	i = 0;
 	while (*s)
@@ -91,7 +92,8 @@ char			**m_split_char(char *s, char c)
 			from = (char *)s;
 			while (*s && *s != c)
 				++s;
-			if (!(ret[i++] = m_substr(from, 0, (s - from))))
+			ret[i++] = m_substr(from, 0, (s - from));
+			if (!ret)
 				return (m_free_split(ret));
 		}
 		else

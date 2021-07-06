@@ -12,12 +12,10 @@
 
 #include "builtin.h"
 
-int		m_exit(t_parsed parsed)
+int	m_exit(t_parsed *parsed)
 {
-	long long arg;
+	long long	arg;
 
-	// ㄱㅐㅅ구 체크해서 return (TRUE);
-	
 	if (parsed.cmd[1][0] != '\0')
 		arg = m_atoi(parsed.cmd[1]);
 	else

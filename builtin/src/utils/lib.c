@@ -37,9 +37,9 @@ void	*m_memset(void *dest, int value, size_t size)
 	return (dest);
 }
 
-int		m_strlen(char *str)
+int	m_strlen(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (!str)
@@ -49,19 +49,22 @@ int		m_strlen(char *str)
 	return (i);
 }
 
-char *m_strcpy(char *dest, char *src)
+char	*m_strcpy(char *dest, char *src)
 {
-	char *tmp = dest;
+	char	*tmp;
+	int		i;
 
+	i = -1;
+	tmp = dest;
 	m_memset(dest, 0, sizeof(dest));
-	while ((*dest++ = *src++) != '\0')
-		;
-	return tmp;
+	while (src[++i])
+		*dest++ = src[i];
+	return (tmp);
 }
 
-int find_equal(char *str)
+int	find_equal(char *str)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (str[++i])
@@ -70,11 +73,4 @@ int find_equal(char *str)
 			return (i);
 	}
 	return (i);
-}
-
-int m_max(int n1, int n2)
-{
-	if (n1 > n2)
-		return (n1);
-	return (n2);
 }

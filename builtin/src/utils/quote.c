@@ -12,28 +12,6 @@
 
 #include "builtin.h"
 
-char *m_find_env(char *envp)
-{
-	char	*dirp;
-	t_tree	**output;
-
-	dirp = NULL;
-	output = search_tree(envp);
-	if (output == NULL)
-		return (NULL);
-	envp = (*output)->val;
-	while (*envp)
-	{
-		if (*envp == '=')
-		{
-			dirp = ++envp;
-			break ;
-		}
-		++envp;
-	}
-	return (dirp);
-}
-
 int 	check_real(char* buf, int idx)
 {
 	if (buf[idx] == '|')
@@ -61,7 +39,7 @@ int	put_env(char **temp, char *env, int tdx)
 {
 	char	*dirp;
 
-	if ((dirp = m_find_env(env)))
+	if ((dirp = m_find_env_list(&env_list, env)))
 	{
 		while (*dirp)
 		{
@@ -72,7 +50,7 @@ int	put_env(char **temp, char *env, int tdx)
 	return (tdx);
 }
 
-void	 replace_env(char *g_read_buf, int before_errno)
+int	replace_env(char *g_read_buf, int before_errno)
 {
 	char	*temp;
 	char	*env;
@@ -83,7 +61,7 @@ void	 replace_env(char *g_read_buf, int before_errno)
 	idx = -1;
 	temp = m_calloc(BUFFER_SIZE, 1);
 	if (!temp)
-		return ;  // error 처리
+		return (FALSE);
 	while(g_read_buf[++idx])
 	{
 		if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
@@ -157,4 +135,5 @@ void	 replace_env(char *g_read_buf, int before_errno)
 	m_strlcpy(g_read_buf, temp, BUFFER_SIZE);
 	free(temp);
 	temp = 0;
+	return (TRUE);
 }

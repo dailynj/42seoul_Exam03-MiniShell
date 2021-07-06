@@ -66,7 +66,7 @@ void	fill_list(char *line, char ch, t_dummy *std)
 int		redi_stdin(t_list *node)
 {
 	t_list	*tmp;
-	char	read_buf[BUFFER_SIZE];
+	char	read_buf[BUFFER_SIZE];         
 	int		fd;
 
 	tmp = node;
@@ -77,7 +77,7 @@ int		redi_stdin(t_list *node)
 		{
 			fd = open(tmp->val, O_WRONLY, 0777);
 			if (fd == -1)
-				return (return_message(tmp->val, "No such file or directory", -1));
+				return (ret_mesg(tmp->val, "No such file or directory", -1));
 			close (fd);
 		}
 		else if (tmp->db == 1)
@@ -104,7 +104,7 @@ int		redi_stdin(t_list *node)
 	return (fd);
 }
 
-int		redi_stdout(t_list *node)
+int	redi_stdout(t_list *node)
 {
 	t_list	*tmp;
 	int		fd;
@@ -122,8 +122,8 @@ int		redi_stdout(t_list *node)
 
 char	*core_cmd(char *line)
 {
-	char *temp;
-	int tdx;
+	char	*temp;
+	int		tdx;
 
 	tdx = -1;
 	temp = malloc(BUFFER_SIZE);
@@ -144,21 +144,11 @@ char	*core_cmd(char *line)
 			while (*line == ' ' && *line != '\0')
 				++line;
 			if (*line == '\0')
-				break;
+				break ;
 			if (*line == '<' || *line == '>')
 				continue ;
 			while (*line != ' ' && *line != '\0')
 				++line;
-			// else
-			// {
-			// 	while (*line != ' ')
-			// 	{
-			// 		temp[++tdx] = *line;
-			// 		++line;
-			// 	}
-			// 	temp[++tdx] = ' ';
-			// }
-			// --line;
 		}
 		else
 			temp[++tdx] = *line;

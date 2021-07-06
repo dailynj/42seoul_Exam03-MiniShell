@@ -21,7 +21,7 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 	int status;
 	char *find_env;
 
-	int in_fds, out_fds;
+	int ifd, ofd;
 	status = 0;
 	exec_str = m_split_char(pipe_str, ' ');
 	find_env = m_find_env_list(&env_list, "PATH");
@@ -45,26 +45,25 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 		{
 			print_list(std_in); // p list
 			if (std_in->tail->left->db > 2)
-				in_fds = std_in->tail->left->db;
+				ifd = std_in->tail->left->db;
 			else if (std_in->tail->left->db == 1)
-				in_fds = open("a.txt", O_RDONLY, 0777);
+				ifd = open("a.txt", O_RDONLY, 0777);
 			else
-				in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
+				ifd = open(std_in->tail->left->val, O_RDONLY, 0777);
 
 			if (std_out->tail->left->db > 2)
-				out_fds = std_out->tail->left->db;
+				ofd = std_out->tail->left->db;
 			else if (std_out->tail->left->db == 1)
-				out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
+				ofd = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
 			else
-				out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
-			
-			printf("cat in : %d. cat out %d.\n", in_fds, out_fds);
+				ofd = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
 
-			dup2(out_fds, STDOUT_FILENO);
-			close(out_fds);
-			dup2(in_fds, STDIN_FILENO);
-			
-			close(in_fds);
+
+			dup2(ofd, STDOUT_FILENO);
+			close(ofd);
+			dup2(ifd, STDIN_FILENO);
+			close(ifd);
+
 			while (path_arr[idx])
 			{
 				char *temp = m_strjoin("/", parsed.cmd[0]);
@@ -78,9 +77,7 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 		// 만약 와일문을 탈출했으면 에러처리 해야함
 		// 여기서 return 말고 exit으로 처리해야함
 		if (m_strchr(parsed.cmd[0], '/'))
-		{
 			exit(259);
-		}
 		else
 			exit(127);
 	}
@@ -90,7 +87,6 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 		errno = status >> 8;
 		if (errno == 0)
 			errno = (status & 255) + 128;
-		// printf("status : %d, errno : %d\n", status, errno);
 		if (status >> 8 == 127)
 			printf("bash: %s: command not found!\n", parsed.cmd[0]);
 		else if(status  == 768)
