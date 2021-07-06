@@ -129,14 +129,14 @@ void			fill_list(char *line, char ch, t_dummy *std);
 int				redi_stdin(t_list *node);
 int				redi_stdout(t_list *node);
 char			*core_cmd(char *line);
-char 			*join_parsed(t_parsed parsed);
+char 			*join_parsed(t_parsed *parsed);
 
 // parsing.c
 t_parsed		get_cmd_echo(char *line);
 t_parsed		get_cmd(char *line);
 
 // error.c
-void			print_error(t_parsed parsed, char *status);
+void			print_error(t_parsed *parsed, char *status);
 int				ret_mesg(char *file, char *message, int ret);
 
 void			print_parsed(t_parsed parsed);
@@ -146,7 +146,7 @@ int		 		replace_env(char *g_read_buf, int before_errno);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
-int				run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_out);
+int				run_execved(char *pipe_str, t_parsed *parsed, t_dummy *std_in, t_dummy *std_out);
 
 // syntax_error.c
 int 			check_syntax(char *g_read_buf);

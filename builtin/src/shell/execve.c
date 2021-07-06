@@ -12,7 +12,7 @@
 
 #include "builtin.h"
 
-int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_out)
+int run_execved(char *pipe_str, t_parsed *parsed, t_dummy *std_in, t_dummy *std_out)
 {
 	char **exec_str;
 	char **envp;
@@ -29,7 +29,7 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 	free(find_env);
 	if (!path_arr)
 	{
-		printf("Error: not found\n"); 
+		printf("Error: not found\n");
 		return (0); // error 처리
 	}
 	envp = make_envp(&env_list);
@@ -37,9 +37,9 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 	if (g_pid == 0)
 	{
 		int idx = 0;
-		if (m_strchr(parsed.cmd[0], '/'))
+		if (m_strchr(parsed->cmd[0], '/'))
 		{
-			execve(parsed.cmd[0], exec_str, envp);
+			execve(parsed->cmd[0], exec_str, envp);
 		}
 		else
 		{
@@ -66,7 +66,7 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 
 			while (path_arr[idx])
 			{
-				char *temp = m_strjoin("/", parsed.cmd[0]);
+				char *temp = m_strjoin("/", parsed->cmd[0]);
 				path = m_strjoin(path_arr[idx], temp);
 				free(temp);
 				execve(path, exec_str, envp); // 에러처리 필요
@@ -76,7 +76,7 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 		}
 		// 만약 와일문을 탈출했으면 에러처리 해야함
 		// 여기서 return 말고 exit으로 처리해야함
-		if (m_strchr(parsed.cmd[0], '/'))
+		if (m_strchr(parsed->cmd[0], '/'))
 			exit(259);
 		else
 			exit(127);
@@ -88,9 +88,9 @@ int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_o
 		if (errno == 0)
 			errno = (status & 255) + 128;
 		if (status >> 8 == 127)
-			printf("bash: %s: command not found!\n", parsed.cmd[0]);
+			printf("bash: %s: command not found!\n", parsed->cmd[0]);
 		else if(status  == 768)
-			printf("bash: %s: No such file or directory\n", parsed.cmd[0]);
+			printf("bash: %s: No such file or directory\n", parsed->cmd[0]);
 		m_free_split(envp);
 		m_free_split(exec_str);
 		m_free_split(path_arr);

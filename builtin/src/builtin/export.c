@@ -24,10 +24,10 @@ int	m_export(t_parsed *parsed, t_dummy *out)
 		ofd = open(out->tail->left->val, O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	if (parsed->cmd[1][0] != '\0')
 		print_error(parsed, "?=1");
-	else if (parsed->cmd[2][0] >= '0' && parsed.cmd[2][0] <= '9')
+	else if (parsed->cmd[2][0] >= '0' && parsed->cmd[2][0] <= '9')
 		print_error(parsed, "?=1");
 	else if (parsed->cmd[2][0] != '\0')
-		add_list_sort(&env_list, parsed.cmd[2]);
+		add_list_sort(&env_list, parsed->cmd[2]);
 	else
 		print_list(&env_list);
 	if (ofd != 1)

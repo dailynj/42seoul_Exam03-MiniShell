@@ -12,17 +12,17 @@
 
 #include "builtin.h"
 
-void	print_error(t_parsed parsed, char *status)
+void	print_error(t_parsed *parsed, char *status)
 {
-	printf("bash: %s: ", parsed.cmd[0]);
+	printf("bash: %s: ", parsed->cmd[0]);
 	if (!m_strncmp(status, "?=127", 5))
 	{
-		printf("%s: No such file or directory\n", parsed.cmd[2]);
+		printf("%s: No such file or directory\n", parsed->cmd[2]);
 		errno = 127;
 	}
 	else if (!m_strncmp(status, "?=1", 3))
 	{
-		printf("-%c: invalid option\n", parsed.cmd[1][1]);
+		printf("-%c: invalid option\n", parsed->cmd[1][1]);
 		errno = 1;
 	}
 }

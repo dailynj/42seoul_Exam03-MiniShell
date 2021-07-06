@@ -53,11 +53,11 @@ int	m_echo(t_parsed *parsed, t_dummy *std_out)
 				O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	else
 		ofd = 1;
-	if (!m_strncmp(parsed.cmd[1], "-n", 2))
-		write(ofd, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+	if (!m_strncmp(parsed->cmd[1], "-n", 2))
+		write(ofd, parsed->cmd[2], m_strlen(parsed->cmd[2]));
 	else
 	{
-		write(ofd, parsed.cmd[2], m_strlen(parsed.cmd[2]));
+		write(ofd, parsed->cmd[2], m_strlen(parsed->cmd[2]));
 		write(ofd, "\n", 1);
 	}
 	if (ofd != 1)

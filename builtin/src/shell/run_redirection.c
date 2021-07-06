@@ -66,7 +66,7 @@ void	fill_list(char *line, char ch, t_dummy *std)
 int		redi_stdin(t_list *node)
 {
 	t_list	*tmp;
-	char	read_buf[BUFFER_SIZE];         
+	char	read_buf[BUFFER_SIZE];
 	int		fd;
 
 	tmp = node;
@@ -158,7 +158,7 @@ char	*core_cmd(char *line)
 	return (temp);
 }
 
-char	*join_parsed(t_parsed parsed)
+char	*join_parsed(t_parsed *parsed)
 {
 	char	*ret;
 	int		cnt;
@@ -171,9 +171,9 @@ char	*join_parsed(t_parsed parsed)
 	while (++cnt < 3)
 	{
 		idx = -1;
-		while (parsed.cmd[cnt][++idx])
+		while (parsed->cmd[cnt][++idx])
 		{
-			ret[++rdx] = parsed.cmd[cnt][idx];
+			ret[++rdx] = parsed->cmd[cnt][idx];
 		}
 		ret[++rdx] = ' ';
 	}
