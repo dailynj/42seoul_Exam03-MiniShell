@@ -12,7 +12,7 @@
 
 #include "builtin.h"
 
-int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out)
+int run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_out)
 {
 	char **exec_str;
 	char **envp;
@@ -21,6 +21,7 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 	int status;
 	char *find_env;
 
+	int in_fds, out_fds;
 	status = 0;
 	exec_str = m_split_char(pipe_str, ' ');
 	find_env = m_find_env_list(&env_list, "PATH");
@@ -42,23 +43,27 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 		}
 		else
 		{
-			int temp_fds;
-			if (std_in->tail->left->db == -1)
-				in_fds = -1;
-			else if (std_in->tail->left->db)
+			print_list(std_in); // p list
+			if (std_in->tail->left->db > 2)
+				in_fds = std_in->tail->left->db;
+			else if (std_in->tail->left->db == 1)
 				in_fds = open("a.txt", O_RDONLY, 0777);
 			else
 				in_fds = open(std_in->tail->left->val, O_RDONLY, 0777);
-			temp_fds = dup(in_fds);
-			if (std_out->tail->left->db == -1)
-				out_fds = -1;
-			else if (std_out->tail->left->db)
+
+			if (std_out->tail->left->db > 2)
+				out_fds = std_out->tail->left->db;
+			else if (std_out->tail->left->db == 1)
 				out_fds = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
 			else
 				out_fds = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
+			
+			printf("cat in : %d. cat out %d.\n", in_fds, out_fds);
+
 			dup2(out_fds, STDOUT_FILENO);
 			close(out_fds);
-			dup2(temp_fds, STDIN_FILENO);
+			dup2(in_fds, STDIN_FILENO);
+			
 			close(in_fds);
 			while (path_arr[idx])
 			{
@@ -74,7 +79,6 @@ int run_execved(char *pipe_str, t_parsed parsed, int in_fds, int out_fds, t_dumm
 		// 여기서 return 말고 exit으로 처리해야함
 		if (m_strchr(parsed.cmd[0], '/'))
 		{
-			printf("here\n");
 			exit(259);
 		}
 		else

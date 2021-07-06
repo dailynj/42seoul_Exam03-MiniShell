@@ -15,7 +15,8 @@
 void	sigint_handler(int err)
 {
 	(void)err;
-	printf("\n");
+	// if ()
+	// printf("\n");
 }
 
 void	sigquit_handler(int err)
@@ -42,9 +43,8 @@ int		main(int ac, char **av, char **env)
 		add_list_sort(&env_list, *env);
 		++env;
 	}
-
 	start_shell(&term, &history);
-	free_list(&env_list);
+	// free_list(&env_list);
 	return (0);
 }
 
@@ -175,52 +175,92 @@ int		start_shell(t_term *term, t_dummy *history)
 		i = -1;
 		int pipe_len = m_arrsize(pipe_str);
 		int pdx = -1;
+		int child_pid;
+		int status;
+		int dupipe = 0;
 		while (++i < pipe_len)
 		{
+			printf("----------loop----------\n");
 			t_dummy		*std_in; // < <<
 			t_dummy		*std_out; // > >>
 			std_in = malloc(sizeof(t_dummy));
 			std_out = malloc(sizeof(t_dummy));
 			init_list(std_out);
 			init_list(std_in);
-			// pipe(pp);
-			if (i !=0)
-				add_list(std_in->tail, "a.txt", 0);
-			if (i != pipe_len - 1)
-				add_list(std_out->tail, "a.txt", 0);
+			if (i != 0)
+			{
+				dupipe = dup(pipes[0]);
+				add_list(std_in->tail, "", dupipe);
+				printf("print -> %d, dup : %d\n", pipes[0], dupipe);
+				// char test[30];
+				// read(pipes[0], &test, 30);
+				// printf(" > test : %s\n", test);
+			}
+			print_list(std_in); // p list
+			// get_cmd 안에서 memset
 			m_memset(&parsed, 0, sizeof(t_parsed));
 			parsed = get_cmd(pipe_str[++pdx]);
-			char *tmp;
-			fill_list(parsed.cmd[2], '<', std_in);
-			fill_list(parsed.cmd[2], '>', std_out);
 
-			tmp = core_cmd(parsed.cmd[2]);
 
-			m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
-			m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
-			free(tmp);
-
-			int in_fds;
-			int out_fds;
-			in_fds = redi_stdin(std_in->head->right);
-			out_fds = redi_stdout(std_out->head->right);
-			if (in_fds == -1)
-				continue ;
-			// 만약 error면 break ;
-			if (m_strlen(parsed.cmd[0]) == 0)
+			if (pipe_len != 1)
+				pipe(pipes);
+			printf("[pipes : %d %d]\n", pipes[0], pipes[1]);
+			if (i != pipe_len - 1)
+				add_list(std_out->tail, "", pipes[1]);
+			if (pipe_len != 1)
 			{
-				++pdx;
+				child_pid = fork();
+			}
+
+			if (pipe_len == 1 || child_pid == 0) // 자식 프로세스일때 
+			{
+				if (pipe_len != 1)
+					close(pipes[0]); // 읽기용 파이프 닫기
+				char *tmp;
+				fill_list(parsed.cmd[2], '<', std_in);
+				fill_list(parsed.cmd[2], '>', std_out);
+
+				tmp = core_cmd(parsed.cmd[2]);
+
+				m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
+				m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
+				free(tmp);
+
+				redi_stdin(std_in->head->right);
+				redi_stdout(std_out->head->right);
+
+				// 만약 error면 break ;
+				if (m_strlen(parsed.cmd[0]) == 0)
+				{
+					++pdx;
+					continue ;
+				}
+				tmp = join_parsed(parsed);
+				print_list(std_in); // p list
+				if (!run_builtin(parsed, std_out))
+					run_execved(tmp, parsed, std_in, std_out);
+				free(tmp);
+				
+				
+				tmp = 0;
+				if (pipe_len != 1)
+				{
+					// printf("go parent!\n");
+					exit(0);
+				}
+			}
+			else
+			{
+				// printf("wait..\n");
+				waitpid(child_pid, &status, 0);
+				close(pipes[1]); // 쓰기용 파이프 닫기
+				// printf("done..\n");
+				printf("head db %d, tail db %d\n", std_in->head->db, std_in->tail->db);
+				printf("head db %d, tail db %d\n", std_out->head->db, std_out->tail->db);
+				// free_list(&std_out);
+				// free_list(&std_in);
 				continue ;
 			}
-			tmp = join_parsed(parsed);
-			if (!run_builtin(parsed, std_out))
-				run_execved(tmp, parsed, in_fds, out_fds, std_in, std_out);
-			
-			free(tmp);
-			free_list(&std_in);
-			free_list(&std_out);
-			tmp = 0;
-
 		}
 		m_free_split(pipe_str);
 	}

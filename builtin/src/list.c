@@ -190,7 +190,7 @@ void print_list(t_dummy *dummy)
 	tmp = dummy->head->right;
 	while (tmp->db != -1)
 	{
-		printf("--> %s\n", tmp->val);
+		printf("--> (%s : %d)\n", tmp->val, tmp->db);
 		tmp = tmp->right;
 	}
 }

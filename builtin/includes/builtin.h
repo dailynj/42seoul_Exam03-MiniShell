@@ -40,7 +40,7 @@
 // extern int errno;
 
 pid_t	g_pid;
-// int		pp[2];
+int		pipes[2];
 
 
 typedef int		t_bool;
@@ -171,8 +171,7 @@ char			*m_find_env(char *envp);
 int				put_env(char **temp, char *env, int tdx);
 
 // execve.c
-int				run_execved(char *pipe_str, t_parsed parsed,
-				int in_fds, int out_fds, t_dummy *std_in, t_dummy *std_out);
+int				run_execved(char *pipe_str, t_parsed parsed, t_dummy *std_in, t_dummy *std_out);
 
 // syntax_error.c
 int 			check_syntax(char *g_read_buf);
