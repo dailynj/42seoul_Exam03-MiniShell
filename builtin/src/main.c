@@ -30,6 +30,7 @@ int	main(int ac, char **av, char **env)
 		++env;
 	}
 	start_shell(&term, &history);
+	// free_list(&g_env_list);
 	return (0);
 }
 
@@ -129,22 +130,19 @@ void	noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history)
 	reset_input_mode(term);
 }
 
-void	start_command(char **pipe_str)
+void	start_command(char **pipe_str) //, t_parsed *parsed)
 {
-	int			i;
-	int			pipe_len;
-	int			pdx;
-	int			child_pid;
-	int			status;
-	t_parsed	parsed;
+	int i = -1;
+	int pipe_len = m_arrsize(pipe_str);
+	int pdx = -1;
+	int child_pid;
+	int status;
+	t_parsed parsed;
 
-	i = -1;
-	pdx = -1;
-	pipe_len = m_arrsize(pipe_str);
 	while (++i < pipe_len)
 	{
-		t_dummy	*std_in;
-		t_dummy	*std_out;
+		t_dummy		*std_in;
+		t_dummy		*std_out;
 		std_in = malloc(sizeof(t_dummy));
 		std_out = malloc(sizeof(t_dummy));
 		init_list(std_out);
@@ -158,20 +156,24 @@ void	start_command(char **pipe_str)
 			add_list(std_out->tail, "", g_pipes[1]);
 		if (pipe_len != 1)
 			child_pid = fork();
-		if (pipe_len == 1 || child_pid == 0)
+		if (pipe_len == 1 || child_pid == 0) // 자식 프로세스일때
 		{
 			if (pipe_len != 1)
-				close(g_pipes[0]);
+				close(g_pipes[0]); // 읽기용 파이프 닫기
 			char *tmp;
 			fill_list(parsed.cmd[2], '<', std_in);
 			fill_list(parsed.cmd[2], '>', std_out);
+
 			tmp = core_cmd(parsed.cmd[2]);
+
 			m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
 			m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
 			free(tmp);
+
 			redi_stdin(std_in->head->right);
 			redi_stdout(std_out->head->right);
 			tmp = join_parsed(&parsed);
+
 			if (!run_builtin(&parsed, std_out))
 				run_execved(tmp, &parsed, std_in, std_out);
 			free(tmp);
@@ -189,13 +191,15 @@ void	start_command(char **pipe_str)
 	}
 }
 
-int	start_shell(t_term *term, t_dummy *history)
+int		start_shell(t_term *term, t_dummy *history)
 {
 	char		*g_read_buf;
 	char		**pipe_str;
+	// t_parsed	parsed;
 	int			before_errno;
 	t_itdx		*itdx;
 
+	itdx = malloc(sizeof(t_itdx));
 	itdx->i = -1;
 	itdx->t = -1;
 	g_read_buf = malloc(BUFFER_SIZE + 1);
@@ -203,13 +207,69 @@ int	start_shell(t_term *term, t_dummy *history)
 	{
 		before_errno = errno;
 		errno = 0;
+		// print_pwd(LONG);
 		noncanonical_input(g_read_buf, term, history);
-		if (check_syntax(g_read_buf) || check_pipe(g_read_buf)
-			|| check_redi(g_read_buf) || errno)
+		if (check_syntax(g_read_buf) || check_pipe(g_read_buf) || check_redi(g_read_buf) || errno)
 			continue ;
 		replace_env(g_read_buf, before_errno, itdx);
 		pipe_str = m_split_char(g_read_buf, REAL_PIPE);
-		start_command(pipe_str);
+		start_command(pipe_str);//, &parsed);
+		// int i = -1;
+		// int pipe_len = m_arrsize(pipe_str);
+		// int pdx = -1;
+		// int child_pid;
+		// int status;
+
+		// while (++i < pipe_len)
+		// {
+		// 	t_dummy		*std_in; // < <<
+		// 	t_dummy		*std_out; // > >>
+		// 	std_in = malloc(sizeof(t_dummy));
+		// 	std_out = malloc(sizeof(t_dummy));
+		// 	init_list(std_out);
+		// 	init_list(std_in);
+		// 	if (i != 0)
+		// 		add_list(std_in->tail, "", g_pipes[0]);
+		// 	parsed = get_cmd(pipe_str[++pdx]);
+		// 	if (pipe_len != 1)
+		// 		pipe(g_pipes);
+		// 	if (i != pipe_len - 1)
+		// 		add_list(std_out->tail, "", g_pipes[1]);
+		// 	if (pipe_len != 1)
+		// 		child_pid = fork();
+		// 	if (pipe_len == 1 || child_pid == 0) // 자식 프로세스일때
+		// 	{
+		// 		if (pipe_len != 1)
+		// 			close(g_pipes[0]); // 읽기용 파이프 닫기
+		// 		char *tmp;
+		// 		fill_list(parsed.cmd[2], '<', std_in);
+		// 		fill_list(parsed.cmd[2], '>', std_out);
+
+		// 		tmp = core_cmd(parsed.cmd[2]);
+
+		// 		m_memset(parsed.cmd[2], 0, BUFFER_SIZE);
+		// 		m_strlcpy(parsed.cmd[2], tmp, m_strlen(tmp) + 1);
+		// 		free(tmp);
+
+		// 		redi_stdin(std_in->head->right);
+		// 		redi_stdout(std_out->head->right);
+		// 		tmp = join_parsed(parsed);
+
+		// 		if (!run_builtin(parsed, std_out))
+		// 			run_execved(tmp, parsed, std_in, std_out);
+		// 		free(tmp);
+		// 		tmp = 0;
+		// 		if (pipe_len != 1)
+		// 			exit(0);
+		// 	}
+		// 	else
+		// 	{
+		// 		waitpid(child_pid, &status, 0);
+		// 		close(g_pipes[1]);
+		// 	}
+		// 	free_list(&std_out);
+		// 	free_list(&std_in);
+		// }
 		m_free_split(pipe_str);
 	}
 	free(g_read_buf);

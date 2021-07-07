@@ -1,14 +1,14 @@
 # minishell
 minishell 너무쉽당.. 할만하네~ 
 
-## To-Do List
 
+
+## To-Do List
 - cat << end 하고 ctrl+C 누르면 cat 실행안하고 $? 를 1로 바꿔줘야 함
 				 ctrl+D 누르면 cat 실행하고 0
 
-- int
+- builtin 여러번이 안됨
 
-- Norm
 
 
 ### 디펜스

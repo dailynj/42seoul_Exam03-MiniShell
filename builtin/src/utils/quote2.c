@@ -28,7 +28,7 @@ void	replace_env_dbquote(char *g_read_buf, char *temp, t_itdx *itdx)
 		}
 		else if (g_read_buf[itdx->i] == '$')
 		{
-			get_env(&env, g_read_buf, itdx->i);
+			get_env(&env, g_read_buf, &itdx->i);
 			itdx->t = put_env(&temp, env, itdx->t);
 			free(env);
 		}
@@ -37,19 +37,18 @@ void	replace_env_dbquote(char *g_read_buf, char *temp, t_itdx *itdx)
 	}
 }
 
-void	replace_dollar(char *g_read_buf, char *env, t_itdx *itdx, char *temp)
+void	replace_dollar(char *g_read_buf, t_itdx *itdx, char *temp)
 {
-	get_env(&env, g_read_buf, itdx->i);
+	char *env;
+
+	get_env(&env, g_read_buf, &itdx->i);
 	itdx->t = put_env(&temp, env, itdx->t);
 	free(env);
 }
 
 void	replace_env_else(char *g_read_buf, char *temp,
 		t_itdx *itdx, int before_errno)
-{
-	char	*env;
-
-	if (g_read_buf[itdx->i] == ' ')
+{if (g_read_buf[itdx->i] == ' ')
 	{
 		temp[++(itdx->t)] = ' ';
 		while (g_read_buf[itdx->i + 1] == ' ')
@@ -63,7 +62,7 @@ void	replace_env_else(char *g_read_buf, char *temp,
 			replace_errno(before_errno, itdx, temp);
 		}
 		else
-			replace_dollar(g_read_buf, env, itdx, temp);
+			replace_dollar(g_read_buf, itdx, temp);
 	}
 	else if (check_real(g_read_buf, itdx->i))
 		temp[++(itdx->t)] = check_real(g_read_buf, itdx->i);
