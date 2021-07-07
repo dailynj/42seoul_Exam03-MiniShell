@@ -32,3 +32,10 @@ int	ret_mesg(char *file, char *message, int ret)
 	printf("bash: %s: %s\n", file, message);
 	return (ret);
 }
+
+int	check_print(int boo)
+{
+	if (boo)
+		printf("bash: Syntax error\n");
+	return (boo);
+}

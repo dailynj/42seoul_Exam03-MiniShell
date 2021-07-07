@@ -63,67 +63,31 @@ void	fill_list(char *line, char ch, t_dummy *std)
 	}
 }
 
-int		redi_stdin(t_list *node)
+int	core_cmd2(char **line)
 {
-	t_list	*tmp;
-	char	read_buf[BUFFER_SIZE];
-	int		fd;
-
-	tmp = node;
-	fd = 0;
-	while (tmp->right)
-	{
-		if (tmp->db == 0)
-		{
-			fd = open(tmp->val, O_WRONLY, 0777);
-			if (fd == -1)
-				return (ret_mesg(tmp->val, "No such file or directory", -1));
-			close (fd);
-		}
-		else if (tmp->db == 1)
-		{
-			fd = open("a.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777);
-			while (1)
-			{
-				m_memset(&read_buf, 0, BUFFER_SIZE);
-				write(1, " > ", 3);
-				read(0, &read_buf, BUFFER_SIZE);
-				read_buf[m_strlen(read_buf) - 1] = 0;
-				if (!m_strncmp(tmp->val, read_buf, m_strlen(tmp->val) + 1))
-					break ;
-				else
-				{
-					write(fd, &read_buf, m_strlen(read_buf));
-					write(fd, "\n", 1);
-				}
-			}
-			close(fd);
-		}
-		tmp = tmp->right;
-	}
-	return (fd);
-}
-
-int	redi_stdout(t_list *node)
-{
-	t_list	*tmp;
-	int		fd;
-
-	tmp = node;
-	fd = 1;
-	while (tmp->right)
-	{
-		fd = open(tmp->val, O_WRONLY | (O_APPEND & (tmp->db << 3)) | O_CREAT, 0777);
-		tmp = tmp->right;
-		close(fd);
-	}
-	return (fd);
+	if (*(*line + 1) == '<' || *(*line + 1) == '>')
+		++(*line);
+	++(*line);
+	while (**line == ' ')
+		++(*line);
+	while (**line != ' ' && **line != '\0')
+		++(*line);
+	while (**line == ' ' && **line != '\0')
+		++(*line);
+	if (**line == '\0')
+		return (1);
+	if (**line == '<' || **line == '>')
+		return (2);
+	while (**line != ' ' && **line != '\0')
+		++(*line);
+	return (0);
 }
 
 char	*core_cmd(char *line)
 {
 	char	*temp;
 	int		tdx;
+	int		ret;
 
 	tdx = -1;
 	temp = malloc(BUFFER_SIZE);
@@ -134,21 +98,11 @@ char	*core_cmd(char *line)
 	{
 		if (*line == '<' || *line == '>')
 		{
-			if (*(line + 1) == '<' || *(line + 1) == '>')
-				++line;
-			++line;
-			while (*line == ' ')
-				++line;
-			while (*line != ' ' && *line != '\0')
-				++line;
-			while (*line == ' ' && *line != '\0')
-				++line;
-			if (*line == '\0')
+			ret = core_cmd2(&line);
+			if (ret == 1)
 				break ;
-			if (*line == '<' || *line == '>')
+			else if (ret == 2)
 				continue ;
-			while (*line != ' ' && *line != '\0')
-				++line;
 		}
 		else
 			temp[++tdx] = *line;

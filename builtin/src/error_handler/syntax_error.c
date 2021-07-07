@@ -12,6 +12,18 @@
 
 #include "builtin.h"
 
+int	db_quote(char *g_read_buf, int *dquote, int *i)
+{
+	*dquote = 1;
+	while (g_read_buf[++(*i)] && g_read_buf[*i] != '\"')
+		if (g_read_buf[*i] == '\\' && g_read_buf[*i + 1])
+			++i;
+	if (g_read_buf[*i] != '\"')
+		return (1);
+	*dquote = 0;
+	return (0);
+}
+
 int	check_syntax2(char *g_read_buf, int *dquote, int *squote, int i)
 {
 	while (g_read_buf[++i])
@@ -22,16 +34,13 @@ int	check_syntax2(char *g_read_buf, int *dquote, int *squote, int i)
 			return (1);
 		else if (g_read_buf[i] == '\"')
 		{
-			while ((*dquote = 1) && g_read_buf[++i] && g_read_buf[i] != '\"')
-				if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
-					++i;
-			if (g_read_buf[i] != '\"')
+			if (db_quote(g_read_buf, dquote, &i) == 1)
 				return (1);
-			*dquote = 0;
 		}
 		else if (g_read_buf[i] == '\'')
 		{
-			while ((*squote = 1) && g_read_buf[++i] && g_read_buf[i] != '\'')
+			*squote = 1;
+			while (g_read_buf[++i] && g_read_buf[i] != '\'')
 				;
 			if (g_read_buf[i] != '\'')
 				return (1);
@@ -97,11 +106,4 @@ int	check_redi(char *line)
 		++line;
 	}
 	return (check_print(0));
-}
-
-int	check_print(int boo)
-{
-	if (boo)
-		printf("bash: Syntax error\n");
-	return (boo);
 }

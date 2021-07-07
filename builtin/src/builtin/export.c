@@ -27,9 +27,9 @@ int	m_export(t_parsed *parsed, t_dummy *out)
 	else if (parsed->cmd[2][0] >= '0' && parsed->cmd[2][0] <= '9')
 		print_error(parsed, "?=1");
 	else if (parsed->cmd[2][0] != '\0')
-		add_list_sort(&env_list, parsed->cmd[2]);
+		add_list_sort(&g_env_list, parsed->cmd[2]);
 	else
-		print_list(&env_list);
+		print_list(&g_env_list);
 	if (ofd != 1)
 		close(ofd);
 	return (TRUE);

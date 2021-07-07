@@ -12,14 +12,14 @@
 
 #include "builtin.h"
 
-int 	check_real(char* buf, int idx)
+int	check_real(char *buf, int idx)
 {
 	if (buf[idx] == '|')
 		return (REAL_PIPE);
 	return (0);
 }
 
-void get_env(char **env, char *buf, int *idx)
+void	get_env(char **env, char *buf, int *idx)
 {
 	int		edx;
 
@@ -39,7 +39,8 @@ int	put_env(char **temp, char *env, int tdx)
 {
 	char	*dirp;
 
-	if ((dirp = m_find_env_list(&env_list, env)))
+	dirp = m_find_env_list(&g_env_list, env);
+	if (dirp)
 	{
 		while (*dirp)
 		{
@@ -50,90 +51,17 @@ int	put_env(char **temp, char *env, int tdx)
 	return (tdx);
 }
 
-int	replace_env(char *g_read_buf, int before_errno)
+void	replace_errno(int before_errno, t_itdx *itdx, char *temp)
 {
-	char	*temp;
-	char	*env;
-	int		idx;
-	int		tdx;
+	char	*err;
+	int		edx;
 
-	tdx = -1;
-	idx = -1;
-	temp = m_calloc(BUFFER_SIZE, 1);
-	if (!temp)
-		return (FALSE);
-	while(g_read_buf[++idx])
+	edx = -1;
+	err = m_itoa(before_errno);
+	while (err[++edx])
 	{
-		if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
-			temp[++tdx] = g_read_buf[++idx];
-		else if (g_read_buf[idx] == '\"')
-		{
-			while (g_read_buf[++idx] && g_read_buf[idx] != '\"')
-			{
-				// 아래랑 똑같음
-				if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1] && g_read_buf[idx + 1] == '\\')
-					temp[++tdx] = g_read_buf[++idx];
-				else if (g_read_buf[idx] == '\\' && g_read_buf[idx + 1])
-				{
-					temp[++tdx] = g_read_buf[idx];
-					temp[++tdx] = g_read_buf[++idx];
-				}
-				else if (g_read_buf[idx] == '$')
-				{
-					get_env(&env, g_read_buf, &idx);
-					tdx = put_env(&temp, env, tdx);
-					free(env);
-				}
-				else
-					temp[++tdx] = g_read_buf[idx];
-			}
-		}
-		else if(g_read_buf[idx] == '\'')
-		{
-			while (g_read_buf[++idx] && g_read_buf[idx] != '\'')
-			{
-				temp[++tdx] = g_read_buf[idx];
-			}
-		}
-		else
-		{
-			// 위에랑 똑같음
-			if (g_read_buf[idx] == ' ')
-			{
-				temp[++tdx] = ' ';
-				while (g_read_buf[idx + 1] == ' ')
-					++idx;
-			}
-			else if (g_read_buf[idx] == '$')
-			{
-				if (g_read_buf[idx + 1] == '?')
-				{
-					char	*err;
-					int		edx = -1;
-					err = m_itoa(before_errno);
-					while(err[++edx])
-					{
-						temp[++tdx] = err[edx];
-					}
-					free(err);
-					++idx;
-				}
-				else
-				{
-					get_env(&env, g_read_buf, &idx);
-					tdx = put_env(&temp, env, tdx);
-					free(env);
-				}
-			}
-			else if (check_real(g_read_buf, idx))
-				temp[++tdx] = check_real(g_read_buf, idx);
-			else
-				temp[++tdx] = g_read_buf[idx];
-		}
+		temp[++(itdx->t)] = err[edx];
 	}
-	m_memset(g_read_buf, 0, BUFFER_SIZE);
-	m_strlcpy(g_read_buf, temp, BUFFER_SIZE);
-	free(temp);
-	temp = 0;
-	return (TRUE);
+	free(err);
+	++itdx->i;
 }

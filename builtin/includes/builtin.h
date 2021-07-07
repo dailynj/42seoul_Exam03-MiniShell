@@ -37,27 +37,26 @@
 # define FALSE 0
 # define TRUE 1
 
-// extern int errno;
-
-pid_t	g_pid;
-int		pipes[2];
-
-typedef int		t_bool;
-
-typedef struct	s_term
+typedef struct s_term
 {
-	struct termios new_term;
-	struct termios org_term;
+	struct termios	new_term;
+	struct termios	org_term;
 }				t_term;
 
-typedef enum	e_type
+typedef enum e_type
 {
 	normal = 0,
 	export,
 	environ
 }				t_type;
 
-typedef struct	s_list
+typedef struct s_itdx
+{
+	int	i;
+	int	t;
+}			t_itdx;
+
+typedef struct s_list
 {
 	char			val[BUFFER_SIZE];
 	int				db;
@@ -65,27 +64,38 @@ typedef struct	s_list
 	struct s_list	*right;
 }				t_list;
 
-typedef struct		s_dummy
+typedef struct s_dummy
 {
 	struct s_list	*head;
 	struct s_list	*tail;
 }					t_dummy;
 
-typedef struct	s_parsed
+typedef struct s_parsed
 {
 	char	cmd[3][BUFFER_SIZE];
 }				t_parsed;
 
-t_dummy env_list;
+typedef struct s_execve
+{
+	char	**exec_str;
+	char	**envp;
+	char	**path_arr;
+}				t_execve;
+
+pid_t	g_pid;
+int		g_pipes[2];
+t_dummy	g_env_list;
 
 // main.c
+void			start_command(char **pipe_str);
 void			sigint_handler(int err);
 void			sigquit_handler(int err);
 int				start_shell(t_term *term, t_dummy *history);
 int				print_pwd(int type);
 int				run_builtin(t_parsed *parsed, t_dummy *std_out);
 void			printpipe(char **pipe_str);
-void			noncanonical_input(char *g_read_buf, t_term *term, t_dummy *history);
+void			noncanonical_input(char *g_read_buf, t_term *term,
+					t_dummy *history);
 
 //builtin
 int				m_echo(t_parsed *parsed, t_dummy *std_out);
@@ -122,6 +132,7 @@ int				m_isnum(char *str);
 void			*m_calloc(size_t count, size_t size);
 char			*m_itoa(int n);
 long long		m_atoi(char *str);
+char			*m_handle_zero(void);
 
 // run_redirection.c
 char			*first_word(char *line);
@@ -129,9 +140,11 @@ void			fill_list(char *line, char ch, t_dummy *std);
 int				redi_stdin(t_list *node);
 int				redi_stdout(t_list *node);
 char			*core_cmd(char *line);
-char 			*join_parsed(t_parsed *parsed);
+char			*join_parsed(t_parsed *parsed);
 
 // parsing.c
+int				check(char *line);
+int				nooption(char *line);
 t_parsed		get_cmd_echo(char *line);
 t_parsed		get_cmd(char *line);
 
@@ -142,15 +155,20 @@ int				ret_mesg(char *file, char *message, int ret);
 void			print_parsed(t_parsed parsed);
 
 // quote.c
-int		 		replace_env(char *g_read_buf, int before_errno);
+int				replace_env(char *g_read_buf, int before_errno,
+					t_itdx *itdx);
 int				put_env(char **temp, char *env, int tdx);
+void			get_env(char **env, char *buf, int *idx);
+int				check_real(char *buf, int idx);
+void			replace_errno(int before_errno, t_itdx *itdx, char *temp);
 
 // execve.c
-int				run_execved(char *pipe_str, t_parsed *parsed, t_dummy *std_in, t_dummy *std_out);
+int				run_execved(char *pipe_str, t_parsed *parsed,
+					t_dummy *std_in, t_dummy *std_out);
 
 // syntax_error.c
-int 			check_syntax(char *g_read_buf);
-int 			check_pipe(char *g_read_buf);
+int				check_syntax(char *g_read_buf);
+int				check_pipe(char *g_read_buf);
 int				check_redi(char *g_read_buf);
 int				check_print(int boo);
 // term.c
@@ -166,8 +184,9 @@ void			sigint_handler(int err);
 t_list			*new_list(char *val, int db);
 int				init_list(t_dummy *dummy);
 int				add_list(t_list *tail, char *val, int db);
-t_bool			history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
-t_bool			history_down(int i, int hdx, t_dummy *history, char **g_read_buf);
+int				history_up(int i, int hdx, t_dummy *history, char **g_read_buf);
+int				history_down(int i, int hdx, t_dummy *history,
+					char **g_read_buf);
 void			delete_val(int hdx, t_dummy *history);
 void			write_val(int hdx, t_dummy *history, int ch);
 int				add_list_sort(t_dummy *dummy, char *val);

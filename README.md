@@ -3,7 +3,10 @@ minishell 너무쉽당.. 할만하네~
 
 ## To-Do List
 
-- t_bool
+- cat << end 하고 ctrl+C 누르면 cat 실행안하고 $? 를 1로 바꿔줘야 함
+				 ctrl+D 누르면 cat 실행하고 0
+
+- int
 
 - Norm
 

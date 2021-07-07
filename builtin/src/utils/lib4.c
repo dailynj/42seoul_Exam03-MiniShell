@@ -34,35 +34,6 @@ char	*m_handle_zero(void)
 	return (ptr);
 }
 
-char	*m_itoa(int n)
-{
-	char	*ptr;
-	char	buf[20];
-	int		tmp;
-	int		len;
-
-	if (n == 0)
-		return (m_handle_zero());
-	tmp = n;
-	len = 0;
-	while (tmp)
-	{
-		buf[len] = (tmp % 10 > 0) ? (tmp % 10) + '0' : -(tmp % 10) + '0';
-		tmp /= 10;
-		len++;
-	}
-	if (n < 0)
-		len++;
-	ptr = (char *)m_calloc(len + 1, sizeof(char));
-	if (!ptr)
-		return (NULL);
-	tmp = (n < 0) ? 0 : -1;
-	ptr[0] = (n < 0) ? '-' : ptr[0];
-	while ((++tmp) < len)
-		ptr[tmp] = buf[len - 1 - tmp];
-	return (ptr);
-}
-
 long long	m_atoi(char *str)
 {
 	int			minus;

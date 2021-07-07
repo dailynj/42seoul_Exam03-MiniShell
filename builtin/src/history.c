@@ -1,6 +1,6 @@
 #include "builtin.h"
 
-t_bool	history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
+int	history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
 {
 	int		len;
 	t_list	*tmp;
@@ -29,7 +29,7 @@ t_bool	history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
 	}
 }
 
-t_bool	history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
+int	history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
 {
 	int		len;
 	t_list	*tmp;

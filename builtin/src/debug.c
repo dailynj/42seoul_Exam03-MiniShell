@@ -38,7 +38,7 @@ void	print_list(t_dummy *dummy)
 	tmp = dummy->head->right;
 	while (tmp->db != -1)
 	{
-		printf("--> (%s : %d)\n", tmp->val, tmp->db);
+		printf("%s\n", tmp->val);
 		tmp = tmp->right;
 	}
 }
