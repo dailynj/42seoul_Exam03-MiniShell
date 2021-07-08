@@ -35,7 +35,6 @@ void	run_execve_child_noslash(t_dummy *std_in, t_dummy *std_out)
 	int		ifd;
 	int		ofd;
 
-	print_list(std_in);
 	if (std_in->tail->left->db > 2)
 		ifd = std_in->tail->left->db;
 	else if (std_in->tail->left->db == 1)
@@ -70,21 +69,24 @@ void	run_execve_child(t_execve *exec, t_parsed *parsed,
 		exit(127);
 }
 
-int	run_execve_parent(t_execve *exec, t_parsed *parsed,
+int	run_execve_parent(t_execve **exec, t_parsed *parsed,
 	int status)
 {
 	wait(&status);
 	errno = status >> 8;
-	if (errno == 0)
+	if (errno == 0 && (status & 255))
+	{
 		errno = (status & 255) + 128;
+		printf("\n");
+	}
 	if (status >> 8 == 127)
 		printf("bash: %s: command not found!\n", parsed->cmd[0]);
 	else if (status == 768)
 		printf("bash: %s: No such file or directory\n", parsed->cmd[0]);
-	m_free_split(exec->envp);
-	m_free_split(exec->exec_str);
-	m_free_split(exec->path_arr);
-	g_pid = 0;
+	m_free_split((*exec)->envp);
+	m_free_split((*exec)->exec_str);
+	m_free_split((*exec)->path_arr);
+	free(*exec);
 	return (1);
 }
 
@@ -94,6 +96,7 @@ int	run_execved(char *pipe_str, t_parsed *parsed,
 	t_execve	*exec;
 	int			status;
 	char		*find_env;
+	pid_t		child_pid;
 
 	status = 0;
 	exec = malloc(sizeof(t_execve));
@@ -104,14 +107,14 @@ int	run_execved(char *pipe_str, t_parsed *parsed,
 	free(find_env);
 	if (!exec->path_arr)
 	{
-		printf("Error: not found\n");
+		printf("sunashell: %s: command not found\n", parsed->cmd[0]);
 		return (0);
 	}
 	exec->envp = make_envp(&g_env_list);
-	g_pid = fork();
-	if (g_pid == 0)
+	child_pid = fork();
+	if (child_pid == 0)
 		run_execve_child(exec, parsed, std_in, std_out);
 	else
-		return (run_execve_parent(exec, parsed, status));
+		return (run_execve_parent(&exec, parsed, status));
 	return (1);
 }

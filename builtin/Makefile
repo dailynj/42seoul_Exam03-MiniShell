@@ -15,14 +15,15 @@ NAME	=	sunashell
 CC		=	gcc
 CFLAGS	=	-Wall -Wextra -Werror
 INCLUDE = -I./includes
-SRC		=	main.c debug.c term.c history.c signal.c\
+SRC		=	main.c debug.c term.c history.c signal.c start_command.c\
 			builtin/cd.c builtin/echo.c builtin/env.c builtin/exit.c \
 			builtin/export.c builtin/pwd.c builtin/unset.c \
 			utils/lib.c utils/lib2.c utils/lib3.c utils/lib4.c utils/lib5.c \
-			utils/parsing.c utils/parsing2.c error_handler/error_handler.c \
-			error_handler/syntax_error.c utils/quote.c utils/quote2.c\
+			error_handler/error_handler.c error_handler/syntax_error.c \
 			shell/run_redirection.c shell/run_redirection2.c shell/execve.c \
-			list/list1.c list/list2.c
+			list/list1.c list/list2.c list/list3.c\
+			parsing/parsing.c parsing/parsing2.c parsing/quote.c parsing/quote2.c \
+			parsing/input.c parsing/input2.c
 
 SRC_DIR = ./src/
 SHELL	= bash

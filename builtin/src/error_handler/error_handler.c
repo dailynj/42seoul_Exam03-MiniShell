@@ -18,7 +18,7 @@ void	print_error(t_parsed *parsed, char *status)
 	if (!m_strncmp(status, "?=127", 5))
 	{
 		printf("%s: No such file or directory\n", parsed->cmd[2]);
-		errno = 127;
+		errno = 1;
 	}
 	else if (!m_strncmp(status, "?=1", 3))
 	{

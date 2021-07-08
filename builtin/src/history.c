@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   history.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/08 13:40:56 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/08 13:40:56 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
-int	history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
+int	history_up(t_idx *ihdx, t_dummy *history, char **read_buf)
 {
 	int		len;
 	t_list	*tmp;
 
 	tmp = history->tail;
-	if (hdx == 0)
-		len = m_strlen(*g_read_buf);
+	if (ihdx->j == 0)
+		len = m_strlen(*read_buf);
 	else
 	{
-		while (--hdx >= 0)
+		while (--ihdx->j >= 0)
 		{
 			tmp = tmp->left;
 			if (tmp->left->db == -1)
@@ -22,14 +34,14 @@ int	history_up(int i, int hdx, t_dummy *history, char **g_read_buf)
 		return (FALSE);
 	else
 	{
-		m_strlcpy(*g_read_buf, tmp->left->val, m_strlen(tmp->left->val) + 1);
-		while (--len >= 0 && i-- >= 0)
+		m_strlcpy(*read_buf, tmp->left->val, m_strlen(tmp->left->val) + 1);
+		while (--len >= 0 && ihdx->i-- >= 0)
 			write(0, "\b \b", 3);
 		return (TRUE);
 	}
 }
 
-int	history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
+int	history_down(int idx, int hdx, t_dummy *history, char **read_buf)
 {
 	int		len;
 	t_list	*tmp;
@@ -42,10 +54,10 @@ int	history_down(int i, int hdx, t_dummy *history, char **g_read_buf)
 			break ;
 	}
 	len = m_strlen(tmp->val);
-	while (--len >= 0 && i-- >= 0)
+	while (--len >= 0 && idx-- >= 0)
 		write(0, "\b \b", 3);
 	if (tmp->right->db != -1)
-		m_strlcpy(*g_read_buf, tmp->right->val, m_strlen(tmp->right->val) + 1);
+		m_strlcpy(*read_buf, tmp->right->val, m_strlen(tmp->right->val) + 1);
 	return (TRUE);
 }
 

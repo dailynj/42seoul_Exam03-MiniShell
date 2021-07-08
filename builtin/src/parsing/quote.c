@@ -51,7 +51,7 @@ int	put_env(char **temp, char *env, int tdx)
 	return (tdx);
 }
 
-void	replace_errno(int before_errno, t_itdx *itdx, char *temp)
+void	replace_errno(int before_errno, t_idx *itdx, char *temp)
 {
 	char	*err;
 	int		edx;
@@ -60,7 +60,7 @@ void	replace_errno(int before_errno, t_itdx *itdx, char *temp)
 	err = m_itoa(before_errno);
 	while (err[++edx])
 	{
-		temp[++(itdx->t)] = err[edx];
+		temp[++(itdx->j)] = err[edx];
 	}
 	free(err);
 	++itdx->i;

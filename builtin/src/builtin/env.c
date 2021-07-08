@@ -34,7 +34,7 @@ int	m_env(t_parsed *parsed, t_dummy *out)
 			write(ofd, parsed->cmd[2], m_strlen(parsed->cmd[2]));
 	}
 	else
-		print_list(&g_env_list);
+		print_list(ofd, &g_env_list);
 	if (ofd != 1)
 		close(ofd);
 	return (TRUE);

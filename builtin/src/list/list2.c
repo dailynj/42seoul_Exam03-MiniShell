@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   list2.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/08 13:41:11 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/08 13:41:12 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 int	add_list_sort(t_dummy *dummy, char *val)
@@ -6,12 +18,11 @@ int	add_list_sort(t_dummy *dummy, char *val)
 	t_list	*new_node;
 
 	tmp = dummy->head;
-	while (tmp->right->db != -1)
-	{
-		if (m_strncmp(tmp->right->val, val, find_equal(val)) >= 0)
-			break ;
+	if (val[find_equal(val) + 1] == '\0')
+		return (TRUE);
+	while (tmp->right->db != -1
+		&& m_strncmp(tmp->right->val, val, find_equal(val)) < 0)
 		tmp = tmp->right;
-	}
 	if (m_strncmp(tmp->right->val, val, find_equal(val)) == 0)
 		m_strlcpy(tmp->right->val, val, m_strlen(val) + 1);
 	else

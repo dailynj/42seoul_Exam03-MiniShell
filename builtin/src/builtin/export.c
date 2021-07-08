@@ -29,7 +29,7 @@ int	m_export(t_parsed *parsed, t_dummy *out)
 	else if (parsed->cmd[2][0] != '\0')
 		add_list_sort(&g_env_list, parsed->cmd[2]);
 	else
-		print_list(&g_env_list);
+		print_list_export(ofd, &g_env_list);
 	if (ofd != 1)
 		close(ofd);
 	return (TRUE);

@@ -12,37 +12,37 @@
 
 #include "builtin.h"
 
-int	db_quote(char *g_read_buf, int *dquote, int *i)
+int	db_quote(char *read_buf, int *dquote, int *i)
 {
 	*dquote = 1;
-	while (g_read_buf[++(*i)] && g_read_buf[*i] != '\"')
-		if (g_read_buf[*i] == '\\' && g_read_buf[*i + 1])
+	while (read_buf[++(*i)] && read_buf[*i] != '\"')
+		if (read_buf[*i] == '\\' && read_buf[*i + 1])
 			++i;
-	if (g_read_buf[*i] != '\"')
+	if (read_buf[*i] != '\"')
 		return (1);
 	*dquote = 0;
 	return (0);
 }
 
-int	check_syntax2(char *g_read_buf, int *dquote, int *squote, int i)
+int	check_syntax2(char *read_buf, int *dquote, int *squote, int i)
 {
-	while (g_read_buf[++i])
+	while (read_buf[++i])
 	{
-		if (g_read_buf[i] == '\\' && g_read_buf[i + 1])
+		if (read_buf[i] == '\\' && read_buf[i + 1])
 			++i;
-		else if (g_read_buf[i] == '\\' && !g_read_buf[i + 1])
+		else if (read_buf[i] == '\\' && !read_buf[i + 1])
 			return (1);
-		else if (g_read_buf[i] == '\"')
+		else if (read_buf[i] == '\"')
 		{
-			if (db_quote(g_read_buf, dquote, &i) == 1)
+			if (db_quote(read_buf, dquote, &i) == 1)
 				return (1);
 		}
-		else if (g_read_buf[i] == '\'')
+		else if (read_buf[i] == '\'')
 		{
 			*squote = 1;
-			while (g_read_buf[++i] && g_read_buf[i] != '\'')
+			while (read_buf[++i] && read_buf[i] != '\'')
 				;
-			if (g_read_buf[i] != '\'')
+			if (read_buf[i] != '\'')
 				return (1);
 			*squote = 0;
 		}
@@ -50,36 +50,36 @@ int	check_syntax2(char *g_read_buf, int *dquote, int *squote, int i)
 	return (0);
 }
 
-int	check_syntax(char *g_read_buf)
+int	check_syntax(char *read_buf)
 {
 	int		dquote;
 	int		squote;
 
 	dquote = 0;
 	squote = 0;
-	if (m_strchr(g_read_buf, ';') || m_strchr(g_read_buf, '`'))
+	if (m_strchr(read_buf, ';') || m_strchr(read_buf, '`'))
 		return (check_print(1));
-	if (check_syntax2(g_read_buf, &dquote, &squote, -1))
+	if (check_syntax2(read_buf, &dquote, &squote, -1))
 		return (check_print(1));
 	return (check_print(dquote || squote));
 }
 
-int	check_pipe(char *g_read_buf)
+int	check_pipe(char *read_buf)
 {
 	int	i;
 	int	flag;
 
 	i = -1;
-	while (g_read_buf[++i])
+	while (read_buf[++i])
 	{
 		flag = 0;
-		if (g_read_buf[i] != '|')
+		if (read_buf[i] != '|')
 			continue ;
-		if (g_read_buf[i] == '|')
+		if (read_buf[i] == '|')
 		{
-			while (g_read_buf[++i] && g_read_buf[i] != '|')
+			while (read_buf[++i] && read_buf[i] != '|')
 			{
-				if (g_read_buf[i] != ' ')
+				if (read_buf[i] != ' ')
 					flag = 1;
 			}
 		}

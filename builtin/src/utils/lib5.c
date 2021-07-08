@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lib5.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/08 13:42:12 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/08 13:42:13 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 char	get_buf(int tmp)
@@ -49,4 +61,11 @@ char	*m_itoa(int n)
 	while ((++tmp) < len)
 		ptr[tmp] = buf[len - 1 - tmp];
 	return (ptr);
+}
+
+char	m_tolower(char s)
+{
+	if (s >= 65 && s <= 90)
+		return (s + 32);
+	return (s);
 }

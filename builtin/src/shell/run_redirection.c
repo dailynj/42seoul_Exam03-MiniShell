@@ -21,13 +21,16 @@ char	*first_word(char *line)
 	i = 0;
 	j = -1;
 	tmp = malloc(BUFFER_SIZE);
+	tmp = m_memset(tmp, 0, BUFFER_SIZE);
 	if (!line || !tmp)
 		return (NULL);
 	while (line[++i])
 	{
-		if (line[i] != ' ' && line[i] != '<' && line[i] != '>')
+		if (line[i] != ' ' && line[i] != '<' && line[i] != '>'
+			&& line[i] != '\0')
 		{
-			while (line[i] != ' ' && line[i] != '<' && line[i] != '>')
+			while (line[i] != ' ' && line[i] != '<' && line[i] != '>'
+				&& line[i] != '\0')
 			{
 				tmp[++j] = line[i];
 				++i;
@@ -35,51 +38,53 @@ char	*first_word(char *line)
 			return (tmp);
 		}
 	}
-	tmp[i] = 0;
 	return (tmp);
 }
 
 void	fill_list(char *line, char ch, t_dummy *std)
 {
 	char	*tmp;
+	int		idx;
 
-	while (*line)
+	idx = 0;
+	while (line[idx])
 	{
-		if (*line == ch)
+		if (line[idx] == ch)
 		{
-			if (*(line + 1) == ch)
+			if (line[idx + 1] == ch)
 			{
-				tmp = first_word(++line);
+				++idx;
+				tmp = first_word(line + idx);
 				add_list(std->tail, tmp, 1);
 			}
 			else
 			{
-				tmp = first_word(line);
+				tmp = first_word(line + idx);
 				add_list(std->tail, tmp, 0);
 			}
 			free(tmp);
 		}
-		++line;
+		++idx;
 	}
 }
 
-int	core_cmd2(char **line)
+int	core_cmd2(char *line, int *idx)
 {
-	if (*(*line + 1) == '<' || *(*line + 1) == '>')
-		++(*line);
-	++(*line);
-	while (**line == ' ')
-		++(*line);
-	while (**line != ' ' && **line != '\0')
-		++(*line);
-	while (**line == ' ' && **line != '\0')
-		++(*line);
-	if (**line == '\0')
+	if (line[*idx + 1] == '<' || line[*idx + 1] == '>')
+		++*idx;
+	++*idx;
+	while (line[*idx] == ' ')
+		++*idx;
+	while (line[*idx] != ' ' && line[*idx] != '\0')
+		++*idx;
+	while (line[*idx] == ' ' && line[*idx] != '\0')
+		++*idx;
+	if (line[*idx] == '\0')
 		return (1);
-	if (**line == '<' || **line == '>')
+	if (line[*idx] == '<' || line[*idx] == '>')
 		return (2);
-	while (**line != ' ' && **line != '\0')
-		++(*line);
+	while (line[*idx] != ' ' && line[*idx] != '\0')
+		++*idx;
 	return (0);
 }
 
@@ -88,25 +93,27 @@ char	*core_cmd(char *line)
 	char	*temp;
 	int		tdx;
 	int		ret;
+	int		idx;
 
 	tdx = -1;
+	idx = 0;
 	temp = malloc(BUFFER_SIZE);
 	m_memset(temp, 0, BUFFER_SIZE);
 	if (!temp)
 		return (NULL);
-	while (*line)
+	while (line[idx])
 	{
-		if (*line == '<' || *line == '>')
+		if (line[idx] == '<' || line[idx] == '>')
 		{
-			ret = core_cmd2(&line);
+			ret = core_cmd2(line, &idx);
 			if (ret == 1)
 				break ;
 			else if (ret == 2)
 				continue ;
 		}
 		else
-			temp[++tdx] = *line;
-		++line;
+			temp[++tdx] = line[idx];
+		++idx;
 	}
 	temp[++tdx] = 0;
 	return (temp);
