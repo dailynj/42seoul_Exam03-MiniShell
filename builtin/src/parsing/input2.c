@@ -55,17 +55,17 @@ void	noncanonical_input(char *read_buf, t_term *term, t_dummy *history)
 	set_input_mode(term);
 	while (read(0, &ch, sizeof(ch)) > 0)
 	{
-		if (ch == 4283163 || ch == 4348699)
+		if (ch == 4283163 || ch == 4348699 || ch == 4479771 || ch == 4414235)
 			input_updown(buf, ch, history, &ihdx);
 		else if (ch == 4)
 			input_ctrld(term, ihdx.i);
+		else if (ch == 127)
+			input_backspace(buf, &ihdx, history);
 		else if (ch == 3 || ch == '\n')
 		{
 			input_ctrlc_nl(buf, &ihdx, history, ch);
 			break ;
 		}
-		else if (ch == 127)
-			input_backspace(buf, &ihdx, history);
 		else
 			input_ch(buf, &ihdx, history, ch);
 		ch = 0;

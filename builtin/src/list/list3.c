@@ -22,6 +22,7 @@ void	print_list_export(int ofd, t_dummy *dummy)
 	while (tmp->db != -1)
 	{
 		idx = -1;
+		write(ofd, "declare -x ", 11);
 		while (tmp->val[++idx])
 		{
 			write(ofd, &tmp->val[idx], 1);

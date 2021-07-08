@@ -51,6 +51,8 @@ void	input_updown(char *buf[2], int ch, t_dummy *history, t_idx *ihdx)
 			--ihdx->j;
 		}
 	}
+	else if (ch == 4479771 || ch == 4414235)
+		;
 	else
 		input_up(buf, history, ihdx);
 }

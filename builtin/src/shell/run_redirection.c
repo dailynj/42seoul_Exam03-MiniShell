@@ -91,31 +91,29 @@ int	core_cmd2(char *line, int *idx)
 char	*core_cmd(char *line)
 {
 	char	*temp;
-	int		tdx;
 	int		ret;
-	int		idx;
+	t_idx	itdx;
 
-	tdx = -1;
-	idx = 0;
+	itdx.j = -1;
+	itdx.i = -1;
 	temp = malloc(BUFFER_SIZE);
 	m_memset(temp, 0, BUFFER_SIZE);
 	if (!temp)
 		return (NULL);
-	while (line[idx])
+	while (line[++itdx.i])
 	{
-		if (line[idx] == '<' || line[idx] == '>')
+		if (line[itdx.i] == '<' || line[itdx.i] == '>')
 		{
-			ret = core_cmd2(line, &idx);
+			ret = core_cmd2(line, &itdx.i);
 			if (ret == 1)
 				break ;
 			else if (ret == 2)
 				continue ;
 		}
 		else
-			temp[++tdx] = line[idx];
-		++idx;
+			temp[++itdx.j] = line[itdx.i];
 	}
-	temp[++tdx] = 0;
+	temp[++itdx.j] = 0;
 	return (temp);
 }
 

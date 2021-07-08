@@ -82,7 +82,6 @@ typedef struct s_execve
 	char	**path_arr;
 }				t_execve;
 
-int		g_pipes[2];
 t_dummy	g_env_list;
 
 // main.c

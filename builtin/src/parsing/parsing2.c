@@ -12,38 +12,45 @@
 
 #include "builtin.h"
 
-void	cmd_echo_else(t_parsed *output, char *line, int *jdx, char *temp,
-			int *idx)
+int	cmd_echo_else(t_parsed *output, char *line, char *temp, t_idx *ijdx)
 {
-	if (!output->cmd[1][0] && *idx == 1)
-		++(*idx);
-	temp = line + *jdx;
-	while (line[*jdx] && ((line[*jdx]) != 32 || *idx != 0))
+	if (!output->cmd[1][0] && ijdx->i == 1)
+		++(ijdx->i);
+	temp = line + ijdx->j;
+	while (line[ijdx->j] && ((line[ijdx->j]) != 32 || ijdx->i != 0))
 	{
-		output->cmd[*idx][(line + *jdx) - temp] = line[*jdx];
-		++*jdx;
+		output->cmd[ijdx->i][(line + ijdx->j) - temp] = line[ijdx->j];
+		++ijdx->j;
 	}
+	return (ijdx->j);
 }
 
-void	cmd_echo(t_parsed *output, char *line, int *jdx, int idx, int cnt)
+void	cmd_echo(t_parsed *output, char *line, int *jdx)
 {
 	char	*temp;
+	int		cnt;
+	t_idx	ijdx;
 
 	temp = 0;
-	while (idx < cnt && idx < 3)
+	cnt = 2;
+	ijdx.i = 1;
+	while (ijdx.i < cnt && ijdx.i < 3)
 	{
 		while (line[*jdx] == 32)
 			++(*jdx);
-		if (nnnn(line + *jdx, 0, 0, 0) > 0 && idx == 1)
+		if (nnnn(line + *jdx, 0, 0, 0) > 0 && ijdx.i == 1)
 		{
 			m_strcpy(output->cmd[1], "-n");
 			*jdx += (nnnn(line + *jdx, 0, 0, 0));
 		}
 		else
-			cmd_echo_else(output, line, jdx, temp, &idx);
+		{
+			ijdx.j = *jdx;
+			*jdx = cmd_echo_else(output, line, temp, &ijdx);
+		}
 		if (check(line + *jdx))
 			++cnt;
-		++idx;
+		++ijdx.i;
 	}
 }
 
@@ -105,7 +112,7 @@ t_parsed	*get_cmd(char *line)
 	if (!m_strncmp(output->cmd[0], "echo", 4))
 	{
 		if (check(line + j))
-			cmd_echo(output, line, &j, 1, 2);
+			cmd_echo(output, line, &j);
 	}
 	else
 		get_cmd_else(output, line, &j);
