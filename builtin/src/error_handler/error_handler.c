@@ -14,7 +14,7 @@
 
 void	print_error(t_parsed *parsed, char *status)
 {
-	printf("bash: %s: ", parsed->cmd[0]);
+	printf("sunashell: %s: ", parsed->cmd[0]);
 	if (!m_strncmp(status, "?=127", 5))
 	{
 		printf("%s: No such file or directory\n", parsed->cmd[2]);
@@ -29,13 +29,13 @@ void	print_error(t_parsed *parsed, char *status)
 
 int	ret_mesg(char *file, char *message, int ret)
 {
-	printf("bash: %s: %s\n", file, message);
+	printf("sunashell: %s: %s\n", file, message);
 	return (ret);
 }
 
 int	check_print(int boo)
 {
 	if (boo)
-		printf("bash: Syntax error\n");
+		printf("sunashell: Syntax error\n");
 	return (boo);
 }

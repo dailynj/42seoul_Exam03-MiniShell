@@ -69,8 +69,7 @@ void	run_execve_child(t_execve *exec, t_parsed *parsed,
 		exit(127);
 }
 
-int	run_execve_parent(t_execve **exec, t_parsed *parsed,
-	int status)
+int	run_execve_parent(t_execve **exec, t_parsed *parsed, int status)
 {
 	wait(&status);
 	errno = status >> 8;
@@ -79,10 +78,10 @@ int	run_execve_parent(t_execve **exec, t_parsed *parsed,
 		errno = (status & 255) + 128;
 		printf("\n");
 	}
-	if (status >> 8 == 127)
-		printf("bash: %s: command not found!\n", parsed->cmd[0]);
+	if (status >> 8 == 127 && parsed->cmd[0][0] != '\0')
+		printf("sunashell: %s: command not found!\n", parsed->cmd[0]);
 	else if (status == 768)
-		printf("bash: %s: No such file or directory\n", parsed->cmd[0]);
+		printf("sunashell: %s: No such file or directory\n", parsed->cmd[0]);
 	m_free_split((*exec)->envp);
 	m_free_split((*exec)->exec_str);
 	m_free_split((*exec)->path_arr);

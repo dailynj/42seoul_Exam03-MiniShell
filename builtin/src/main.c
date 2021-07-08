@@ -92,30 +92,28 @@ int	run_builtin(t_parsed *parsed, t_dummy *std_out)
 int	print_pwd(int type)
 {
 	char	cwd[PATH_MAX];
-	char	*temp;
 	int		cnt;
 	int		color;
+	int		idx;
 
-	temp = cwd;
+	idx = -1;
 	cnt = 0;
 	color = 1;
 	m_memset(cwd, 0, PATH_MAX);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (FALSE);
 	printf("\033[0mSuNaSHELL🦀 ");
-	while (*temp)
+	while (cwd[++idx])
 	{
 		++cnt;
-		if (*temp == '/')
+		if (cwd[idx] == '/')
 		{
 			cnt = 0;
 			color = (color + 1) % 6 + 48;
 		}
 		if (cnt < BUFFER_SIZE * type)
-			printf("\033[0;3%dm%c", color % 6, *temp);
-		++temp;
+			printf("\033[0;3%dm%c", color % 6, cwd[idx]);
 	}
 	printf("\033[0;37m\n");
-	write(1, " > ", 3);
-	return (TRUE);
+	return (write(1, " > ", 3));
 }

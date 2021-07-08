@@ -12,11 +12,13 @@
 
 #include "builtin.h"
 
-void	input_up(char *buf[2], t_dummy *history, t_idx *ihdx)
+void	input_up(char *buf[2], t_dummy *history, t_idx *ihdx, int ch)
 {
 	int	k;
 
-	if (history_up(ihdx, history, &buf[0]))
+	if (ch == 4479771 || ch == 4414235)
+		;
+	else if (history_up(*ihdx, history, &buf[0]))
 	{
 		k = -1;
 		while (buf[0][++k])
@@ -51,10 +53,8 @@ void	input_updown(char *buf[2], int ch, t_dummy *history, t_idx *ihdx)
 			--ihdx->j;
 		}
 	}
-	else if (ch == 4479771 || ch == 4414235)
-		;
 	else
-		input_up(buf, history, ihdx);
+		input_up(buf, history, ihdx, ch);
 }
 
 void	input_ctrld(t_term *term, int idx)

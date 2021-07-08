@@ -70,6 +70,12 @@ typedef struct s_dummy
 	struct s_list	*tail;
 }					t_dummy;
 
+typedef struct s_std
+{
+	t_dummy		*in;
+	t_dummy		*out;
+}				t_std;
+
 typedef struct s_parsed
 {
 	char	cmd[3][BUFFER_SIZE];
@@ -178,13 +184,12 @@ void		set_input_mode(t_term *term);
 
 // signal.c
 void		sigint_handler(int err);
-// void			sigquit_handler(void);
 
 // list.c
 t_list		*new_list(char *val, int db);
 int			init_list(t_dummy *dummy);
 int			add_list(t_list *tail, char *val, int db);
-int			history_up(t_idx *ihdx, t_dummy *history, char **read_buf);
+int			history_up(t_idx ihdx, t_dummy *history, char **read_buf);
 int			history_down(int i, int hdx, t_dummy *history,
 				char **read_buf);
 void		delete_val(int hdx, t_dummy *history);
@@ -202,7 +207,7 @@ void		print_list_export(int ofd, t_dummy *dummy);
 
 //input.c
 void		init_input(char *read_buf, t_idx *ihdx, char **buf);
-void		input_up(char **buf, t_dummy *history, t_idx *ihdx);
+void		input_up(char *buf[2], t_dummy *history, t_idx *ihdx, int ch);
 void		input_updown(char **buf, int ch, t_dummy *history, t_idx *ihdx);
 void		input_ctrld(t_term *term, int idx);
 void		input_backspace(char **buf, t_idx *ihdx, t_dummy *history);

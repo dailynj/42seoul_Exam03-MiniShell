@@ -12,6 +12,7 @@
 
 #include "builtin.h"
 
+// return -1 이면 에러처리(바로 다음 command로 넘어가야함)
 void	redi_stdin_db(t_list *tmp, int fd)
 {
 	char	read_buf[BUFFER_SIZE];
@@ -27,6 +28,7 @@ void	redi_stdin_db(t_list *tmp, int fd)
 			break ;
 		else
 		{
+			// ctrl + c , ctrl + d,  \n
 			write(fd, &read_buf, m_strlen(read_buf));
 			write(fd, "\n", 1);
 		}

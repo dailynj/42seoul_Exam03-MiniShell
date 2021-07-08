@@ -12,17 +12,17 @@
 
 #include "builtin.h"
 
-int	history_up(t_idx *ihdx, t_dummy *history, char **read_buf)
+int	history_up(t_idx ihdx, t_dummy *history, char **read_buf)
 {
 	int		len;
 	t_list	*tmp;
 
 	tmp = history->tail;
-	if (ihdx->j == 0)
+	if (ihdx.j == 0)
 		len = m_strlen(*read_buf);
 	else
 	{
-		while (--ihdx->j >= 0)
+		while (--ihdx.j >= 0)
 		{
 			tmp = tmp->left;
 			if (tmp->left->db == -1)
@@ -35,7 +35,7 @@ int	history_up(t_idx *ihdx, t_dummy *history, char **read_buf)
 	else
 	{
 		m_strlcpy(*read_buf, tmp->left->val, m_strlen(tmp->left->val) + 1);
-		while (--len >= 0 && ihdx->i-- >= 0)
+		while (--len >= 0 && ihdx.i-- >= 0)
 			write(0, "\b \b", 3);
 		return (TRUE);
 	}

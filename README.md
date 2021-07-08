@@ -6,7 +6,7 @@ minishell 너무쉽당.. 할만하네~
 ## To-Do List
 - cat << end 하고 ctrl+C 누르면 cat 실행안하고 $? 를 1로 바꿔줘야 함
 				 ctrl+D 누르면 cat 실행하고 0
-
+- a.txt 이름 고치기
 
 ### 디펜스
 - cmd || cmd : OR 연산 (pipe x)
@@ -37,8 +37,6 @@ echo a + echo b + echo c 후 방향키 위아래
 echo b 지워보기
 echo b -> ls 로 바꾸고 실행
 echo a -> echo asdf 바꾸고 실행
-
-
 
 **redirection**
 cat a > b
