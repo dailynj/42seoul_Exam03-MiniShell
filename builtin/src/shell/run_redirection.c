@@ -71,20 +71,20 @@ void	fill_list(char *line, char ch, t_dummy *std)
 int	core_cmd2(char *line, int *idx)
 {
 	if (line[*idx + 1] == '<' || line[*idx + 1] == '>')
-		++*idx;
-	++*idx;
+		++(*idx);
+	++(*idx);
 	while (line[*idx] == ' ')
-		++*idx;
+		++(*idx);
 	while (line[*idx] != ' ' && line[*idx] != '\0')
-		++*idx;
+		++(*idx);
 	while (line[*idx] == ' ' && line[*idx] != '\0')
-		++*idx;
+		++(*idx);
 	if (line[*idx] == '\0')
 		return (1);
 	if (line[*idx] == '<' || line[*idx] == '>')
 		return (2);
 	while (line[*idx] != ' ' && line[*idx] != '\0')
-		++*idx;
+		++(*idx);
 	return (0);
 }
 

@@ -21,9 +21,10 @@ void	init_term(t_term *term)
 	term->new_term.c_cc[VTIME] = 0;
 }
 
-void	reset_input_mode(t_term *term)
+int	reset_input_mode(t_term *term)
 {
 	tcsetattr(STDIN_FILENO, TCSANOW, &term->org_term);
+	return (FALSE);
 }
 
 void	set_input_mode(t_term *term)

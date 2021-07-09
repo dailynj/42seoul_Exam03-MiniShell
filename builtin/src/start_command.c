@@ -27,7 +27,7 @@ void	child_command(t_parsed *parsed, t_std *std, int pipe_in, int pipe_len)
 	tmp = 0;
 	redi_stdout(std->out->head->right);
 	tmp = join_parsed(parsed);
-	if (redi_stdin(std->in->head->right) != -1
+	if (!redi_stdin(std->in->head->right)
 		&& !run_builtin(parsed, std->out))
 		run_execved(tmp, parsed, std->in, std->out);
 	free(tmp);

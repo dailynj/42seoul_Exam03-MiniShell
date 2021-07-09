@@ -49,6 +49,7 @@ void	start_shell(t_term *term, t_dummy *history)
 		itdx->j = -1;
 		before_errno = errno;
 		errno = 0;
+		set_input_mode(term);
 		noncanonical_input(read_buf, term, history);
 		if (check_syntax(read_buf) || check_pipe(read_buf)
 			|| check_redi(read_buf) || errno)
@@ -57,7 +58,6 @@ void	start_shell(t_term *term, t_dummy *history)
 		pipe_str = m_split_char(read_buf, REAL_PIPE);
 		start_command(pipe_str);
 		m_free_split(pipe_str);
-		pipe_str = 0;
 	}
 	free(read_buf);
 	read_buf = 0;

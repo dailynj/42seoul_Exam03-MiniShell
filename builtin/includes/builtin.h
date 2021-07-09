@@ -179,7 +179,7 @@ int			check_redi(char *read_buf);
 int			check_print(int boo);
 // term.c
 void		init_term(t_term *term);
-void		reset_input_mode(t_term *term);
+int			reset_input_mode(t_term *term);
 void		set_input_mode(t_term *term);
 
 // signal.c

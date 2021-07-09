@@ -52,7 +52,6 @@ void	noncanonical_input(char *read_buf, t_term *term, t_dummy *history)
 
 	ch = 0;
 	init_input(read_buf, &ihdx, buf);
-	set_input_mode(term);
 	while (read(0, &ch, sizeof(ch)) > 0)
 	{
 		if (ch == 4283163 || ch == 4348699 || ch == 4479771 || ch == 4414235)

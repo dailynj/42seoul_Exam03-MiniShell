@@ -72,6 +72,7 @@ char	**m_free_split(char **s)
 		i++;
 	}
 	free(s);
+	s = 0;
 	return (NULL);
 }
 

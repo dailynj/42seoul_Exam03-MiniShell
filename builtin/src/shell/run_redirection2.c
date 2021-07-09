@@ -12,37 +12,78 @@
 
 #include "builtin.h"
 
-// return -1 이면 에러처리(바로 다음 command로 넘어가야함)
-void	redi_stdin_db(t_list *tmp, int fd)
+char	nl_to_null(char ch)
 {
-	char	read_buf[BUFFER_SIZE];
+	if (ch == '\n')
+		return (0);
+	return (ch);
+}
 
-	fd = open("a.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777);
-	while (1)
+int	get_read_buf(char *read_buf, int *i)
+{
+	char	ch;
+
+	while (read(0, &ch, 1) > 0)
 	{
-		m_memset(&read_buf, 0, BUFFER_SIZE);
-		write(1, " > ", 3);
-		read(0, &read_buf, BUFFER_SIZE);
-		read_buf[m_strlen(read_buf) - 1] = 0;
-		if (!m_strncmp(tmp->val, read_buf, m_strlen(tmp->val) + 1))
-			break ;
-		else
+		if (ch == 3)
 		{
-			// ctrl + c , ctrl + d,  \n
-			write(fd, &read_buf, m_strlen(read_buf));
-			write(fd, "\n", 1);
+			write(1, "\n", 1);
+			return (FALSE);
+		}
+		else if (ch == 4 && *i == -1)
+			return (TRUE);
+		else if (ch == 127 && *i != -1)
+		{
+			read_buf[(*i)--] = 0;
+			write(1, "\b \b", 3);
+		}
+		else if (ch != 127)
+		{
+			write(1, &ch, 1);
+			read_buf[++(*i)] = nl_to_null(ch);
+			if (ch == '\n')
+				break ;
 		}
 	}
+	return (TRUE);
+}
+
+int	redi_stdin_db(t_term *term, t_list *tmp, int fd)
+{
+	char	*read_buf;
+	int		i;
+
+	fd = open("a.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	set_input_mode(term);
+	read_buf = m_calloc(BUFFER_SIZE, 0);
+	while (1)
+	{
+		i = -1;
+		write(1, " > ", 3);
+		if (!get_read_buf(read_buf, &i))
+		{
+			free(read_buf);
+			return (reset_input_mode(term));
+		}
+		if (!m_strncmp(tmp->val, read_buf, m_strlen(tmp->val) + 1))
+			break ;
+		write(fd, read_buf, m_strlen(read_buf));
+		write(fd, "\n", 1);
+	}
+	free(read_buf);
 	close(fd);
+	return (!reset_input_mode(term));
 }
 
 int	redi_stdin(t_list *node)
 {
 	t_list	*tmp;
 	int		fd;
+	t_term	term;
 
 	tmp = node;
 	fd = 0;
+	init_term(&term);
 	while (tmp->right)
 	{
 		if (tmp->db == 0)
@@ -53,7 +94,10 @@ int	redi_stdin(t_list *node)
 			close (fd);
 		}
 		else if (tmp->db == 1)
-			redi_stdin_db(tmp, fd);
+		{
+			if (!redi_stdin_db(&term, tmp, fd))
+				return (FALSE);
+		}
 		tmp = tmp->right;
 	}
 	return (fd);
