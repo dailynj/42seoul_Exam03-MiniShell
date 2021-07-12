@@ -63,6 +63,7 @@ int	redi_stdin_db(t_term *term, t_list *tmp, int fd)
 		if (!get_read_buf(read_buf, &i, tmp->val))
 		{
 			free(read_buf);
+			errno = 1;
 			return (reset_input_mode(term));
 		}
 		if (!m_strncmp(tmp->val, read_buf, m_strlen(tmp->val) + 1))
@@ -96,7 +97,7 @@ int	redi_stdin(t_list *node)
 		else if (tmp->db == 1)
 		{
 			if (!redi_stdin_db(&term, tmp, fd))
-				return (FALSE);
+				return (-1);
 		}
 		tmp = tmp->right;
 	}
