@@ -39,7 +39,7 @@ int	put_env(char **temp, char *env, int tdx)
 {
 	char	*dirp;
 
-	dirp = m_find_env_list(&g_env_list, env);
+	dirp = m_find_env_list(g_env_list, env);
 	if (dirp)
 	{
 		while (*dirp)

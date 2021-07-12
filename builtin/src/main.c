@@ -12,25 +12,45 @@
 
 #include "builtin.h"
 
+t_dummy	*init_all(t_term *term, char **env)
+{
+	t_dummy	*history;
+
+	history = malloc(sizeof(t_dummy));
+	if (!history)
+		return (NULL);
+	g_env_list = malloc(sizeof(t_dummy));
+	if (!g_env_list)
+	{
+		free_list(&history);
+		return (NULL);
+	}
+	init_term(term);
+	init_list(history);
+	init_list(g_env_list);
+	while (*env)
+	{
+		add_list_sort(g_env_list, *env);
+		++env;
+	}
+	return (history);
+}
+
 int	main(int ac, char **av, char **env)
 {
 	t_term		term;
-	t_dummy		history;
+	t_dummy		*history;
 
 	(void)ac;
 	(void)av;
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, sigquit_handler);
-	init_term(&term);
-	init_list(&history);
-	init_list(&g_env_list);
-	while (*env)
-	{
-		add_list_sort(&g_env_list, *env);
-		++env;
-	}
-	start_shell(&term, &history);
-	// free_list(&g_env_list);
+	history = init_all(&term, env);
+	if (history == NULL)
+		exit(1);
+	start_shell(&term, history);
+	free_list(&g_env_list);
+	free_list(&history);
 	return (0);
 }
 

@@ -14,12 +14,12 @@
 
 char	nl_to_null(char ch)
 {
-	if (ch == '\n')
+	if (ch == '\n' || ch == 4)
 		return (0);
 	return (ch);
 }
 
-int	get_read_buf(char *read_buf, int *i)
+int	get_read_buf(char *read_buf, int *i, char *val)
 {
 	char	ch;
 
@@ -31,7 +31,7 @@ int	get_read_buf(char *read_buf, int *i)
 			return (FALSE);
 		}
 		else if (ch == 4 && *i == -1)
-			return (TRUE);
+			return (m_strlcpy(read_buf, val, m_strlen(val) + 1));
 		else if (ch == 127 && *i != -1)
 		{
 			read_buf[(*i)--] = 0;
@@ -60,7 +60,7 @@ int	redi_stdin_db(t_term *term, t_list *tmp, int fd)
 	{
 		i = -1;
 		write(1, " > ", 3);
-		if (!get_read_buf(read_buf, &i))
+		if (!get_read_buf(read_buf, &i, tmp->val))
 		{
 			free(read_buf);
 			return (reset_input_mode(term));

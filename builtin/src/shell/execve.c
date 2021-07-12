@@ -27,7 +27,7 @@ void	find_path(t_parsed *parsed, t_execve *exec)
 		execve(path, exec->exec_str, exec->envp);
 		free(path);
 		++idx;
-	}	
+	}
 }
 
 void	run_execve_child_noslash(t_dummy *std_in, t_dummy *std_out)
@@ -101,7 +101,7 @@ int	run_execved(char *pipe_str, t_parsed *parsed,
 	exec = malloc(sizeof(t_execve));
 	m_memset(exec, 0, sizeof(t_execve));
 	exec->exec_str = m_split_char(pipe_str, ' ');
-	find_env = m_find_env_list(&g_env_list, "PATH");
+	find_env = m_find_env_list(g_env_list, "PATH");
 	exec->path_arr = m_split_char(find_env, 58);
 	free(find_env);
 	if (!exec->path_arr)
@@ -109,7 +109,7 @@ int	run_execved(char *pipe_str, t_parsed *parsed,
 		printf("sunashell: %s: command not found\n", parsed->cmd[0]);
 		return (0);
 	}
-	exec->envp = make_envp(&g_env_list);
+	exec->envp = make_envp(g_env_list);
 	child_pid = fork();
 	if (child_pid == 0)
 		run_execve_child(exec, parsed, std_in, std_out);

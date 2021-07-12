@@ -16,7 +16,7 @@ int	m_cd_env(char *envp)
 {
 	char	*dirp;
 
-	dirp = m_find_env_list(&g_env_list, envp);
+	dirp = m_find_env_list(g_env_list, envp);
 	return (chdir(dirp));
 }
 
