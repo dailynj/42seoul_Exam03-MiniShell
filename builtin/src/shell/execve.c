@@ -35,21 +35,20 @@ void	run_execve_child_noslash(t_dummy *std_in, t_dummy *std_out)
 	int		ifd;
 	int		ofd;
 
-	if (std_in->tail->left->db > 2)
-		ifd = std_in->tail->left->db;
-	else if (std_in->tail->left->db == 1)
-		ifd = open("a.txt", O_RDONLY, 0777);
-	else
-		ifd = open(std_in->tail->left->val, O_RDONLY, 0777);
-	if (std_out->tail->left->db > 2)
+	if (m_strlen(std_out->tail->left->val) == 0
+		&& std_out->tail->left->db != -1)
 		ofd = std_out->tail->left->db;
 	else if (std_out->tail->left->db == 1)
 		ofd = open(std_out->tail->left->val, O_WRONLY | O_APPEND, 0777);
 	else
 		ofd = open(std_out->tail->left->val, O_WRONLY | O_TRUNC, 0777);
+	if (std_in->tail->left->db == 1)
+		ifd = open("stdout", O_RDONLY);
+	else
+		ifd = open(std_in->tail->left->val, O_RDONLY);
+	dup2(ifd, STDIN_FILENO);
 	dup2(ofd, STDOUT_FILENO);
 	close(ofd);
-	dup2(ifd, STDIN_FILENO);
 	close(ifd);
 }
 
@@ -103,12 +102,12 @@ int	run_execved(char *pipe_str, t_parsed *parsed,
 	exec->exec_str = m_split_char(pipe_str, ' ');
 	find_env = m_find_env_list(g_env_list, "PATH");
 	exec->path_arr = m_split_char(find_env, 58);
-	free(find_env);
-	if (!exec->path_arr)
+	if (!exec->path_arr && !m_strchr(parsed->cmd[0], '/'))
 	{
 		printf("sunashell: %s: command not found\n", parsed->cmd[0]);
 		return (0);
 	}
+	free(find_env);
 	exec->envp = make_envp(g_env_list);
 	child_pid = fork();
 	if (child_pid == 0)

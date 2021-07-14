@@ -58,10 +58,7 @@ void	replace_env_else(char *read_buf, char *temp,
 	else if (read_buf[itdx->i] == '$')
 	{
 		if (read_buf[itdx->i + 1] == '?')
-		{
-			++(itdx->i);
 			replace_errno(before_errno, itdx, temp);
-		}
 		else
 			replace_dollar(read_buf, itdx, temp);
 	}

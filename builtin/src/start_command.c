@@ -17,7 +17,10 @@ void	child_command(t_parsed *parsed, t_std *std, int pipe_in, int pipe_len)
 	char	*tmp;
 
 	if (pipe_len != 1)
+	{
+		dup2(pipe_in, STDIN_FILENO);
 		close(pipe_in);
+	}
 	fill_list(parsed->cmd[2], '<', std->in);
 	fill_list(parsed->cmd[2], '>', std->out);
 	tmp = core_cmd(parsed->cmd[2]);
@@ -41,7 +44,7 @@ void	parent_command(pid_t child_pid, int *status, int pipe_out)
 	close(pipe_out);
 	waitpid(child_pid, status, 0);
 }
-
+// pipe[0] 읽기용 pipe[1] 쓰기용
 int	run_command2(t_std *std, t_parsed *parsed, t_idx ipdx, int pipe_in)
 {
 	int			child_pid;
@@ -53,14 +56,14 @@ int	run_command2(t_std *std, t_parsed *parsed, t_idx ipdx, int pipe_in)
 	if (ipdx.i != 0)
 		add_list(std->in->tail, "", pipe_in);
 	if (ipdx.i != ipdx.j - 1)
-		add_list(std->out->tail, "", pipes[1]);
+		add_list(std->out->tail, "", pipes[1]); // 리스트에 추가가 안되낭??
 	if (ipdx.j != 1)
 		child_pid = fork();
 	if (ipdx.j == 1 || child_pid == 0)
-		child_command(parsed, std, pipes[0], ipdx.j);
+		child_command(parsed, std, pipe_in, ipdx.j);
 	else
 		parent_command(child_pid, &status, pipes[1]);
-	return (pipes[0]);
+	return (pipes[0]); // 읽기용 리턴
 }
 
 int	run_command(int idx, int *pdx, char **pipe_str, int pipe_in)

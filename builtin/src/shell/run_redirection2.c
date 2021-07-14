@@ -53,7 +53,7 @@ int	redi_stdin_db(t_term *term, t_list *tmp, int fd)
 	char	*read_buf;
 	int		i;
 
-	fd = open("a.txt", O_WRONLY | O_TRUNC | O_CREAT, 0777);
+	fd = open("stdout", O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	set_input_mode(term);
 	read_buf = m_calloc(BUFFER_SIZE, 0);
 	while (1)
