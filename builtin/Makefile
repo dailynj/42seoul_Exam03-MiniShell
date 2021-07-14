@@ -40,7 +40,7 @@ $(NAME): $(OBJ)
 	# @./wave.sh
 	# @./spinner.sh
 	@$(CC) $(CFLAGS) $(INCLUDE) $(SRCS) -o $(NAME)
-	@printf "\b\b\b\b\b\b\b\b\b\b\b\b\033\e[1;33mSU\e[1;31mNA\e[1;37mSHELL \e[0;32mis Ready 💚\e[0m\n"
+	@printf "\b\b\b\b\b\b\b\b\b\b\b\b\033\e[1;33mMI\e[1;31mNI\e[1;37mSHELL \e[0;32mis Ready 💚\e[0m\n"
 
 
 bonus	: all

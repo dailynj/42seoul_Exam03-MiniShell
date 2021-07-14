@@ -78,9 +78,9 @@ int	run_execve_parent(t_execve **exec, t_parsed *parsed, int status)
 		printf("\n");
 	}
 	if (status >> 8 == 127 && parsed->cmd[0][0] != '\0')
-		printf("sunashell: %s: command not found!\n", parsed->cmd[0]);
+		printf("minishell: %s: command not found!\n", parsed->cmd[0]);
 	else if (status == 768)
-		printf("sunashell: %s: No such file or directory\n", parsed->cmd[0]);
+		printf("minishell: %s: No such file or directory\n", parsed->cmd[0]);
 	m_free_split((*exec)->envp);
 	m_free_split((*exec)->exec_str);
 	m_free_split((*exec)->path_arr);
@@ -104,7 +104,7 @@ int	run_execved(char *pipe_str, t_parsed *parsed,
 	exec->path_arr = m_split_char(find_env, 58);
 	if (!exec->path_arr && !m_strchr(parsed->cmd[0], '/'))
 	{
-		printf("sunashell: %s: command not found\n", parsed->cmd[0]);
+		printf("minishell: %s: command not found\n", parsed->cmd[0]);
 		return (0);
 	}
 	free(find_env);

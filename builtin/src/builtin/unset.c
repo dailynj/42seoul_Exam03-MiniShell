@@ -19,7 +19,6 @@ int	m_unset(t_parsed *parsed)
 
 	i = -1;
 	temp = m_split_char(parsed->cmd[2], 32);
-	printf("-> %s\n", parsed->cmd[2]);
 	if (parsed->cmd[1][0] != '\0')
 		print_error(parsed, "?=1");
 	else

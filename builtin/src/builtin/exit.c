@@ -23,13 +23,13 @@ int	m_exit(t_parsed *parsed)
 	printf("exit\n");
 	if (parsed->cmd[1][0] != '\0' && !m_isnum(parsed->cmd[1]))
 	{
-		printf("sunashell: exit: %s: numeric argument required\n",
+		printf("minishell: exit: %s: numeric argument required\n",
 			parsed->cmd[1]);
 		exit(255);
 	}
 	else if (parsed->cmd[2][0] != '\0' && !m_isnum(parsed->cmd[2]))
 	{
-		printf("sunashell: exit: %s: numeric argument required\n",
+		printf("minishell: exit: %s: numeric argument required\n",
 			parsed->cmd[2]);
 		exit(255);
 	}

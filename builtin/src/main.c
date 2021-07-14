@@ -122,7 +122,7 @@ int	print_pwd(int type)
 	m_memset(cwd, 0, PATH_MAX);
 	if (getcwd(cwd, sizeof(cwd)) == NULL)
 		return (FALSE);
-	printf("\033[0mSuNaSHELL🦀 ");
+	printf("\033[0mMINISHELL🦀 ");
 	while (cwd[++idx])
 	{
 		++cnt;
