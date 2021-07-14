@@ -106,10 +106,7 @@ char	*core_cmd(char *line)
 			if (ret == 1)
 				break ;
 			else if (ret == 2)
-			{
 				--itdx.i;
-				continue ;
-			}
 		}
 		else
 			temp[++itdx.j] = line[itdx.i];
