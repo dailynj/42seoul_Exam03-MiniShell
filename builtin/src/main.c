@@ -72,7 +72,7 @@ void	start_shell(t_term *term, t_dummy *history)
 		set_input_mode(term);
 		noncanonical_input(read_buf, term, history);
 		if (check_syntax(read_buf) || check_pipe(read_buf)
-			|| check_redi(read_buf) || errno)
+			|| check_redi(read_buf) || errno || !m_strlen(read_buf))
 			continue ;
 		replace_env(read_buf, before_errno, itdx);
 		pipe_str = m_split_char(read_buf, REAL_PIPE);

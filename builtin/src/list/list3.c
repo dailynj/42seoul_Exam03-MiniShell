@@ -29,7 +29,7 @@ void	print_list_export(int ofd, t_dummy *dummy)
 			if (tmp->val[idx] == '=')
 				write(ofd, "\"", 1);
 		}
-		if (find_equal(tmp->val) != 0)
+		if (find_equal(tmp->val) != m_strlen(tmp->val))
 			write(ofd, "\"", 1);
 		write(ofd, "\n", 1);
 		tmp = tmp->right;

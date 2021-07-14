@@ -15,14 +15,19 @@
 void	print_error(t_parsed *parsed, char *status)
 {
 	printf("minishell: %s: ", parsed->cmd[0]);
-	if (!m_strncmp(status, "?=127", 5))
+	if (!m_strncmp(status, "127", 3))
 	{
 		printf("%s: No such file or directory\n", parsed->cmd[2]);
 		errno = 1;
 	}
-	else if (!m_strncmp(status, "?=1", 3))
+	else if (!m_strncmp(status, "1", 1))
 	{
 		printf("-%c: invalid option\n", parsed->cmd[1][1]);
+		errno = 1;
+	}
+	else if (!m_strncmp(status, "=", 1))
+	{
+		printf("`=': not a valid identifier\n");
 		errno = 1;
 	}
 }

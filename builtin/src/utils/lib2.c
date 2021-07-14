@@ -66,8 +66,14 @@ char	**m_free_split(char **s)
 	unsigned int	i;
 
 	i = 0;
-	if (!s || !*s)
+	if (!s)
 		return (NULL);
+	if (!*s)
+	{
+		free(s);
+		s = 0;
+		return (NULL);
+	}
 	while (s[i] != NULL)
 	{
 		free(s[i]);

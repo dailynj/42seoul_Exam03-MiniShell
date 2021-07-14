@@ -18,13 +18,14 @@ int	add_list_sort(t_dummy *dummy, char *val)
 	t_list	*new_node;
 
 	tmp = dummy->head;
-	if (val[find_equal(val) + 1] == '\0')
-		return (TRUE);
 	while (tmp->right->db != -1
 		&& m_strncmp(tmp->right->val, val, find_equal(val)) < 0)
 		tmp = tmp->right;
 	if (m_strncmp(tmp->right->val, val, find_equal(val)) == 0)
-		m_strlcpy(tmp->right->val, val, m_strlen(val) + 1);
+	{
+		if (find_equal(val) != m_strlen(val))
+			m_strlcpy(tmp->right->val, val, m_strlen(val) + 1);
+	}
 	else
 	{
 		new_node = new_list(val, 0);

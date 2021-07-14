@@ -12,10 +12,24 @@
 
 #include "builtin.h"
 
+void	add_word(char *temp, t_parsed *parsed)
+{
+	if (temp[0] >= '0' && temp[0] <= '9')
+		print_error(parsed, "1");
+	else if (temp[0] == '=')
+		print_error(parsed, "=");
+	else
+		add_list_sort(g_env_list, temp);
+}
+
 int	m_export(t_parsed *parsed, t_dummy *out)
 {
-	int	ofd;
+	int		ofd;
+	int		i;
+	char	**temp;
 
+	i = -1;
+	temp = m_split_char(parsed->cmd[2], 32);
 	if (out->tail->left->db == -1)
 		ofd = 1;
 	else if (out->tail->left->db)
@@ -24,13 +38,15 @@ int	m_export(t_parsed *parsed, t_dummy *out)
 		ofd = open(out->tail->left->val, O_WRONLY | O_TRUNC | O_CREAT, 0777);
 	if (parsed->cmd[1][0] != '\0')
 		print_error(parsed, "?=1");
-	else if (parsed->cmd[2][0] >= '0' && parsed->cmd[2][0] <= '9')
-		print_error(parsed, "?=1");
 	else if (parsed->cmd[2][0] != '\0')
-		add_list_sort(g_env_list, parsed->cmd[2]);
+	{
+		while (temp[++i])
+			add_word(temp[i], parsed);
+	}
 	else
 		print_list_export(ofd, g_env_list);
 	if (ofd != 1)
 		close(ofd);
+	m_free_split(temp);
 	return (TRUE);
 }
