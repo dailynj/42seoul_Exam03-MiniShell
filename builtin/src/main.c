@@ -40,28 +40,31 @@ int	main(int ac, char **av, char **env)
 {
 	t_term		term;
 	t_dummy		*history;
+	char		*read_buf;
 
 	(void)ac;
 	(void)av;
+	read_buf = malloc(BUFFER_SIZE + 1);
 	signal(SIGINT, sigint_handler);
 	signal(SIGQUIT, sigquit_handler);
 	history = init_all(&term, env);
 	if (history == NULL)
 		exit(1);
-	start_shell(&term, history);
+	start_shell(&term, history, read_buf);
+	free(read_buf);
+	read_buf = 0;
 	free_list(&g_env_list);
 	free_list(&history);
 	return (0);
 }
 
-void	start_shell(t_term *term, t_dummy *history)
+void	start_shell(t_term *term, t_dummy *history, char *read_buf)
 {
-	char		*read_buf;
 	char		**pipe_str;
 	int			before_errno;
 	t_idx		*itdx;
+	char		tmp_read_buf[BUFFER_SIZE];
 
-	read_buf = malloc(BUFFER_SIZE + 1);
 	itdx = malloc(sizeof(t_idx));
 	while (print_pwd(LONG))
 	{
@@ -74,13 +77,12 @@ void	start_shell(t_term *term, t_dummy *history)
 		if (check_syntax(read_buf) || check_pipe(read_buf)
 			|| check_redi(read_buf) || errno || !m_strlen(read_buf))
 			continue ;
+		m_strlcpy(tmp_read_buf, read_buf, m_strlen(read_buf) + 1);
 		replace_env(read_buf, before_errno, itdx);
 		pipe_str = m_split_char(read_buf, REAL_PIPE);
-		start_command(pipe_str);
+		start_command(pipe_str, tmp_read_buf);
 		m_free_split(pipe_str);
 	}
-	free(read_buf);
-	read_buf = 0;
 }
 
 int	run_builtin(t_parsed *parsed, t_dummy *std_out)
@@ -129,10 +131,10 @@ int	print_pwd(int type)
 		if (cwd[idx] == '/')
 		{
 			cnt = 0;
-			color = (color + 1) % 6 + 48;
+			color = (color + 1) % 6;
 		}
 		if (cnt < BUFFER_SIZE * type)
-			printf("\033[0;3%dm%c", color % 6, cwd[idx]);
+			printf("\033[0;3%dm%c", color % 6 + 1, cwd[idx]);
 	}
 	printf("\033[0;37m\n");
 	return (write(1, " > ", 3));

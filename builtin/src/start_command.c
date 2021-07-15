@@ -66,40 +66,38 @@ int	run_command2(t_std *std, t_parsed *parsed, t_idx ipdx, int pipe_in)
 	return (pipes[0]);
 }
 
-int	run_command(int idx, int *pdx, char **pipe_str, int pipe_in)
+int	run_command(int *idx, char **pipe_str, int pipe_in, char *read_buf)
 {
 	t_parsed	*parsed;
-	t_idx		ipdx;
+	t_idx		ijdx;
 	t_std		std;
 
-	ipdx.i = idx;
-	ipdx.j = m_arrsize(pipe_str);
+	ijdx.i = *idx;
+	ijdx.j = m_arrsize(pipe_str);
 	std.in = malloc(sizeof(t_dummy));
 	std.out = malloc(sizeof(t_dummy));
 	init_list(std.out);
 	init_list(std.in);
-	parsed = get_cmd(pipe_str[++*pdx]);
-	ipdx.j = run_command2(&std, parsed, ipdx, pipe_in);
+	parsed = make_parsed(pipe_str[*idx], read_buf, idx);
+	ijdx.j = run_command2(&std, parsed, ijdx, pipe_in);
 	free_list(&std.out);
 	free_list(&std.in);
 	free(parsed);
 	parsed = 0;
-	return (ipdx.j);
+	return (ijdx.j);
 }
 
-void	start_command(char **pipe_str)
+void	start_command(char **pipe_str, char *read_buf)
 {
-	int	pipe_len;
-	int	idx;
-	int	pdx;
-	int	pipe_in;
+	int		pipe_len;
+	int		pipe_in;
+	int		idx;
 
 	idx = -1;
-	pdx = -1;
 	pipe_in = 0;
 	pipe_len = m_arrsize(pipe_str);
 	while (++idx < pipe_len)
 	{
-		pipe_in = run_command(idx, &pdx, pipe_str, pipe_in);
+		pipe_in = run_command(&idx, pipe_str, pipe_in, read_buf);
 	}
 }

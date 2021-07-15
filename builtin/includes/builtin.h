@@ -91,10 +91,10 @@ typedef struct s_execve
 t_dummy	*g_env_list;
 
 // main.c
-void		start_command(char **pipe_str);
+void		start_command(char **pipe_str, char *read_buf);
 void		sigint_handler(int err);
 void		sigquit_handler(int err);
-void		start_shell(t_term *term, t_dummy *history);
+void		start_shell(t_term *term, t_dummy *history, char *read_buf);
 int			print_pwd(int type);
 int			run_builtin(t_parsed *parsed, t_dummy *std_out);
 void		printpipe(char **pipe_str);
@@ -154,6 +154,7 @@ int			check(char *line);
 int			nooption(char *line);
 t_parsed	get_cmd_echo(char *line);
 t_parsed	*get_cmd(char *line);
+t_parsed	*make_parsed(char *line, char *read_buf, int *j);
 
 // error.c
 void		print_error(t_parsed *parsed, char *status);

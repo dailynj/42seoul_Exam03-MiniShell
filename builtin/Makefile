@@ -22,7 +22,7 @@ SRC		=	main.c debug.c term.c history.c signal.c start_command.c\
 			error_handler/error_handler.c error_handler/syntax_error.c \
 			shell/run_redirection.c shell/run_redirection2.c shell/execve.c \
 			list/list1.c list/list2.c list/list3.c\
-			parsing/parsing.c parsing/parsing2.c parsing/quote.c parsing/quote2.c \
+			parsing/parsing.c parsing/parsing2.c parsing/parsing3.c parsing/quote.c parsing/quote2.c \
 			parsing/input.c parsing/input2.c
 
 SRC_DIR = ./src/
