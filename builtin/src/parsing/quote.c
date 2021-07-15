@@ -38,16 +38,20 @@ void	get_env(char **env, char *buf, int *idx)
 int	put_env(char **temp, char *env, int tdx)
 {
 	char	*dirp;
+	int		i;
 
+	i = -1;
 	dirp = m_find_env_list(g_env_list, env);
-	if (dirp)
+	if (dirp[++i])
 	{
-		while (*dirp)
+		while (dirp[i])
 		{
-			(*temp)[++tdx] = *dirp;
-			++dirp;
+			(*temp)[++tdx] = dirp[i];
+			++i;
 		}
 	}
+	free(dirp);
+	dirp = 0;
 	return (tdx);
 }
 

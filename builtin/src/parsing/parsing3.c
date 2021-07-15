@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing3.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/02 12:04:00 by najlee            #+#    #+#             */
+/*   Updated: 2021/07/02 12:04:01 by najlee           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 int	check_quote(char *read_buf, int x)
@@ -7,6 +19,8 @@ int	check_quote(char *read_buf, int x)
 	length = 0;
 	if (read_buf[x] == '\"')
 	{
+		if (read_buf[x + 1] == '$')
+			return length;
 		while (read_buf[++x] != '\"')
 		{
 			++length;
@@ -22,16 +36,13 @@ int	check_quote(char *read_buf, int x)
 	return (length);
 }
 
-t_parsed	*make_parsed(char *line, char *read_buf, int *j)
+int	get_x(int *j, char *read_buf)
 {
-	t_parsed	*parsed;
-	int			length;
-	int			x;
-	int			cnt;
+	int	x;
+	int	cnt;
 
 	x = -1;
 	cnt = 0;
-	parsed = get_cmd(line);
 	if (*j)
 	{
 		while (read_buf[++x])
@@ -40,11 +51,29 @@ t_parsed	*make_parsed(char *line, char *read_buf, int *j)
 			{
 				++cnt;
 				if (cnt == *j)
+				{
+					++x;
+					while (read_buf[++x] == ' ')
+						;
 					break ;
+				}
 			}
 		}
 	}
-	length = check_quote(read_buf, ++x);
+	if (x == -1)
+		++x;
+	return (x);
+}
+
+t_parsed	*make_parsed(char *line, char *read_buf, int *j)
+{
+	t_parsed	*parsed;
+	int			length;
+	int			x;
+
+	parsed = get_cmd(line);
+	x = get_x(j, read_buf);
+	length = check_quote(read_buf, x);
 	if (length > m_strlen(parsed->cmd[0]))
 		m_strlcpy(parsed->cmd[0], &read_buf[x + 1], length + 1);
 	return (parsed);
