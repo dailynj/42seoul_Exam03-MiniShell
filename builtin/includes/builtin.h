@@ -209,7 +209,7 @@ void		print_list_export(int ofd, t_dummy *dummy);
 void		init_input(char *read_buf, t_idx *ihdx, char **buf);
 void		input_up(char *buf[2], t_dummy *history, t_idx *ihdx, int ch);
 void		input_updown(char **buf, int ch, t_dummy *history, t_idx *ihdx);
-void		input_ctrld(t_term *term, int idx);
+void		input_ctrld(t_term *term, int idx, int ch);
 void		input_backspace(char **buf, t_idx *ihdx, t_dummy *history);
 void		input_ch(char **buf, t_idx *ihdx, t_dummy *history, int ch);
 void		input_ctrlc_nl(char **buf, t_idx *ihdx, t_dummy *history, int ch);

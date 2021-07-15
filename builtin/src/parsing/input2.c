@@ -56,8 +56,8 @@ void	noncanonical_input(char *read_buf, t_term *term, t_dummy *history)
 	{
 		if (ch == 4283163 || ch == 4348699 || ch == 4479771 || ch == 4414235)
 			input_updown(buf, ch, history, &ihdx);
-		else if (ch == 4)
-			input_ctrld(term, ihdx.i);
+		else if (ch == 4 || ch == '\t')
+			input_ctrld(term, ihdx.i, ch);
 		else if (ch == 127)
 			input_backspace(buf, &ihdx, history);
 		else if (ch == 3 || ch == '\n')

@@ -57,9 +57,9 @@ void	input_updown(char *buf[2], int ch, t_dummy *history, t_idx *ihdx)
 		input_up(buf, history, ihdx, ch);
 }
 
-void	input_ctrld(t_term *term, int idx)
+void	input_ctrld(t_term *term, int idx, int ch)
 {
-	if (idx == -1)
+	if (idx == -1 && ch != '\t')
 	{
 		reset_input_mode(term);
 		printf("exit\n");
