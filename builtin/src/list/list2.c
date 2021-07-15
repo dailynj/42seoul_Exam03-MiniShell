@@ -106,6 +106,7 @@ int	delete_list(t_dummy *dummy, char *val)
 	}
 	if (m_strncmp(tmp->right->val, val, find_equal(val)) == 0)
 	{
+		--dummy->head->db;
 		del_node = tmp->right;
 		tmp->right = tmp->right->right;
 		tmp->right->left = tmp;
