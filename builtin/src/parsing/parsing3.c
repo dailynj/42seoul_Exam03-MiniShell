@@ -6,7 +6,7 @@
 /*   By: najlee <najlee@student.42seoul.kr>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/02 12:04:00 by najlee            #+#    #+#             */
-/*   Updated: 2021/07/02 12:04:01 by najlee           ###   ########.fr       */
+/*   Updated: 2021/07/15 14:28:48 by najlee           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	check_quote(char *read_buf, int x)
 	if (read_buf[x] == '\"')
 	{
 		if (read_buf[x + 1] == '$')
-			return length;
+			return (length);
 		while (read_buf[++x] != '\"')
 		{
 			++length;
