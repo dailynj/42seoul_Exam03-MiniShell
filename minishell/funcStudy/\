@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+ 
+int main() {
+     
+    pid_t pid;
+    int status,i;
+     
+    pid = fork();
+     
+	pid  = waitpid(pid, &status, 0);
+    if (pid == -1 )
+	{
+		printf("error\n");
+	}
+	else
+	{
+		if (WIFEXITED(status)){
+			printf("프로그램에서 exited(%d) 또는 main에서 return ;하여 종료되었습니다.\n",
+					WEXITSTATUS(status));
+		} else if (WIFSIGNALED(status)) {
+			printf("siganl %d번이 발생하여 종료되었습니다.\n");
+		} else if (WIFSTOPPED(status) {
+			printf("signal %d번으로 인하여 stop되었습니다. \n", STOPSIG(status));
+		} else if (WIFCONTINUED(status)) {
+			printf("stop된 프로세스를 진행합니다\n");
+		}
+	}
+     
+    return 0;
+}
