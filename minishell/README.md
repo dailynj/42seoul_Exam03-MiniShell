@@ -1,4 +1,4 @@
-## minishell
+## 📌 minishell
  : Make a simple shell (bash)
 
 ## builtins
@@ -31,3 +31,22 @@ pipeline.
 - ctrl-C print a new prompt on a newline.
 - ctrl-D exit the shell.
 - ctrl-\ do nothing.
+
+### Compiling
+Run `make`.
+
+### Running
+1. start shell
+```
+./minishell
+```
+2. test examples
+```
+echo -n hello
+env
+export a=aaaa
+echo aaaa > a > b
+echo a | echo b | ls
+cat
+echo $?
+```
