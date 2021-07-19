@@ -32,10 +32,10 @@ pipeline.
 - ctrl-D exit the shell.
 - ctrl-\ do nothing.
 
-### Compiling
+## Compiling
 Run `make`.
 
-### Running
+## Running
 1. start shell
 ```
 ./minishell
